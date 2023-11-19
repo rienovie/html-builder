@@ -1,3 +1,4 @@
 build/
 .kdev4/
-html-builder.git.kdev4
+html-builder.git.kdev4\
+.vscode

@@ -1,17 +1,16 @@
-#include <stdio.h>
-#include "UI/imgui.h"
-#include "UI/imgui_stdlib.h"
-#include "UI/imconfig.h"
-#include "UI/backends/imgui_impl_glfw.h"
-#include "UI/backends/imgui_impl_opengl3.h"
-#include <GLFW/glfw3.h>
-
+#include "main.h"
 
 int main () {
 
+    glfwSetErrorCallback(glfw_error_callback);
+    if (!glfwInit())
+        return 1;
+
+    const char* glsl_version = "#version 130";
+
     //create window
-    GLFWwindow* mainWindow = glfwCreateWindow(1280,720,"Main Window",nullptr,nullptr);
-    if(mainWindow == nullptr) { return 1; }
+    GLFWwindow* mainWindow = glfwCreateWindow(1280,720,"Main Window",NULL,NULL);
+    if(mainWindow == nullptr) { qPrint("window null");return 1; }
     glfwMakeContextCurrent(mainWindow);
     glfwSwapInterval(1); //vsync
 
@@ -23,7 +22,7 @@ int main () {
     ImGui::StyleColorsDark();
 
     ImGui_ImplGlfw_InitForOpenGL(mainWindow,true);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init(glsl_version);
 
     ImVec4 clearColor = ImVec4(0.45f,0.55f,0.60f,1.00f);
 
@@ -64,7 +63,11 @@ int main () {
 
 }
 
-void initialize() {
+static void glfw_error_callback(int error, const char* description) {
+    fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+}
 
 
+void qPrint(std::string output) {
+    std::cout << output << std::endl;
 }
