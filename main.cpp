@@ -9,7 +9,7 @@ int main () {
     const char* glsl_version = "#version 130";
 
     //create window
-    GLFWwindow* mainWindow = glfwCreateWindow(1280,720,"Main Window",NULL,NULL);
+    GLFWwindow* mainWindow = glfwCreateWindow(1600,900,"Main Window",NULL,NULL);
     if(mainWindow == nullptr) { qPrint("window null");return 1; }
     glfwMakeContextCurrent(mainWindow);
     glfwSwapInterval(1); //vsync
@@ -36,7 +36,10 @@ int main () {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
+
+        mainUIOutput();
+
 
         //rendering
         ImGui::Render();
@@ -70,4 +73,13 @@ static void glfw_error_callback(int error, const char* description) {
 
 void qPrint(std::string output) {
     std::cout << output << std::endl;
+}
+
+void mainUIOutput(){
+
+    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+    ImGui::Begin("Test Window",NULL,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar |ImGuiWindowFlags_NoDecoration);
+    ImGui::Button("Hello!");
+    ImGui::End();
 }
