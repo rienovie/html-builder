@@ -1,5 +1,8 @@
 #include "main.h"
 
+static bool testWindow_open = false;
+static bool showDemo = false;
+
 int main () {
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -36,9 +39,10 @@ int main () {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        //ImGui::ShowDemoWindow();
+        if(showDemo) {ImGui::ShowDemoWindow();}
 
-        mainUIOutput();
+        showMainUI();
+        if(testWindow_open) {showTestWindow();}
 
 
         //rendering
@@ -75,11 +79,23 @@ void qPrint(std::string output) {
     std::cout << output << std::endl;
 }
 
-void mainUIOutput(){
+void showMainUI(){
+
+
 
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-    ImGui::Begin("Test Window",NULL,ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar |ImGuiWindowFlags_NoDecoration);
-    ImGui::Button("Hello!");
+    ImGui::Begin("Main",NULL,ImGuiWindowFlags_NoCollapse);
+    if(ImGui::Button("Toggle test Window")) testWindow_open = !testWindow_open;
+    if(ImGui::Button("Toggle Demo Window")) showDemo = !showDemo;
+    ImGui::End();
+}
+
+void showTestWindow(){
+    ImGui::Begin("Test Window",NULL);
+    ImGui::Text("I'm a test window!");
+    if(ImGui::Button("Close")){
+        testWindow_open = false;
+    }
     ImGui::End();
 }
