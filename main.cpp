@@ -1,6 +1,5 @@
 #include "main.h"
 
-static int secondsCount = 0;
 static bool closeThreads = false;
 
 int main () {
@@ -29,7 +28,6 @@ int main () {
 void tick_sec() {
     if(closeThreads) return;
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    secondsCount += 1;
-    util::qPrint(secondsCount);
+    util::qPrint("tick");
     tick_sec();
 }

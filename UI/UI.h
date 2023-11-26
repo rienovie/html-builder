@@ -6,6 +6,7 @@
 #include "ImGui/backends/imgui_impl_glfw.h"
 #include "ImGui/backends/imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
+#include "../sys/util.h"
 
 namespace UI {
     int initialize();
@@ -13,6 +14,7 @@ namespace UI {
     void mainLoop();
     void showMainUI();
     void showTestWindow();
+    void showSettingsWindow();
     bool mainLoopCondition();
     void glfw_error_callback(int error, const char* description);
 }

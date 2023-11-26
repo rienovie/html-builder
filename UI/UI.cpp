@@ -1,8 +1,15 @@
 #include "UI.h"
 
-static float txtSize = 24.0f;
+//settings
+static int fontSize = 24;
+static bool darkMode = true;
+
+//windows
 static bool testWindow_open = false;
 static bool showDemo = false;
+static bool showSettings = false;
+
+
 ImFont *font_main , *font_bold , *font_light;
 ImVec4 clearColor = ImVec4(0.45f,0.55f,0.60f,1.00f);
 GLFWwindow* mainWindow;
@@ -27,9 +34,9 @@ namespace UI {
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",txtSize);
-        font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",txtSize);
-        font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",txtSize);
+        font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",fontSize);
+        font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",fontSize);
+        font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",fontSize);
 
         ImGui::StyleColorsDark();
 
@@ -52,7 +59,7 @@ namespace UI {
     void mainLoop(){
         //poll and handle events (inputs, window resize, etc)
             glfwPollEvents();
-            ImGui::GetIO().FontGlobalScale = txtSize / 24.0f;
+            ImGui::GetIO().FontGlobalScale = fontSize / 24.0f;
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
@@ -62,6 +69,7 @@ namespace UI {
 
             if(showDemo) {ImGui::ShowDemoWindow();}
             if(testWindow_open) {showTestWindow();}
+            if(showSettings) {showSettingsWindow();}
 
             //rendering
             ImGui::Render();
@@ -89,6 +97,7 @@ namespace UI {
         ImGui::Begin("Main",NULL,ImGuiWindowFlags_NoCollapse);
         if(ImGui::Button("Toggle test Window")) testWindow_open = !testWindow_open;
         if(ImGui::Button("Toggle Demo Window")) showDemo = !showDemo;
+        if(ImGui::Button("Toggle Settings Window")) showSettings = !showSettings;
         ImGui::End();
     }
 
@@ -100,9 +109,22 @@ namespace UI {
         ImGui::PushFont(font_main);
         if(ImGui::Button("Close")) { testWindow_open = false; }
         ImGui::PopFont();
+        ImGui::End();
+    }
+
+    void showSettingsWindow(){
+        ImGui::Begin("Settings",NULL);
+        if(ImGui::Button("Default")) { fontSize = 24; };
+        ImGui::SameLine();
         ImGui::PushFont(font_bold);
-        ImGui::SliderFloat("Font Size",&txtSize,8.0f,42.0f);
+        ImGui::SliderInt("Font Size",&fontSize,8,42);
         ImGui::PopFont();
+        if(ImGui::Button("Toggle Dark Mode")) {
+            darkMode = !darkMode;
+            if(darkMode) { ImGui::StyleColorsDark(); }
+            else ImGui::StyleColorsLight();
+
+        } ;
         ImGui::End();
     }
 
