@@ -8,6 +8,8 @@ int main () {
 
     std::thread t_sec (tick_sec);
 
+    UI::setThemeByFile("../UI/Themes/default.hbtheme");
+
     //main loop
     while(UI::mainLoopCondition()){
         UI::mainLoop();
@@ -28,6 +30,6 @@ int main () {
 void tick_sec() {
     if(closeThreads) return;
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    util::qPrint("tick");
+    //util::qPrint("tick");
     tick_sec();
 }

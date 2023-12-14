@@ -6,7 +6,7 @@
 namespace util {
     int strToInt(std::string str);
 
-        //quick print
+    //quick print
     template <typename T>
     void qPrint(T output) {
         std::cout << output << "\n";

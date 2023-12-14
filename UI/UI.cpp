@@ -1,13 +1,19 @@
 #include "UI.h"
 
 //settings
-static int fontSize = 24;
+static int maxFontSize = 42;
+static int fontSize = 32;
 static bool darkMode = true;
 
 //windows
 static bool testWindow_open = false;
 static bool showDemo = false;
 static bool showSettings = false;
+
+std::map<std::string, std::string> themeMap {
+{"fontSize","32"},
+{"darkMode","1"}
+};
 
 
 ImFont *font_main , *font_bold , *font_light;
@@ -34,9 +40,9 @@ namespace UI {
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",fontSize);
-        font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",fontSize);
-        font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",fontSize);
+        font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",maxFontSize);
+        font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",maxFontSize);
+        font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",maxFontSize);
 
         ImGui::StyleColorsDark();
 
@@ -58,29 +64,30 @@ namespace UI {
 
     void mainLoop(){
         //poll and handle events (inputs, window resize, etc)
-            glfwPollEvents();
-            ImGui::GetIO().FontGlobalScale = fontSize / 24.0f;
+        glfwPollEvents();
+        ImGui::GetIO().FontGlobalScale = float(fontSize) / float(maxFontSize);
 
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
-            showMainUI();
+        showMainUI();
 
-            if(showDemo) {ImGui::ShowDemoWindow();}
-            if(testWindow_open) {showTestWindow();}
-            if(showSettings) {showSettingsWindow();}
+        //windows
+        if(showDemo) { ImGui::ShowDemoWindow(); }
+        if(testWindow_open) { showTestWindow(); }
+        if(showSettings) { showSettingsWindow(); }
 
-            //rendering
-            ImGui::Render();
-            int display_w, display_h;
-            glfwGetFramebufferSize(mainWindow, &display_w,&display_h);
-            glViewport(0,0,display_w,display_h);
-            glClearColor(clearColor.x * clearColor.w , clearColor.y * clearColor.w , clearColor.z * clearColor.w , clearColor.w);
-            glClear(GL_COLOR_BUFFER_BIT);
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        //rendering
+        ImGui::Render();
+        int display_w, display_h;
+        glfwGetFramebufferSize(mainWindow, &display_w,&display_h);
+        glViewport(0,0,display_w,display_h);
+        glClearColor(clearColor.x * clearColor.w , clearColor.y * clearColor.w , clearColor.z * clearColor.w , clearColor.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-            glfwSwapBuffers(mainWindow);
+        glfwSwapBuffers(mainWindow);
     }
 
     void cleanUp(){
@@ -114,6 +121,9 @@ namespace UI {
 
     void showSettingsWindow(){
         ImGui::Begin("Settings",NULL);
+        if(ImGui::Button("Load From File")) {setThemeByFile("../UI/Themes/default.hbtheme");}
+        ImGui::SameLine();
+        if(ImGui::Button("Save To File")) {saveThemeToFile("../UI/Themes/","Test");}
         if(ImGui::Button("Default")) { fontSize = 24; };
         ImGui::SameLine();
         ImGui::PushFont(font_bold);
@@ -127,5 +137,78 @@ namespace UI {
         } ;
         ImGui::End();
     }
+
+    void setThemeByFile(const char* fileLocation) {
+        std::string line, buildStr, property;
+        std::ifstream file;
+        file.open(fileLocation);
+
+        if(file.is_open()){
+
+            //for each line
+            while(getline(file,line)){
+                property.clear();
+                buildStr.clear();
+
+                for(char element : line){
+                    if(element == '='){
+                        property = buildStr;
+                        buildStr.clear();
+                    } else{
+                        buildStr.push_back(element);
+                    }
+                }
+                themeMap[property] = buildStr;
+                util::qPrint(themeMap[property]);
+            }
+        } else {
+            util::qPrint("File",fileLocation,"was unable to be opened!");
+        }
+
+        file.close();
+
+        //theme options
+        fontSize = util::strToInt(themeMap["fontSize"]);
+        darkMode = util::strToInt(themeMap["darkMode"]);
+
+
+        //apply any manual settings
+        darkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
+
+    }
+
+    void saveThemeToFile(const char* themeDir, const char* name) {
+        std::ofstream file;
+        std::string fileName, property, value, line;
+        fileName.append(themeDir);
+        fileName.append(name);
+        fileName.append(".hbtheme");
+
+        //set map to current values
+        themeMap["fontSize"] = std::to_string(fontSize);
+        themeMap["darkMode"] = std::to_string(darkMode);
+
+        file.open(fileName);
+
+        if(file.is_open()){
+            for(auto option : themeMap){
+                file << option.first;
+                file << '=';
+                file << option.second;
+                file << '\n';
+            }
+
+            util::qPrint("File",fileName,"was saved!");
+
+        } else {
+            util::qPrint("File",fileName,"could not be saved!");
+        }
+
+        file.close();
+
+
+    }
+
+
 
 }
