@@ -10,6 +10,7 @@
 #include <fstream>
 #include <map>
 #include <filesystem>
+#include <vector>
 
 namespace UI {
     int initialize();
@@ -20,7 +21,11 @@ namespace UI {
     void showSettingsWindow();
     bool mainLoopCondition();
     void glfw_error_callback(int error, const char* description);
-    void setThemeByFile(const char* file);
-    void saveThemeToFile(const char* themeDir, const char* name);
+    void setThemeByPath(const char* path);
+    void saveThemeToFile(const char* name);
+    void setAllThemeNames();
+    std::string getThemeNameByPath(std::string themePath);
+    void setThemeByName(std::string name);
+    std::string getThemePathByName(std::string name);
 }
 

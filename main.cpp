@@ -8,7 +8,7 @@ int main () {
 
     std::thread t_sec (tick_sec);
 
-    UI::setThemeByFile("../UI/Themes/default.hbtheme");
+    UI::setThemeByPath("../UI/Themes/default.hbtheme");
 
     //main loop
     while(UI::mainLoopCondition()){

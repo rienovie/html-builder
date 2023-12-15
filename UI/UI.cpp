@@ -4,16 +4,20 @@
 static int maxFontSize = 42;
 static int fontSize = 32;
 static bool darkMode = true;
+static int currentTheme = 0; //is set to the combo selection
 
 //windows
 static bool testWindow_open = false;
 static bool showDemo = false;
 static bool showSettings = false;
 
+//fun stuff
+std::vector<std::string> foundThemes;
 std::map<std::string, std::string> themeMap {
-{"fontSize","32"},
-{"darkMode","1"}
+    {"fontSize","32"},
+    {"darkMode","1"}
 };
+
 
 
 ImFont *font_main , *font_bold , *font_light;
@@ -48,6 +52,11 @@ namespace UI {
 
         ImGui_ImplGlfw_InitForOpenGL(mainWindow,true);
         ImGui_ImplOpenGL3_Init(glsl_version);
+
+        setAllThemeNames();
+        //TODO
+        //set the currentTheme value
+        //Need to create a config file that saves user settings
 
         return 0;
 
@@ -121,9 +130,25 @@ namespace UI {
 
     void showSettingsWindow(){
         ImGui::Begin("Settings",NULL);
-        if(ImGui::Button("Load From File")) {setThemeByFile("../UI/Themes/default.hbtheme");}
-        ImGui::SameLine();
-        if(ImGui::Button("Save To File")) {saveThemeToFile("../UI/Themes/","Test");}
+
+        //TODO
+        //set to the current theme
+        //Need to create a config file that saves user settings
+
+        if (ImGui::BeginCombo("Theme",foundThemes[currentTheme].c_str())){
+            //for each theme
+            for(int i = 0;i<foundThemes.size();i++){
+                const bool isSelected = (currentTheme == i);
+                if(ImGui::Selectable(foundThemes[i].c_str(),isSelected)) {
+                    currentTheme = i;
+                    //selection change is here
+                    setThemeByName(foundThemes[i]);
+                }
+                if(isSelected) { ImGui::SetItemDefaultFocus(); }
+            }
+            ImGui::EndCombo();
+        }
+
         if(ImGui::Button("Default")) { fontSize = 24; };
         ImGui::SameLine();
         ImGui::PushFont(font_bold);
@@ -138,7 +163,7 @@ namespace UI {
         ImGui::End();
     }
 
-    void setThemeByFile(const char* fileLocation) {
+    void setThemeByPath(const char* fileLocation) {
         std::string line, buildStr, property;
         std::ifstream file;
         file.open(fileLocation);
@@ -159,7 +184,6 @@ namespace UI {
                     }
                 }
                 themeMap[property] = buildStr;
-                util::qPrint(themeMap[property]);
             }
         } else {
             util::qPrint("File",fileLocation,"was unable to be opened!");
@@ -177,10 +201,10 @@ namespace UI {
 
     }
 
-    void saveThemeToFile(const char* themeDir, const char* name) {
+    void saveThemeToFile(const char* name) {
         std::ofstream file;
         std::string fileName, property, value, line;
-        fileName.append(themeDir);
+        fileName.append("../UI/Themes/");
         fileName.append(name);
         fileName.append(".hbtheme");
 
@@ -208,6 +232,50 @@ namespace UI {
 
 
     }
+
+    void setAllThemeNames(){
+        //for each file in theme path
+        for(auto& file : std::filesystem::directory_iterator("../UI/Themes/")){
+            if(file.is_regular_file() && (file.path().extension() == ".hbtheme")){
+                foundThemes.push_back(getThemeNameByPath(file.path()));
+            }
+        }
+
+    }
+
+    std::string getThemeNameByPath(std::string themePath) {
+        bool dotFound = false;
+        std::string buildStr;
+
+        for(int i = themePath.length();i>1;i--){
+            if(themePath[i] == '.'){
+                dotFound = true;
+                continue;
+            }
+            if(themePath[i] == '/'){
+                return buildStr;
+            }
+            if(dotFound){
+                buildStr.insert(buildStr.begin(),themePath[i]);
+            }
+        }
+
+        return std::string("Error :(");
+    }
+
+    std::string getThemePathByName(std::string name) {
+        std::string output;
+        output.append("../UI/Themes/");
+        output.append(name);
+        output.append(".hbtheme");
+        return output;
+    }
+
+
+    void setThemeByName(std::string name) {
+        setThemeByPath(getThemePathByName(name).c_str());
+    }
+
 
 
 
