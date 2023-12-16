@@ -6,5 +6,6 @@
 #include <chrono>
 #include "UI/UI.h"
 #include "sys/util.h"
+#include "sys/config.h"
 
 void tick_sec();

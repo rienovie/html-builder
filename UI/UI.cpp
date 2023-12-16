@@ -179,9 +179,10 @@ namespace UI {
                     if(element == '='){
                         property = buildStr;
                         buildStr.clear();
-                    } else{
+                    } else {
                         buildStr.push_back(element);
                     }
+
                 }
                 themeMap[property] = buildStr;
             }
