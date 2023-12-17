@@ -5,13 +5,11 @@
 #include <filesystem>
 #include <fstream>
 #include <vector>
-#include <algorithm>
 
 class config {
 public:
     static std::string get(char const* propertyName);
     static void update(char const* propertyName, std::string newValue);
-    static void refreshValues();
 
     config();
 private:
