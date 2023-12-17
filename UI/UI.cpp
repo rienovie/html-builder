@@ -5,6 +5,8 @@ static int maxFontSize = 42;
 static int fontSize = 32;
 static bool darkMode = true;
 static int currentTheme = 0; //is set to the combo selection
+static int userWindowWidth = 1600;
+static int userWindowHeight = 900;
 
 //windows
 static bool testWindow_open = false;
@@ -12,7 +14,7 @@ static bool showDemo = false;
 static bool showSettings = false;
 
 //fun stuff
-std::vector<std::string> foundThemes;
+std::vector<std::string> vFoundThemes;
 std::map<std::string, std::string> themeMap {
     {"fontSize","32"},
     {"darkMode","1"}
@@ -31,9 +33,16 @@ namespace UI {
             return 1;
 
         const char* glsl_version = "#version 130";
+        userWindowHeight = util::strToInt(config::get("windowHeight"));
+        userWindowWidth = util::strToInt(config::get("windowWidth"));
+
+        //fallback if not found in config
+        //config should have values updated to default for second run
+        if(userWindowHeight == 0) { userWindowHeight = 480; }
+        if(userWindowWidth == 0) { userWindowWidth = 640; }
 
         //create window
-        mainWindow = glfwCreateWindow(1600,900,"Main Window",NULL,NULL);
+        mainWindow = glfwCreateWindow(userWindowWidth,userWindowHeight,"Main Window",NULL,NULL);
         if(mainWindow == nullptr) { return 1; }
         glfwMakeContextCurrent(mainWindow);
         glfwSwapInterval(1); //vsync
@@ -128,14 +137,14 @@ namespace UI {
     void showSettingsWindow(){
         ImGui::Begin("Settings",NULL);
 
-        if (ImGui::BeginCombo("Theme",foundThemes[currentTheme].c_str())){
+        if (ImGui::BeginCombo("Theme",vFoundThemes[currentTheme].c_str())){
             //for each theme
-            for(int i = 0;i<foundThemes.size();i++){
+            for(int i = 0;i<vFoundThemes.size();i++){
                 const bool isSelected = (currentTheme == i);
-                if(ImGui::Selectable(foundThemes[i].c_str(),isSelected)) {
+                if(ImGui::Selectable( vFoundThemes[i].c_str(),isSelected)) {
                     currentTheme = i;
                     //selection change is here
-                    setThemeByName(foundThemes[i],true);
+                    setThemeByName( vFoundThemes[i],true);
                 }
                 if(isSelected) { ImGui::SetItemDefaultFocus(); }
             }
@@ -231,17 +240,11 @@ namespace UI {
         //for each file in theme path
         for(auto& file : std::filesystem::directory_iterator("../UI/Themes/")){
             if(file.is_regular_file() && (file.path().extension() == ".hbtheme")){
-                foundThemes.push_back(getThemeNameByPath(file.path()));
+                vFoundThemes.push_back(getThemeNameByPath(file.path()));
             }
         }
-        //assign the current theme
-        std::string cfgTheme = config::get("theme");
-        for(int i = 0;i<foundThemes.size();i++){
-            if(foundThemes[i] == cfgTheme){
-                currentTheme = i;
-                break;
-            }
-        }
+        assignCurrentThemeValueByName(config::get("theme"));
+
     }
 
     std::string getThemeNameByPath(std::string themePath) {
@@ -266,6 +269,11 @@ namespace UI {
 
     std::string getThemePathByName(std::string name) {
         std::string output;
+        if(!util::searchVector(vFoundThemes,name)) {
+            name = "Default";
+            config::update("theme",name);
+            assignCurrentThemeValueByName("Default");
+        }
         output.append("../UI/Themes/");
         output.append(name);
         output.append(".hbtheme");
@@ -275,7 +283,16 @@ namespace UI {
 
     void setThemeByName(std::string name, bool updateConfig) {
         setThemeByPath(getThemePathByName(name).c_str());
-        if(updateConfig) { config::update("theme",foundThemes[currentTheme]); }
+        if(updateConfig) { config::update("theme",vFoundThemes[currentTheme]); }
+    }
+
+    void assignCurrentThemeValueByName ( std::string name ) {
+        for(int i = 0;i<vFoundThemes.size();i++){
+            if( vFoundThemes[i] == name){
+                currentTheme = i;
+                break;
+            }
+        }
     }
 
 

@@ -4,7 +4,9 @@
 
 //default config options
 std::map<std::string, std::string> config::defaultConfig{
-    {"theme","Default"}
+    {"theme","Default"},
+    {"windowWidth","1600"},
+    {"windowHeight","900"}
 };
 std::map<std::string, std::string> config::loadedConfig{};
 
@@ -40,6 +42,7 @@ void config::saveConfig() {
 
         if(fileIn.is_open()){
             while(getline(fileIn,line)) {
+                if(line.length() == 0) { continue; }
                 fileLines.push_back(line);
             }
             setConfigVariableValues(fileLines);
@@ -60,9 +63,11 @@ void config::saveConfig() {
     }
 }
 
-
+//this does not feel very efficient but maybe I'll make it better when I am
+//a better propgramer
 void config::loadConfig() {
-    std::string line, buildStr , property;
+    std::string line, buildStr, property;
+    std::vector<std::string> vFoundProps;
 
     //create config file if doesn't exist
     if (!(std::filesystem::exists("../hb.config"))) {
@@ -82,13 +87,14 @@ void config::loadConfig() {
         }
     }
 
+    //read file and load config props and values
     std::ifstream fileIn;
     fileIn.open("../hb.config");
     if(fileIn.is_open()){
-        while(getline(fileIn,line)){
+        while(getline(fileIn,line)) {
             property.clear();
             buildStr.clear();
-
+            if(line.length() == 0) { continue; }
             for(char element : line){
                 if(element == '='){
                     property = buildStr;
@@ -97,13 +103,37 @@ void config::loadConfig() {
                     buildStr.push_back(element);
                 }
             }
-
+            loadedConfig[property] = buildStr;
+            vFoundProps.push_back(property);
         }
-        loadedConfig[property] = buildStr;
+
+        fileIn.close();
 
     } else {
         util::qPrint("User config could not be opened!");
     }
+
+    //if any default props did not exist on file
+    if(vFoundProps.size() < defaultConfig.size()) {
+        std::ofstream fileOut;
+        fileOut.open("../hb.config",std::ios::app);
+        //add any unfound props from default props
+        if(fileOut.is_open()){
+            for(auto configOption : defaultConfig){
+                if(!util::searchVector(vFoundProps,configOption.first)) {
+                    fileOut << configOption.first;
+                    fileOut << "=";
+                    fileOut << configOption.second;
+                    fileOut << "\n";
+                }
+            }
+            fileOut.close();
+        } else {
+            util::qPrint("Config could not be opened when attempting to add additional default props");
+        }
+
+    }
+
 }
 
 void config::setConfigVariableValues ( std::vector<std::string>& fileLines ) {

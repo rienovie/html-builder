@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace util {
     int strToInt(std::string str);
@@ -15,6 +16,14 @@ namespace util {
     void qPrint(T output, Args... args){
         std::cout << output << " ";
         qPrint(args...);
+    }
+
+    template <typename T>
+    bool searchVector(std::vector<T>& inputVector, T toFind) {
+        for(T toCheck : inputVector){
+            if(toCheck == toFind) { return true; }
+        }
+        return false;
     }
 
 }

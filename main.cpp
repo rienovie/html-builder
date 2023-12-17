@@ -9,7 +9,6 @@
 
 //TODO move ImGui windows into their own file / header
 //TODO remove darkMode and make color customization available
-//TODO set screen size by config
 
 static bool closeThreads = false;
 
