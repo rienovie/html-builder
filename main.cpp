@@ -1,14 +1,27 @@
 #include "main.h"
 
+//TODO change variable naming convention
+//int = iVariableName
+//bool = bVariableName
+//string = sVariableName
+//char = cVariableName
+//etc
+
+//TODO move ImGui windows into their own file / header
+//TODO remove darkMode and make color customization available
+//TODO set screen size by config
+
 static bool closeThreads = false;
 
 int main () {
 
-    if(UI::initialize()) return 1;
+    config cfg;
+
+    if(UI::initialize()) { return 1; }
 
     std::thread t_sec (tick_sec);
 
-    UI::setThemeByPath("../UI/Themes/default.hbtheme");
+    UI::setThemeByName(cfg.get("theme"));
 
     //main loop
     while(UI::mainLoopCondition()){

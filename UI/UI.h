@@ -11,6 +11,7 @@
 #include <map>
 #include <filesystem>
 #include <vector>
+#include "../sys/config.h"
 
 namespace UI {
     int initialize();
@@ -25,7 +26,7 @@ namespace UI {
     void saveThemeToFile(const char* name);
     void setAllThemeNames();
     std::string getThemeNameByPath(std::string themePath);
-    void setThemeByName(std::string name);
+    void setThemeByName(std::string name, bool updateConfig = false);
     std::string getThemePathByName(std::string name);
 }
 

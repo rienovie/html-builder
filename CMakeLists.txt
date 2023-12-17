@@ -9,6 +9,7 @@ set(SOURCES
     main.cpp
     UI/UI.cpp
     sys/util.cpp
+    sys/config.cpp
 )
 
 add_library(imgui

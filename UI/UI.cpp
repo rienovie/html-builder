@@ -54,9 +54,6 @@ namespace UI {
         ImGui_ImplOpenGL3_Init(glsl_version);
 
         setAllThemeNames();
-        //TODO
-        //set the currentTheme value
-        //Need to create a config file that saves user settings
 
         return 0;
 
@@ -131,10 +128,6 @@ namespace UI {
     void showSettingsWindow(){
         ImGui::Begin("Settings",NULL);
 
-        //TODO
-        //set to the current theme
-        //Need to create a config file that saves user settings
-
         if (ImGui::BeginCombo("Theme",foundThemes[currentTheme].c_str())){
             //for each theme
             for(int i = 0;i<foundThemes.size();i++){
@@ -142,7 +135,7 @@ namespace UI {
                 if(ImGui::Selectable(foundThemes[i].c_str(),isSelected)) {
                     currentTheme = i;
                     //selection change is here
-                    setThemeByName(foundThemes[i]);
+                    setThemeByName(foundThemes[i],true);
                 }
                 if(isSelected) { ImGui::SetItemDefaultFocus(); }
             }
@@ -241,7 +234,14 @@ namespace UI {
                 foundThemes.push_back(getThemeNameByPath(file.path()));
             }
         }
-
+        //assign the current theme
+        std::string cfgTheme = config::get("theme");
+        for(int i = 0;i<foundThemes.size();i++){
+            if(foundThemes[i] == cfgTheme){
+                currentTheme = i;
+                break;
+            }
+        }
     }
 
     std::string getThemeNameByPath(std::string themePath) {
@@ -273,8 +273,9 @@ namespace UI {
     }
 
 
-    void setThemeByName(std::string name) {
+    void setThemeByName(std::string name, bool updateConfig) {
         setThemeByPath(getThemePathByName(name).c_str());
+        if(updateConfig) { config::update("theme",foundThemes[currentTheme]); }
     }
 
 
