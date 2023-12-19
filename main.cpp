@@ -1,16 +1,21 @@
 #include "main.h"
 
-//TODO change variable naming convention
-//int = iVariableName
-//bool = bVariableName
-//string = sVariableName
-//char = cVariableName
-//etc
+/*Variable Naming = prefixVariableName
+ * bTestVariable = true;
+ * i = int
+ * b = bool
+ * s = string
+ * c = char
+ * m = map
+ * v = vector
+ * f = float
+ *
+*/
 
 //TODO move ImGui windows into their own file / header
 //TODO remove darkMode and make color customization available
 
-static bool closeThreads = false;
+static bool bCloseThreads = false;
 
 int main () {
 
@@ -29,7 +34,7 @@ int main () {
     }
 
     //clean up
-    closeThreads = true;
+    bCloseThreads = true;
     UI::cleanUp();
 
     t_sec.join();
@@ -40,7 +45,7 @@ int main () {
 
 
 void tick_sec() {
-    if(closeThreads) return;
+    if( bCloseThreads ) return;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     //util::qPrint("tick");
     tick_sec();

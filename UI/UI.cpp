@@ -1,15 +1,15 @@
 #include "UI.h"
 
 //settings
-static int maxFontSize = 42;
-static int fontSize = 32;
-static bool darkMode = true;
-static int currentTheme = 0; //is set to the combo selection
-static int userWindowWidth = 1600;
-static int userWindowHeight = 900;
+static int iMaxFontSize = 42;
+static int iFontSize = 32;
+static bool bDarkMode = true;
+static int iCurrentTheme = 0; //is set to the combo selection
+static int iUserWindowWidth = 1600;
+static int iUserWindowHeight = 900;
 
 //windows
-static bool testWindow_open = false;
+static bool bTestWindow_open = false;
 static bool showDemo = false;
 static bool showSettings = false;
 
@@ -33,17 +33,19 @@ namespace UI {
             return 1;
 
         const char* glsl_version = "#version 130";
-        userWindowHeight = util::strToInt(config::get("windowHeight"));
-        userWindowWidth = util::strToInt(config::get("windowWidth"));
+        iUserWindowHeight = util::strToInt(config::get("windowHeight"));
+        iUserWindowWidth = util::strToInt(config::get("windowWidth"));
 
         //fallback if not found in config
         //config should have values updated to default for second run
-        if(userWindowHeight == 0) { userWindowHeight = 480; }
-        if(userWindowWidth == 0) { userWindowWidth = 640; }
+        if( iUserWindowHeight == 0) {
+        iUserWindowHeight = 480; }
+        if( iUserWindowWidth == 0) {
+        iUserWindowWidth = 640; }
 
         //create window
-        mainWindow = glfwCreateWindow(userWindowWidth,userWindowHeight,"Main Window",NULL,NULL);
-        if(mainWindow == nullptr) { return 1; }
+        mainWindow = glfwCreateWindow( iUserWindowWidth,iUserWindowHeight,"Main Window",NULL,NULL);
+        if(mainWindow == NULL) { return 1; }
         glfwMakeContextCurrent(mainWindow);
         glfwSwapInterval(1); //vsync
 
@@ -53,9 +55,9 @@ namespace UI {
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",maxFontSize);
-        font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",maxFontSize);
-        font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",maxFontSize);
+        font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",iMaxFontSize );
+        font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",iMaxFontSize );
+        font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",iMaxFontSize );
 
         ImGui::StyleColorsDark();
 
@@ -80,7 +82,7 @@ namespace UI {
     void mainLoop(){
         //poll and handle events (inputs, window resize, etc)
         glfwPollEvents();
-        ImGui::GetIO().FontGlobalScale = float(fontSize) / float(maxFontSize);
+        ImGui::GetIO().FontGlobalScale = float(iFontSize) / float(iMaxFontSize);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -90,7 +92,7 @@ namespace UI {
 
         //windows
         if(showDemo) { ImGui::ShowDemoWindow(); }
-        if(testWindow_open) { showTestWindow(); }
+        if( bTestWindow_open ) { showTestWindow(); }
         if(showSettings) { showSettingsWindow(); }
 
         //rendering
@@ -117,9 +119,9 @@ namespace UI {
         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
         ImGui::Begin("Main",NULL,ImGuiWindowFlags_NoCollapse);
-        if(ImGui::Button("Toggle test Window")) testWindow_open = !testWindow_open;
-        if(ImGui::Button("Toggle Demo Window")) showDemo = !showDemo;
-        if(ImGui::Button("Toggle Settings Window")) showSettings = !showSettings;
+        if(ImGui::Button("Toggle test Window")) { bTestWindow_open = !bTestWindow_open; }
+        if(ImGui::Button("Toggle Demo Window")) { showDemo = !showDemo; }
+        if(ImGui::Button("Toggle Settings Window")) { showSettings = !showSettings; }
         ImGui::End();
     }
 
@@ -129,7 +131,7 @@ namespace UI {
         ImGui::Text("I'm a test window!");
         ImGui::PopFont();
         ImGui::PushFont(font_main);
-        if(ImGui::Button("Close")) { testWindow_open = false; }
+        if(ImGui::Button("Close")) { bTestWindow_open = false; }
         ImGui::PopFont();
         ImGui::End();
     }
@@ -137,28 +139,28 @@ namespace UI {
     void showSettingsWindow(){
         ImGui::Begin("Settings",NULL);
 
-        if (ImGui::BeginCombo("Theme",vFoundThemes[currentTheme].c_str())){
+        if (ImGui::BeginCombo("Theme",vFoundThemes[iCurrentTheme].c_str())){
             //for each theme
             for(int i = 0;i<vFoundThemes.size();i++){
-                const bool isSelected = (currentTheme == i);
-                if(ImGui::Selectable( vFoundThemes[i].c_str(),isSelected)) {
-                    currentTheme = i;
+                const bool bSelected = ( iCurrentTheme == i);
+                if(ImGui::Selectable( vFoundThemes[i].c_str(),bSelected )) {
+                    iCurrentTheme = i;
                     //selection change is here
                     setThemeByName( vFoundThemes[i],true);
                 }
-                if(isSelected) { ImGui::SetItemDefaultFocus(); }
+                if( bSelected ) { ImGui::SetItemDefaultFocus(); }
             }
             ImGui::EndCombo();
         }
 
-        if(ImGui::Button("Default")) { fontSize = 24; };
+        if(ImGui::Button("Default")) { iFontSize = 24; };
         ImGui::SameLine();
         ImGui::PushFont(font_bold);
-        ImGui::SliderInt("Font Size",&fontSize,8,42);
+        ImGui::SliderInt("Font Size",&iFontSize,10,42);
         ImGui::PopFont();
         if(ImGui::Button("Toggle Dark Mode")) {
-            darkMode = !darkMode;
-            if(darkMode) { ImGui::StyleColorsDark(); }
+            bDarkMode = !bDarkMode;
+            if( bDarkMode ) { ImGui::StyleColorsDark(); }
             else ImGui::StyleColorsLight();
 
         } ;
@@ -166,72 +168,72 @@ namespace UI {
     }
 
     void setThemeByPath(const char* fileLocation) {
-        std::string line, buildStr, property;
-        std::ifstream file;
-        file.open(fileLocation);
+        std::string sLine, sBuild, sProp;
+        std::ifstream fileIn;
+        fileIn.open(fileLocation);
 
-        if(file.is_open()){
+        if( fileIn.is_open()){
 
             //for each line
-            while(getline(file,line)){
-                property.clear();
-                buildStr.clear();
+            while(getline( fileIn,sLine )) {
+                sProp.clear();
+                sBuild.clear();
 
-                for(char element : line){
+                for(char element : sLine ) {
                     if(element == '='){
-                        property = buildStr;
-                        buildStr.clear();
+                        sProp = sBuild;
+                        sBuild.clear();
                     } else {
-                        buildStr.push_back(element);
+                        sBuild.push_back(element);
                     }
 
                 }
-                themeMap[property] = buildStr;
+                themeMap[sProp] = sBuild;
             }
         } else {
             util::qPrint("File",fileLocation,"was unable to be opened!");
         }
 
-        file.close();
+        fileIn.close();
 
         //theme options
-        fontSize = util::strToInt(themeMap["fontSize"]);
-        darkMode = util::strToInt(themeMap["darkMode"]);
+        iFontSize = util::strToInt(themeMap["fontSize"]);
+        bDarkMode = util::strToInt(themeMap["darkMode"]);
 
 
         //apply any manual settings
-        darkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
+        bDarkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
 
     }
 
     void saveThemeToFile(const char* name) {
-        std::ofstream file;
-        std::string fileName, property, value, line;
-        fileName.append("../UI/Themes/");
-        fileName.append(name);
-        fileName.append(".hbtheme");
+        std::ofstream fileOut;
+        std::string sFileName;
+        sFileName.append("../UI/Themes/");
+        sFileName.append(name);
+        sFileName.append(".hbtheme");
 
         //set map to current values
-        themeMap["fontSize"] = std::to_string(fontSize);
-        themeMap["darkMode"] = std::to_string(darkMode);
+        themeMap["fontSize"] = std::to_string( iFontSize );
+        themeMap["darkMode"] = std::to_string( bDarkMode );
 
-        file.open(fileName);
+        fileOut.open( sFileName );
 
-        if(file.is_open()){
+        if( fileOut.is_open()){
             for(auto option : themeMap){
-                file << option.first;
-                file << '=';
-                file << option.second;
-                file << '\n';
+                fileOut << option.first;
+                fileOut << '=';
+                fileOut << option.second;
+                fileOut << '\n';
             }
 
-            util::qPrint("File",fileName,"was saved!");
+            util::qPrint("File",sFileName,"was saved!");
 
         } else {
-            util::qPrint("File",fileName,"could not be saved!");
+            util::qPrint("File",sFileName,"could not be saved!");
         }
 
-        file.close();
+        fileOut.close();
 
 
     }
@@ -247,49 +249,46 @@ namespace UI {
 
     }
 
-    std::string getThemeNameByPath(std::string themePath) {
-        bool dotFound = false;
-        std::string buildStr;
+    std::string getThemeNameByPath(std::string sThemePath ) {
+        bool bDotFound = false;
+        std::string sBuild;
 
-        for(int i = themePath.length();i>1;i--){
-            if(themePath[i] == '.'){
-                dotFound = true;
+        //reverse for loop
+        for(int i = sThemePath.length();i>1;i--){
+            if( sThemePath[i] == '.'){
+                bDotFound = true;
                 continue;
             }
-            if(themePath[i] == '/'){
-                return buildStr;
-            }
-            if(dotFound){
-                buildStr.insert(buildStr.begin(),themePath[i]);
-            }
+            if( sThemePath[i] == '/') { return sBuild; }
+            if( bDotFound ) { sBuild.insert( sBuild.begin(),sThemePath[i]); }
         }
 
         return std::string("Error :(");
     }
 
-    std::string getThemePathByName(std::string name) {
-        std::string output;
-        if(!util::searchVector(vFoundThemes,name)) {
-            name = "Default";
-            config::update("theme",name);
+    std::string getThemePathByName(std::string sName ) {
+        std::string sOutput;
+        if(!util::searchVector(vFoundThemes,sName )) {
+            sName = "Default";
+            config::update("theme",sName );
             assignCurrentThemeValueByName("Default");
         }
-        output.append("../UI/Themes/");
-        output.append(name);
-        output.append(".hbtheme");
-        return output;
+        sOutput.append("../UI/Themes/");
+        sOutput.append( sName );
+        sOutput.append(".hbtheme");
+        return sOutput;
     }
 
 
     void setThemeByName(std::string name, bool updateConfig) {
         setThemeByPath(getThemePathByName(name).c_str());
-        if(updateConfig) { config::update("theme",vFoundThemes[currentTheme]); }
+        if(updateConfig) { config::update("theme",vFoundThemes[iCurrentTheme]); }
     }
 
     void assignCurrentThemeValueByName ( std::string name ) {
         for(int i = 0;i<vFoundThemes.size();i++){
             if( vFoundThemes[i] == name){
-                currentTheme = i;
+                iCurrentTheme = i;
                 break;
             }
         }

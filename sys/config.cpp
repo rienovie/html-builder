@@ -3,12 +3,12 @@
 
 
 //default config options
-std::map<std::string, std::string> config::defaultConfig{
+std::map<std::string, std::string> config::mDefaultConfig{
     {"theme","Default"},
     {"windowWidth","1600"},
     {"windowHeight","900"}
 };
-std::map<std::string, std::string> config::loadedConfig{};
+std::map<std::string, std::string> config::mLoadedConfig{};
 
 config::config() {
     loadConfig();
@@ -16,14 +16,14 @@ config::config() {
 
 //Returns string of "0" if property not found
 std::string config::get ( const char* propertyName ) {
-    if(loadedConfig.count(propertyName) == 0) {
+    if( mLoadedConfig.count( propertyName ) == 0) {
         return std::string("0");
     }
-    return loadedConfig[propertyName];
+    return mLoadedConfig[propertyName];
 }
 
-void config::update ( const char* propertyName, std::string newValue ) {
-    loadedConfig[propertyName] = newValue;
+void config::update ( const char* propertyName, std::string sNewValue ) {
+    mLoadedConfig[propertyName] = sNewValue;
     saveConfig();
 }
 
@@ -35,17 +35,17 @@ void config::saveConfig() {
     } else { //config file exists
         std::ifstream fileIn;
         std::ofstream fileOut;
-        std::string line;
-        std::vector<std::string> fileLines;
+        std::string sLine;
+        std::vector<std::string> vFileLines;
 
         fileIn.open("../hb.config");
 
         if(fileIn.is_open()){
-            while(getline(fileIn,line)) {
-                if(line.length() == 0) { continue; }
-                fileLines.push_back(line);
+            while(getline(fileIn,sLine )) {
+                if( sLine.length() == 0) { continue; }
+                vFileLines.push_back( sLine );
             }
-            setConfigVariableValues(fileLines);
+            setConfigVariableValues( vFileLines );
         } else {
             util::qPrint("Config file was found but could not be opened!");
             return;
@@ -54,8 +54,8 @@ void config::saveConfig() {
         fileIn.close();
         fileOut.open("../hb.config",std::ios::out | std::ios::trunc);
         if(fileOut.is_open()){
-            for(std::string line : fileLines){
-                fileOut << line;
+            for(std::string ln : vFileLines ){
+                fileOut << ln;
                 fileOut << "\n";
             }
         }
@@ -66,7 +66,7 @@ void config::saveConfig() {
 //this does not feel very efficient but maybe I'll make it better when I am
 //a better propgramer
 void config::loadConfig() {
-    std::string line, buildStr, property;
+    std::string sLine, sBuild, sProp;
     std::vector<std::string> vFoundProps;
 
     //create config file if doesn't exist
@@ -75,7 +75,7 @@ void config::loadConfig() {
         std::ofstream fileOut;
         fileOut.open("../hb.config");
         if(fileOut.is_open()){
-            for(auto configOption : defaultConfig){
+            for(auto configOption : mDefaultConfig) {
                 fileOut << configOption.first;
                 fileOut << '=';
                 fileOut << configOption.second;
@@ -91,20 +91,20 @@ void config::loadConfig() {
     std::ifstream fileIn;
     fileIn.open("../hb.config");
     if(fileIn.is_open()){
-        while(getline(fileIn,line)) {
-            property.clear();
-            buildStr.clear();
-            if(line.length() == 0) { continue; }
-            for(char element : line){
-                if(element == '='){
-                    property = buildStr;
-                    buildStr.clear();
+        while(getline(fileIn,sLine )) {
+            sProp.clear();
+            sBuild.clear();
+            if( sLine.length() == 0) { continue; }
+            for(char cElement : sLine ){
+                if( cElement == '='){
+                    sProp = sBuild;
+                    sBuild.clear();
                 } else {
-                    buildStr.push_back(element);
+                    sBuild.push_back( cElement );
                 }
             }
-            loadedConfig[property] = buildStr;
-            vFoundProps.push_back(property);
+            mLoadedConfig[sProp] = sBuild;
+            vFoundProps.push_back( sProp );
         }
 
         fileIn.close();
@@ -114,12 +114,12 @@ void config::loadConfig() {
     }
 
     //if any default props did not exist on file
-    if(vFoundProps.size() < defaultConfig.size()) {
+    if(vFoundProps.size() < mDefaultConfig.size()) {
         std::ofstream fileOut;
         fileOut.open("../hb.config",std::ios::app);
         //add any unfound props from default props
         if(fileOut.is_open()){
-            for(auto configOption : defaultConfig){
+            for(auto configOption : mDefaultConfig ){
                 if(!util::searchVector(vFoundProps,configOption.first)) {
                     fileOut << configOption.first;
                     fileOut << "=";
@@ -136,16 +136,16 @@ void config::loadConfig() {
 
 }
 
-void config::setConfigVariableValues ( std::vector<std::string>& fileLines ) {
+void config::setConfigVariableValues ( std::vector<std::string>& vFileLines ) {
     std::string sBuild, sNewValue;
 
     //for each line
-    for(std::string& sLine : fileLines) {
+    for(std::string& sLine : vFileLines ) {
         sBuild.clear();
         sNewValue.clear();
 
-        for(char element : sLine){
-            if(element == '=') { //if buildStr has completed
+        for(char cElement : sLine){
+            if( cElement == '=') { //if buildStr has completed
                 sNewValue = get(sBuild.c_str());
 
                 //does not exist
@@ -160,7 +160,7 @@ void config::setConfigVariableValues ( std::vector<std::string>& fileLines ) {
                     break; //exit for-loop to next line
                 }
 
-            } else { sBuild.push_back(element); }
+            } else { sBuild.push_back( cElement ); }
         }
     }
 }

@@ -25,9 +25,9 @@ namespace UI {
     void setThemeByPath(const char* path);
     void saveThemeToFile(const char* name);
     void setAllThemeNames();
-    std::string getThemeNameByPath(std::string themePath);
+    std::string getThemeNameByPath(std::string sThemePath);
     void setThemeByName(std::string name, bool updateConfig = false);
-    std::string getThemePathByName(std::string name);
+    std::string getThemePathByName(std::string sName);
     void assignCurrentThemeValueByName(std::string name);
 }
 

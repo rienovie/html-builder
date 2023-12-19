@@ -8,15 +8,15 @@
 
 class config {
 public:
-    static std::string get(char const* propertyName);
-    static void update(char const* propertyName, std::string newValue);
+    static std::string get(char const* propertyName );
+    static void update(char const* propertyName, std::string sNewValue);
 
     config();
 private:
-    static std::map<std::string, std::string> defaultConfig;
-    static std::map<std::string, std::string> loadedConfig;
+    static std::map<std::string, std::string> mDefaultConfig;
+    static std::map<std::string, std::string> mLoadedConfig;
 
     static void loadConfig();
     static void saveConfig();
-    static void setConfigVariableValues(std::vector<std::string>& fileLines);
+    static void setConfigVariableValues(std::vector<std::string>& vFileLines);
 };
