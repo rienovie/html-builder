@@ -58,7 +58,6 @@ void config::update (configType cfgTo, const char* propertyName, std::string sNe
             break;
         case theme:
             mLoadedTheme[propertyName] = sNewValue;
-            util::qPrint(mLoadedTheme[propertyName]);
             saveConfig(cfgTo);
             break;
         default:
@@ -177,7 +176,7 @@ void config::loadConfig(configType cfgLoadFrom) {
                     sBuild.push_back( cElement );
                 }
             }
-            mConfigLoadPtr->insert({sProp, sBuild});
+            (*mConfigLoadPtr)[sProp] = sBuild;
             vFoundProps.push_back( sProp );
         }
 
