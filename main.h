@@ -9,3 +9,4 @@
 #include "sys/config.h"
 
 void tick_sec();
+void tick_long();

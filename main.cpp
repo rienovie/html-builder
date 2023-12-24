@@ -15,6 +15,7 @@
 //TODO move ImGui windows into their own file / header
 //TODO remove darkMode and make color customization available
 
+struct rusage memUsage;
 static bool bCloseThreads = false;
 
 int main () {
@@ -24,6 +25,7 @@ int main () {
     if(UI::initialize()) { return 1; }
 
     std::thread t_sec (tick_sec);
+    std::thread t_long (tick_long);
 
     //UI::setThemeByName(cfg.get(config::system,"theme"));
 
@@ -37,7 +39,8 @@ int main () {
     bCloseThreads = true;
     UI::cleanUp();
 
-    t_sec.join();
+    t_sec.detach();
+    t_long.detach();
 
     return 0;
 
@@ -53,3 +56,14 @@ void tick_sec() {
     //recursive call
     tick_sec();
 }
+
+void tick_long() {
+    if(bCloseThreads) return;
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    util::printMemUse(memUsage);
+
+    //recursive call
+    tick_long();
+
+}
+

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sys/resource.h>
 
 namespace util {
     int strToInt(std::string str);
@@ -25,5 +26,7 @@ namespace util {
         }
         return false;
     }
+
+    void printMemUse(rusage& usageRef);
 
 }

@@ -22,12 +22,6 @@ namespace UI {
     void showSettingsWindow();
     bool mainLoopCondition();
     void glfw_error_callback(int error, const char* description);
-    void setThemeByPath(const char* path);
-    void saveThemeToFile(const char* name);
-    void setAllThemeNames();
-    std::string getThemeNameByPath(std::string sThemePath);
-    void setThemeByName(std::string name, bool updateConfig = false);
-    std::string getThemePathByName(std::string sName);
     void assignCurrentThemeValueByName(std::string name);
     void tick_sec();
     void refreshTheme();

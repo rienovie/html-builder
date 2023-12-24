@@ -169,119 +169,6 @@ namespace UI {
         ImGui::End();
     }
 
-    void setThemeByPath(const char* fileLocation) {
-        std::string sLine, sBuild, sProp;
-        std::ifstream fileIn;
-        fileIn.open(fileLocation);
-
-        if( fileIn.is_open()){
-
-            //for each line
-            while(getline( fileIn,sLine )) {
-                sProp.clear();
-                sBuild.clear();
-
-                for(char element : sLine ) {
-                    if(element == '='){
-                        sProp = sBuild;
-                        sBuild.clear();
-                    } else {
-                        sBuild.push_back(element);
-                    }
-
-                }
-                config::update(config::theme,sProp.c_str(),sBuild);
-            }
-        } else {
-            util::qPrint("File",fileLocation,"was unable to be opened!");
-        }
-
-        fileIn.close();
-
-        //theme options
-        iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
-        bDarkMode = util::strToInt(config::getProp(config::theme,"darkMode"));
-
-
-        //apply any manual settings
-
-    }
-
-    void saveThemeToFile(const char* name) {
-        std::ofstream fileOut;
-        std::string sFileName;
-        sFileName.append("../UI/Themes/");
-        sFileName.append(name);
-        sFileName.append(".hbtheme");
-
-        fileOut.open( sFileName );
-
-        if( fileOut.is_open()){
-            for(auto option : config::getConfig(config::theme)){
-                fileOut << option.first;
-                fileOut << '=';
-                fileOut << option.second;
-                fileOut << '\n';
-            }
-
-            util::qPrint("File",sFileName,"was saved!");
-
-        } else {
-            util::qPrint("File",sFileName,"could not be saved!");
-        }
-
-        fileOut.close();
-
-
-    }
-
-    void setAllThemeNames(){
-        //for each file in theme path
-        for(auto& file : std::filesystem::directory_iterator("../UI/Themes/")){
-            if(file.is_regular_file() && (file.path().extension() == ".hbtheme")){
-                vFoundThemes.push_back(getThemeNameByPath(file.path()));
-            }
-        }
-        assignCurrentThemeValueByName(config::getProp(config::system,"theme"));
-
-    }
-
-    std::string getThemeNameByPath(std::string sThemePath ) {
-        bool bDotFound = false;
-        std::string sBuild;
-
-        //reverse for loop
-        for(int i = sThemePath.length();i>1;i--){
-            if( sThemePath[i] == '.'){
-                bDotFound = true;
-                continue;
-            }
-            if( sThemePath[i] == '/') { return sBuild; }
-            if( bDotFound ) { sBuild.insert( sBuild.begin(),sThemePath[i]); }
-        }
-
-        return std::string("Error :(");
-    }
-
-    std::string getThemePathByName(std::string sName ) {
-        std::string sOutput;
-        if(!util::searchVector(vFoundThemes,sName )) {
-            sName = "Default";
-            config::update(config::system,"theme",sName );
-            assignCurrentThemeValueByName("Default");
-        }
-        sOutput.append("../UI/Themes/");
-        sOutput.append( sName );
-        sOutput.append(".hbtheme");
-        return sOutput;
-    }
-
-
-    void setThemeByName(std::string name, bool updateConfig) {
-        setThemeByPath(getThemePathByName(name).c_str());
-        if(updateConfig) { config::update(config::system,"theme",vFoundThemes[iCurrentTheme]); }
-    }
-
     void assignCurrentThemeValueByName ( std::string name ) {
         for(int i = 0;i<vFoundThemes.size();i++){
             if( vFoundThemes[i] == name){
@@ -303,9 +190,6 @@ namespace UI {
     void refreshTheme() {
         bDarkMode = util::strToInt(config::getProp(config::theme,"darkMode"));
         bDarkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
-        util::qPrint(bDarkMode);
-        util::qPrint(util::strToInt(config::getProp(config::theme,"darkMode")));
-        util::qPrint(config::getProp(config::system,"theme"));
     }
 
 

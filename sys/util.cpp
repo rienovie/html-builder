@@ -12,4 +12,11 @@ namespace util {
         return -1;
     }
 
+    void printMemUse(rusage& usageRef) {
+        if(getrusage(RUSAGE_SELF, &usageRef) == 0){
+            qPrint("Memory Usage:",usageRef.ru_maxrss,"kb");
+        }
+    }
+
+
 }
