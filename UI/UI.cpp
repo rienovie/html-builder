@@ -7,20 +7,14 @@ static bool bDarkMode = true;
 static int iCurrentTheme = 0; //is set to the combo selection
 static int iUserWindowWidth = 1600;
 static int iUserWindowHeight = 900;
+static int iLastStoredFontSize = 32;
 
 //windows
 static bool bTestWindow_open = false;
 static bool showDemo = false;
 static bool showSettings = false;
 
-//fun stuff
 std::vector<std::string> vFoundThemes;
-std::map<std::string, std::string> themeMap {
-    {"fontSize","32"},
-    {"darkMode","1"}
-};
-
-
 
 ImFont *font_main , *font_bold , *font_light;
 ImVec4 clearColor = ImVec4(0.45f,0.55f,0.60f,1.00f);
@@ -32,9 +26,8 @@ namespace UI {
         if (!glfwInit())
             return 1;
 
-        const char* glsl_version = "#version 130";
-        iUserWindowHeight = util::strToInt(config::get("windowHeight"));
-        iUserWindowWidth = util::strToInt(config::get("windowWidth"));
+        iUserWindowHeight = util::strToInt(config::getProp(config::system,"windowHeight"));
+        iUserWindowWidth = util::strToInt(config::getProp(config::system,"windowWidth"));
 
         //fallback if not found in config
         //config should have values updated to default for second run
@@ -62,9 +55,16 @@ namespace UI {
         ImGui::StyleColorsDark();
 
         ImGui_ImplGlfw_InitForOpenGL(mainWindow,true);
-        ImGui_ImplOpenGL3_Init(glsl_version);
+        ImGui_ImplOpenGL3_Init("#version 130");
 
-        setAllThemeNames();
+        vFoundThemes = config::getAllThemeNames();
+        iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
+        for(int i = 0;i<vFoundThemes.size();i++){
+            if(vFoundThemes[i] == config::getProp(config::system,"theme")){
+               iCurrentTheme = i;
+            }
+        }
+        refreshTheme();
 
         return 0;
 
@@ -142,11 +142,12 @@ namespace UI {
         if (ImGui::BeginCombo("Theme",vFoundThemes[iCurrentTheme].c_str())){
             //for each theme
             for(int i = 0;i<vFoundThemes.size();i++){
-                const bool bSelected = ( iCurrentTheme == i);
-                if(ImGui::Selectable( vFoundThemes[i].c_str(),bSelected )) {
+                const bool bSelected = (iCurrentTheme == i);
+                if(ImGui::Selectable(vFoundThemes[i].c_str(),bSelected)) {
                     iCurrentTheme = i;
                     //selection change is here
-                    setThemeByName( vFoundThemes[i],true);
+                    config::update(config::system,"theme",vFoundThemes[i]);
+                    refreshTheme();
                 }
                 if( bSelected ) { ImGui::SetItemDefaultFocus(); }
             }
@@ -156,12 +157,13 @@ namespace UI {
         if(ImGui::Button("Default")) { iFontSize = 24; };
         ImGui::SameLine();
         ImGui::PushFont(font_bold);
-        ImGui::SliderInt("Font Size",&iFontSize,10,42);
+        ImGui::SliderInt("Font Size",&iFontSize,10,iMaxFontSize);
         ImGui::PopFont();
         if(ImGui::Button("Toggle Dark Mode")) {
             bDarkMode = !bDarkMode;
             if( bDarkMode ) { ImGui::StyleColorsDark(); }
             else ImGui::StyleColorsLight();
+            config::update(config::theme,"darkMode",std::to_string(bDarkMode));
 
         } ;
         ImGui::End();
@@ -188,7 +190,7 @@ namespace UI {
                     }
 
                 }
-                themeMap[sProp] = sBuild;
+                config::update(config::theme,sProp.c_str(),sBuild);
             }
         } else {
             util::qPrint("File",fileLocation,"was unable to be opened!");
@@ -197,12 +199,11 @@ namespace UI {
         fileIn.close();
 
         //theme options
-        iFontSize = util::strToInt(themeMap["fontSize"]);
-        bDarkMode = util::strToInt(themeMap["darkMode"]);
+        iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
+        bDarkMode = util::strToInt(config::getProp(config::theme,"darkMode"));
 
 
         //apply any manual settings
-        bDarkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
 
     }
 
@@ -213,14 +214,10 @@ namespace UI {
         sFileName.append(name);
         sFileName.append(".hbtheme");
 
-        //set map to current values
-        themeMap["fontSize"] = std::to_string( iFontSize );
-        themeMap["darkMode"] = std::to_string( bDarkMode );
-
         fileOut.open( sFileName );
 
         if( fileOut.is_open()){
-            for(auto option : themeMap){
+            for(auto option : config::getConfig(config::theme)){
                 fileOut << option.first;
                 fileOut << '=';
                 fileOut << option.second;
@@ -245,7 +242,7 @@ namespace UI {
                 vFoundThemes.push_back(getThemeNameByPath(file.path()));
             }
         }
-        assignCurrentThemeValueByName(config::get("theme"));
+        assignCurrentThemeValueByName(config::getProp(config::system,"theme"));
 
     }
 
@@ -270,7 +267,7 @@ namespace UI {
         std::string sOutput;
         if(!util::searchVector(vFoundThemes,sName )) {
             sName = "Default";
-            config::update("theme",sName );
+            config::update(config::system,"theme",sName );
             assignCurrentThemeValueByName("Default");
         }
         sOutput.append("../UI/Themes/");
@@ -282,7 +279,7 @@ namespace UI {
 
     void setThemeByName(std::string name, bool updateConfig) {
         setThemeByPath(getThemePathByName(name).c_str());
-        if(updateConfig) { config::update("theme",vFoundThemes[iCurrentTheme]); }
+        if(updateConfig) { config::update(config::system,"theme",vFoundThemes[iCurrentTheme]); }
     }
 
     void assignCurrentThemeValueByName ( std::string name ) {
@@ -294,7 +291,22 @@ namespace UI {
         }
     }
 
+    //called each second in main tick_sec function
+    void tick_sec() {
+        //update font config
+        if(iLastStoredFontSize != iFontSize){
+            iLastStoredFontSize = iFontSize;
+            config::update(config::system,"fontSize",std::to_string(iFontSize));
+        }
+    }
 
+    void refreshTheme() {
+        bDarkMode = util::strToInt(config::getProp(config::theme,"darkMode"));
+        bDarkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
+        util::qPrint(bDarkMode);
+        util::qPrint(util::strToInt(config::getProp(config::theme,"darkMode")));
+        util::qPrint(config::getProp(config::system,"theme"));
+    }
 
 
 }

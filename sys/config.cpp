@@ -1,36 +1,88 @@
 #include "config.h"
 
-
-
 //default config options
 std::map<std::string, std::string> config::mDefaultConfig{
     {"theme","Default"},
     {"windowWidth","1600"},
-    {"windowHeight","900"}
+    {"windowHeight","900"},
+    {"fontSize","24"}
 };
 std::map<std::string, std::string> config::mLoadedConfig{};
+std::vector<std::string> config::vFoundThemes;
+std::map<std::string, std::string> config::mLoadedTheme {};
+std::map<std::string,std::string> config::mDefaultNewTheme {
+    {"darkMode","1"}
+};
 
 config::config() {
-    loadConfig();
+    findAllThemes();
+    loadConfig(system);
+    loadConfig(theme);
 }
 
 //Returns string of "0" if property not found
-std::string config::get ( const char* propertyName ) {
-    if( mLoadedConfig.count( propertyName ) == 0) {
-        return std::string("0");
+std::string config::getProp(configType cfgFrom, const char* propertyName ) {
+    std::map<std::string,std::string> *mConfigGetPtr = &mLoadedConfig;
+    std::string sOutput;
+    switch(cfgFrom){
+        case system:
+            //mConfigGetPtr = &mLoadedConfig;
+            break;
+        case theme:
+            mConfigGetPtr = &mLoadedTheme;
+            break;
+        default:
+            util::qPrint("Attempted to get property value at",cfgFrom,"but is not implemented!");
+            //mConfigGetPtr = &mLoadedConfig;
+            break;
     }
-    return mLoadedConfig[propertyName];
+
+    if( mConfigGetPtr->count(propertyName) == 0) {
+        return std::string("NULL");
+    } else {
+        sOutput = (*mConfigGetPtr)[propertyName];
+    }
+    return sOutput;
 }
 
-void config::update ( const char* propertyName, std::string sNewValue ) {
-    mLoadedConfig[propertyName] = sNewValue;
-    saveConfig();
+void config::update (configType cfgTo, const char* propertyName, std::string sNewValue) {
+    switch(cfgTo){
+        case system:
+            mLoadedConfig[propertyName] = sNewValue;
+            saveConfig(cfgTo);
+            //when changing theme, load new theme
+            if(std::string(propertyName) == "theme") {
+                util::qPrint("Theme updated!");
+                loadConfig(theme);
+            }
+            break;
+        case theme:
+            mLoadedTheme[propertyName] = sNewValue;
+            util::qPrint(mLoadedTheme[propertyName]);
+            saveConfig(cfgTo);
+            break;
+        default:
+            util::qPrint("Attempted to update config type:",cfgTo,"but is not implemented!");
+            break;
+    }
 }
 
-void config::saveConfig() {
-    if(!(std::filesystem::exists("../hb.config"))) {
-        util::qPrint("Config file not found!","\n","Attempting to create file...");
-        loadConfig();
+void config::saveConfig(configType cfgSaveTo) {
+    std::string cfgLocation;
+    switch (cfgSaveTo){
+        case system:
+            cfgLocation = "../hb.config";
+            break;
+        case theme:
+            cfgLocation = getThemePathByName(getProp(system,"theme"));
+            break;
+        default:
+            util::qPrint("Attempted to save config type:",cfgSaveTo,"but is not implemented!");
+            break;
+    }
+    if(!(std::filesystem::exists(cfgLocation))) {
+        util::qPrint("Config file not found at",cfgLocation,"\n","Attempting to create file...");
+        loadConfig(cfgSaveTo);
         return;
     } else { //config file exists
         std::ifstream fileIn;
@@ -38,21 +90,21 @@ void config::saveConfig() {
         std::string sLine;
         std::vector<std::string> vFileLines;
 
-        fileIn.open("../hb.config");
+        fileIn.open(cfgLocation);
 
         if(fileIn.is_open()){
-            while(getline(fileIn,sLine )) {
+            while(getline(fileIn,sLine)) {
                 if( sLine.length() == 0) { continue; }
                 vFileLines.push_back( sLine );
             }
-            setConfigVariableValues( vFileLines );
+            setConfigVariableValues(cfgSaveTo, vFileLines );
         } else {
-            util::qPrint("Config file was found but could not be opened!");
+            util::qPrint("Config file was found at",cfgLocation, "but could not be opened!");
             return;
         }
 
         fileIn.close();
-        fileOut.open("../hb.config",std::ios::out | std::ios::trunc);
+        fileOut.open(cfgLocation,std::ios::out | std::ios::trunc);
         if(fileOut.is_open()){
             for(std::string ln : vFileLines ){
                 fileOut << ln;
@@ -65,17 +117,39 @@ void config::saveConfig() {
 
 //this does not feel very efficient but maybe I'll make it better when I am
 //a better propgramer
-void config::loadConfig() {
+void config::loadConfig(configType cfgLoadFrom) {
     std::string sLine, sBuild, sProp;
     std::vector<std::string> vFoundProps;
+    std::string cfgLoadLocation;
+    std::map<std::string,std::string>
+        *mConfigLoadPtr = &mLoadedConfig,
+        *mDefaultLoadPtr = &mDefaultConfig;
+
+    switch(cfgLoadFrom){
+        case system:
+            cfgLoadLocation = "../hb.config";
+            //mConfigLoadPtr = &mLoadedConfig;
+            //mDefaultPtr = &mDefaultConfig;
+            break;
+        case theme:
+            cfgLoadLocation = getThemePathByName(getProp(system,"theme"));
+            mConfigLoadPtr = &mLoadedTheme;
+            mDefaultLoadPtr = &mDefaultNewTheme;
+            break;
+        default:
+            util::qPrint("Attempted to load config type:",cfgLoadFrom,"but is not implemented!");
+            cfgLoadLocation = "../hb.config";
+            //mConfigLoadPtr = &mLoadedConfig;
+            //mDefaultLoadPtr = &mDefaultConfig;
+            break;
+    }
 
     //create config file if doesn't exist
-    if (!(std::filesystem::exists("../hb.config"))) {
-        util::qPrint("file is not found attempt");
+    if (!(std::filesystem::exists(cfgLoadLocation))) {
         std::ofstream fileOut;
-        fileOut.open("../hb.config");
+        fileOut.open(cfgLoadLocation);
         if(fileOut.is_open()){
-            for(auto configOption : mDefaultConfig) {
+            for(auto configOption : *mDefaultLoadPtr ) {
                 fileOut << configOption.first;
                 fileOut << '=';
                 fileOut << configOption.second;
@@ -83,13 +157,13 @@ void config::loadConfig() {
             }
             fileOut.close();
         } else {
-            util::qPrint("User config could not be created!");
+            util::qPrint("User config at",cfgLoadLocation,"could not be created!");
         }
     }
 
     //read file and load config props and values
     std::ifstream fileIn;
-    fileIn.open("../hb.config");
+    fileIn.open(cfgLoadLocation);
     if(fileIn.is_open()){
         while(getline(fileIn,sLine )) {
             sProp.clear();
@@ -103,23 +177,23 @@ void config::loadConfig() {
                     sBuild.push_back( cElement );
                 }
             }
-            mLoadedConfig[sProp] = sBuild;
+            mConfigLoadPtr->insert({sProp, sBuild});
             vFoundProps.push_back( sProp );
         }
 
         fileIn.close();
 
     } else {
-        util::qPrint("User config could not be opened!");
+        util::qPrint("User config at", cfgLoadLocation,"could not be opened!");
     }
 
     //if any default props did not exist on file
-    if(vFoundProps.size() < mDefaultConfig.size()) {
+    if(vFoundProps.size() < mDefaultLoadPtr->size()) {
         std::ofstream fileOut;
-        fileOut.open("../hb.config",std::ios::app);
+        fileOut.open(cfgLoadLocation,std::ios::app);
         //add any unfound props from default props
         if(fileOut.is_open()){
-            for(auto configOption : mDefaultConfig ){
+            for(auto configOption : *mDefaultLoadPtr ){
                 if(!util::searchVector(vFoundProps,configOption.first)) {
                     fileOut << configOption.first;
                     fileOut << "=";
@@ -129,14 +203,14 @@ void config::loadConfig() {
             }
             fileOut.close();
         } else {
-            util::qPrint("Config could not be opened when attempting to add additional default props");
+            util::qPrint("Config could not be opened when attempting to add additional default props at",cfgLoadLocation);
         }
 
     }
 
 }
 
-void config::setConfigVariableValues ( std::vector<std::string>& vFileLines ) {
+void config::setConfigVariableValues (configType cfgTyp, std::vector<std::string>& vFileLines ) {
     std::string sBuild, sNewValue;
 
     //for each line
@@ -146,10 +220,10 @@ void config::setConfigVariableValues ( std::vector<std::string>& vFileLines ) {
 
         for(char cElement : sLine){
             if( cElement == '=') { //if buildStr has completed
-                sNewValue = get(sBuild.c_str());
+                sNewValue = getProp(cfgTyp,sBuild.c_str());
 
                 //does not exist
-                if( sNewValue == std::string("0")) {
+                if( sNewValue == std::string("NULL")) {
                     util::qPrint("Property",sBuild,"was not found!");
                     break;
                 } else {
@@ -162,6 +236,61 @@ void config::setConfigVariableValues ( std::vector<std::string>& vFileLines ) {
 
             } else { sBuild.push_back( cElement ); }
         }
+    }
+}
+
+std::string config::getThemePathByName(std::string sName) {
+    std::string sOutput;
+    if(!util::searchVector(vFoundThemes,sName)){
+        sName = "Default";
+        config::update(config::system,"theme",sName);
+        //loadConfig(theme);
+    }
+    sOutput.append("../UI/Themes/");
+    sOutput.append(sName);
+    sOutput.append(".hbtheme");
+    return sOutput;
+}
+
+void config::findAllThemes() {
+    vFoundThemes.clear();
+    for(auto& file : std::filesystem::directory_iterator("../UI/Themes/")){
+        if(file.is_regular_file() && (file.path().extension() == ".hbtheme")){
+            vFoundThemes.push_back(getThemeNameByPath(file.path()));
+        }
+    }
+}
+
+std::string config::getThemeNameByPath ( std::string sPath ) {
+    bool bDotFound = false;
+    std::string sBuild;
+
+    //reverse for loop
+    for(int i = sPath.length();i>1;i--){
+        if(sPath[i] == '.'){
+            bDotFound = true;
+            continue;
+        }
+        if(sPath[i] == '/') { return sBuild; }
+        if(bDotFound) { sBuild.insert(sBuild.begin(),sPath[i]); }
+    }
+    util::qPrint("Error unable to getThemeNameByPath with path:",sPath);
+    return std::string("Error :(");
+}
+
+std::vector<std::string> config::getAllThemeNames() {
+    return vFoundThemes;
+}
+
+std::map<std::string, std::string> config::getConfig ( configType cfgToGet ) {
+    switch(cfgToGet){
+        case system:
+            return mLoadedConfig;
+        case theme:
+            return mLoadedTheme;
+        default:
+            util::qPrint("Tried to get config:",cfgToGet,"but is not implemented!");
+            return mLoadedConfig;
     }
 }
 

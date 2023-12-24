@@ -25,7 +25,7 @@ int main () {
 
     std::thread t_sec (tick_sec);
 
-    UI::setThemeByName(cfg.get("theme"));
+    //UI::setThemeByName(cfg.get(config::system,"theme"));
 
     //main loop
     while(UI::mainLoopCondition()){
@@ -48,5 +48,8 @@ void tick_sec() {
     if( bCloseThreads ) return;
     std::this_thread::sleep_for(std::chrono::seconds(1));
     //util::qPrint("tick");
+    UI::tick_sec();
+
+    //recursive call
     tick_sec();
 }

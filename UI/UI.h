@@ -29,5 +29,7 @@ namespace UI {
     void setThemeByName(std::string name, bool updateConfig = false);
     std::string getThemePathByName(std::string sName);
     void assignCurrentThemeValueByName(std::string name);
+    void tick_sec();
+    void refreshTheme();
 }
 
