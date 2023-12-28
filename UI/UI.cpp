@@ -52,8 +52,6 @@ namespace UI {
         font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",iMaxFontSize );
         font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",iMaxFontSize );
 
-        ImGui::StyleColorsDark();
-
         ImGui_ImplGlfw_InitForOpenGL(mainWindow,true);
         ImGui_ImplOpenGL3_Init("#version 130");
 
@@ -161,8 +159,9 @@ namespace UI {
         ImGui::PopFont();
         if(ImGui::Button("Toggle Dark Mode")) {
             bDarkMode = !bDarkMode;
-            if( bDarkMode ) { ImGui::StyleColorsDark(); }
-            else ImGui::StyleColorsLight();
+            //if( bDarkMode ) { ImGui::StyleColorsDark(); }
+            //else ImGui::StyleColorsLight();
+            //TODO darkMode is being replaced, remove when fully updated
             config::update(config::theme,"darkMode",std::to_string(bDarkMode));
 
         } ;
@@ -188,8 +187,34 @@ namespace UI {
     }
 
     void refreshTheme() {
-        bDarkMode = util::strToInt(config::getProp(config::theme,"darkMode"));
-        bDarkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
+        //bDarkMode = util::strToInt(config::getProp(config::theme,"darkMode"));
+        //bDarkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
+        //TODO updating the values for theme customization happens here
+        //TODO should have a check for each of these and only apply to the values
+        //that have updated
+
+        //feels like I should have the style outside this scope so I don't have
+        //recreate the variable everytime I need to refreshTheme
+        ImGuiStyle& uiStyle = ImGui::GetStyle();
+
+        uiStyle.FrameRounding = util::strToFloat(config::getProp(config::theme,"frameRounding"));
+        uiStyle.ItemSpacing = ImVec2(
+            util::strToFloat(config::getProp(config::theme,"itemSpacingX")),
+            util::strToFloat(config::getProp(config::theme,"itemSpacingY")));
+        uiStyle.ItemInnerSpacing = ImVec2(
+            util::strToFloat(config::getProp(config::theme,"itemSpacingX")),
+            util::strToFloat(config::getProp(config::theme,"itemSpacingY")));
+        uiStyle.FramePadding = ImVec2(
+            util::strToFloat(config::getProp(config::theme,"framePadX")),
+            util::strToFloat(config::getProp(config::theme,"framePadY")));
+        uiStyle.TabRounding = util::strToFloat(config::getProp(config::theme,"tabRounding"));
+        uiStyle.FrameBorderSize = util::strToFloat(config::getProp(config::theme,"frameBorder"));
+
+        //TODO need to create a function that gives me the ImVec4 for each color and
+        //also need to look into if I can build the enum name from string and make it
+        //way easier to set the values which will also mean just adding another color
+        //to the config will modify the color without me having to hard code it
+
     }
 
 

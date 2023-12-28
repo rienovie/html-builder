@@ -7,6 +7,7 @@
 
 namespace util {
     int strToInt(std::string str);
+    float strToFloat(std::string str);
 
     //quick print
     template <typename T>

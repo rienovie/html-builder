@@ -2,12 +2,21 @@
 
 namespace util {
 
+    float strToFloat ( std::string str ) {
+        try {
+            return std::stof(str);
+        } catch (...) {
+            qPrint("ERROR using stof! Attempted string:",str);
+        }
+        return -1.0f;
+    }
+
+
     int strToInt(std::string str){
         try{
             return std::stoi(str);
         } catch (...){
-            std::string eStr = "ERROR using stoi! Attempted string:";
-            qPrint(eStr,str);
+            qPrint("ERROR using stoi! Attempted string:",str);
         }
         return -1;
     }

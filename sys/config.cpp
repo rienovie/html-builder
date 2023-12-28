@@ -11,9 +11,44 @@ std::map<std::string, std::string> config::mLoadedConfig{};
 std::vector<std::string> config::vFoundThemes;
 std::map<std::string, std::string> config::mLoadedTheme {};
 std::map<std::string,std::string> config::mDefaultNewTheme {
-    {"darkMode","1"}
+    {"darkMode","1"}, //will deprecate this once theme customization is implemented
+    {"frameRounding","4"}, //should also modify grabRounding & popupRounding
+    {"frameBorder","1"},
+    {"framePadX","6"},
+    {"framePadY","4"},
+    {"itemSpacingX","8"}, //should be used for innerSpacing as well
+    {"itemSpacingY","6"},
+    {"scrollBarSize","14"},
+    {"scrollBarRounding","4"},
+    {"tabRounding","8"},
+    {"circleTess","5.00"},
+    //~ is the marker for color
+    {"~Text","1.00,1.00,1.00,1.00"},
+    {"~TextDisabled","0.50,0.50,0.50,1.00"},
+    {"~WindowBg","0.00,0.04,0.11,0.94"},
+    {"~ChildBg","0.00,0.00,0.00,0.00"},
+    {"~PopupBg","0.00,0.10,0.20,0.94"},
+    {"~Border","1.00,1.00,1.00,0.23"},
+    {"~BorderShadow","0.00,0.00,0.00,0.00"},
+    {"~FrameBg","0.36,0.31,1.00,0.20"},
+    {"~FrameBgHovered","0.31,0.39,1.00,0.62"},
+    {"~FrameBgActive","0.31,0.39,1.00,1.00"},
+    {"~TitleBg","0.07,0.06,0.20,1.00"},
+    {"~TitleBgActive","0.36,0.31,1.00,0.22"},
+    {"~TitleBgCollapsed","0.00,0.00,0.00,0.50"},
+    {"~MenuBarBg","0.00,0.00,0.00,1.00"},
+    {"~ScrollbarBg","0.36,0.31,1.00,0.10"},
+    {"~ScrollbarGrab","0.17,0.22,0.55,1.00"},
+    {"~ScrollbarGrabHovered","0.22,0.28,0.71,1.00"},
+    {"~ScrollbarGrabActive","0.31,0.39,1.00,1.00"},
+    {"~CheckMark","0.31,0.39,1.00,1.00"},
+
 };
 
+/*options to set manually
+ * windowMenuButtonPosition = none
+ *
+*/
 config::config() {
     findAllThemes();
     loadConfig(system);
