@@ -17,6 +17,7 @@ public:
     static std::map<std::string,std::string> getConfig(configType cfgToGet);
     static void update(configType cfgTo, char const* propertyName, std::string sNewValue);
     static std::vector<std::string> getAllThemeNames();
+    static std::map<std::string,std::string> getAllThemeColorValues();
 
     config();
 private:

@@ -25,5 +25,7 @@ namespace UI {
     void assignCurrentThemeValueByName(std::string name);
     void tick_sec();
     void refreshTheme();
+    ImVec4 getColorFromConfig(std::string sColorValue);
+    int getColorEnum(std::string sColorName);
 }
 

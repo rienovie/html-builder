@@ -55,7 +55,7 @@ config::config() {
     loadConfig(theme);
 }
 
-//Returns string of "0" if property not found
+//Returns string of "NULL" if property not found
 std::string config::getProp(configType cfgFrom, const char* propertyName ) {
     std::map<std::string,std::string> *mConfigGetPtr = &mLoadedConfig;
     std::string sOutput;
@@ -327,4 +327,18 @@ std::map<std::string, std::string> config::getConfig ( configType cfgToGet ) {
             return mLoadedConfig;
     }
 }
+
+std::map<std::string, std::string> config::getAllThemeColorValues() {
+    std::map<std::string,std::string> mOutput;
+
+    for(auto colorOption : mLoadedTheme) {
+        if(colorOption.first[0] == '~') {
+            mOutput.insert(colorOption);
+        }
+    }
+
+    return mOutput;
+
+}
+
 

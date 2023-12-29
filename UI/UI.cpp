@@ -215,7 +215,66 @@ namespace UI {
         //way easier to set the values which will also mean just adding another color
         //to the config will modify the color without me having to hard code it
 
+        auto mColorOptions = config::getAllThemeColorValues();
+
+        //TODO currently broken
+        // for(auto colOpt : mColorOptions) {
+        //     uiStyle.Colors[getColorEnum(colOpt.first)] = getColorFromConfig(colOpt.second);
+        //     util::qPrint(ImGui::GetStyleColorName(getColorEnum(colOpt.first)),colOpt.second);
+        // }
+
     }
+
+    ImVec4 getColorFromConfig (std::string sColorValue) {
+        ImVec4 output = ImVec4(-1,-1,-1,-1);
+        std::string sColVal = config::getProp(config::theme,sColorValue.c_str());
+        std::string sBuild = "";
+        int iStrLength = sColorValue.length();
+        int iOutputCounter = 0; // 0,1,2,3 = x,y,z,w
+
+        if(sColVal == "NULL") { return output; }
+        //TODO working here
+        for(int i = 0; i < iStrLength; i++) {
+            if(sColVal[i] == ',') {
+                switch (iOutputCounter) {
+                    case 0:
+                        output.x = util::strToFloat(sBuild);
+                        break;
+                    case 1:
+                        output.y = util::strToFloat(sBuild);
+                        break;
+                    case 2:
+                        output.z = util::strToFloat(sBuild);
+                        break;
+                    case 3:
+                        output.w = util::strToFloat(sBuild);
+                        break;
+                    default:
+                        util::qPrint("Error iOutputCounter is out of bounds in getColorFromConfig!");
+                        break;
+                }
+                sBuild.clear();
+                iOutputCounter++;
+            } else {
+                sBuild.push_back(sColVal[i]);
+            }
+        }
+
+        return output;
+
+    }
+
+    int getColorEnum ( std::string sColorName ) {
+        if(sColorName[0] != '~') { return -1; }
+        sColorName.erase(0,1);
+        for(int i = 0; i < ImGuiCol_COUNT;i++) {
+            if(ImGui::GetStyleColorName(i) == sColorName) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
 
 }
