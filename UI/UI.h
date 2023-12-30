@@ -27,5 +27,6 @@ namespace UI {
     void refreshTheme();
     ImVec4 getColorFromConfig(std::string sColorValue);
     int getColorEnum(std::string sColorName);
+    void setColorEnumMap();
 }
 

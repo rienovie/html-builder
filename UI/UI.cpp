@@ -15,6 +15,7 @@ static bool showDemo = false;
 static bool showSettings = false;
 
 std::vector<std::string> vFoundThemes;
+std::map<std::string, int> mColorEnum;
 
 ImFont *font_main , *font_bold , *font_light;
 ImVec4 clearColor = ImVec4(0.45f,0.55f,0.60f,1.00f);
@@ -55,6 +56,7 @@ namespace UI {
         ImGui_ImplGlfw_InitForOpenGL(mainWindow,true);
         ImGui_ImplOpenGL3_Init("#version 130");
 
+        setColorEnumMap();
         vFoundThemes = config::getAllThemeNames();
         iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
         for(int i = 0;i<vFoundThemes.size();i++){
@@ -187,12 +189,6 @@ namespace UI {
     }
 
     void refreshTheme() {
-        //bDarkMode = util::strToInt(config::getProp(config::theme,"darkMode"));
-        //bDarkMode ? ImGui::StyleColorsDark() : ImGui::StyleColorsLight();
-        //TODO updating the values for theme customization happens here
-        //TODO should have a check for each of these and only apply to the values
-        //that have updated
-
         //feels like I should have the style outside this scope so I don't have
         //recreate the variable everytime I need to refreshTheme
         ImGuiStyle& uiStyle = ImGui::GetStyle();
@@ -210,32 +206,22 @@ namespace UI {
         uiStyle.TabRounding = util::strToFloat(config::getProp(config::theme,"tabRounding"));
         uiStyle.FrameBorderSize = util::strToFloat(config::getProp(config::theme,"frameBorder"));
 
-        //TODO need to create a function that gives me the ImVec4 for each color and
-        //also need to look into if I can build the enum name from string and make it
-        //way easier to set the values which will also mean just adding another color
-        //to the config will modify the color without me having to hard code it
-
         auto mColorOptions = config::getAllThemeColorValues();
 
-        //TODO currently broken
-        // for(auto colOpt : mColorOptions) {
-        //     uiStyle.Colors[getColorEnum(colOpt.first)] = getColorFromConfig(colOpt.second);
-        //     util::qPrint(ImGui::GetStyleColorName(getColorEnum(colOpt.first)),colOpt.second);
-        // }
+        for(auto colOpt : mColorOptions) {
+            uiStyle.Colors[getColorEnum(colOpt.first)] = getColorFromConfig(colOpt.second);
+        }
 
     }
 
     ImVec4 getColorFromConfig (std::string sColorValue) {
         ImVec4 output = ImVec4(-1,-1,-1,-1);
-        std::string sColVal = config::getProp(config::theme,sColorValue.c_str());
         std::string sBuild = "";
         int iStrLength = sColorValue.length();
         int iOutputCounter = 0; // 0,1,2,3 = x,y,z,w
 
-        if(sColVal == "NULL") { return output; }
-        //TODO working here
         for(int i = 0; i < iStrLength; i++) {
-            if(sColVal[i] == ',') {
+            if(sColorValue[i] == ',') {
                 switch (iOutputCounter) {
                     case 0:
                         output.x = util::strToFloat(sBuild);
@@ -246,9 +232,6 @@ namespace UI {
                     case 2:
                         output.z = util::strToFloat(sBuild);
                         break;
-                    case 3:
-                        output.w = util::strToFloat(sBuild);
-                        break;
                     default:
                         util::qPrint("Error iOutputCounter is out of bounds in getColorFromConfig!");
                         break;
@@ -256,9 +239,10 @@ namespace UI {
                 sBuild.clear();
                 iOutputCounter++;
             } else {
-                sBuild.push_back(sColVal[i]);
+                sBuild.push_back(sColorValue[i]);
             }
         }
+        output.w = util::strToFloat(sBuild);
 
         return output;
 
@@ -267,13 +251,16 @@ namespace UI {
     int getColorEnum ( std::string sColorName ) {
         if(sColorName[0] != '~') { return -1; }
         sColorName.erase(0,1);
-        for(int i = 0; i < ImGuiCol_COUNT;i++) {
-            if(ImGui::GetStyleColorName(i) == sColorName) {
-                return i;
-            }
-        }
-        return -1;
+
+        return mColorEnum[sColorName];
     }
+
+    void setColorEnumMap() {
+        for(int i = 0; i < ImGuiCol_COUNT; i++) {
+            mColorEnum[ImGui::GetStyleColorName(i)] = i;
+        }
+    }
+
 
 
 
