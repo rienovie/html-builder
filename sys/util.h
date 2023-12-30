@@ -20,12 +20,18 @@ namespace util {
         qPrint(args...);
     }
 
+    //if bReturnIndex = false will return 0 if not found
+    //if bReturnIndex = true will return -1 if not found
     template <typename T>
-    bool searchVector(std::vector<T>& inputVector, T toFind) {
-        for(T toCheck : inputVector){
-            if(toCheck == toFind) { return true; }
+    int searchVector(std::vector<T>& inputVector, T toFind, bool bReturnIndex = false) {
+        int iSize = inputVector.size();
+        for(int i = 0; i < iSize; i++) {
+            if(inputVector[i] == toFind) {
+                return (i + (!bReturnIndex));
+                //need to return at least 1 if found at index 0 when bReturnIndex is false
+            }
         }
-        return false;
+        return (0 - (bReturnIndex));
     }
 
     void printMemUse(rusage& usageRef);
