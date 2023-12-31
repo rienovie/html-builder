@@ -1,14 +1,11 @@
-darkMode=1
-circleTess=5.00
+circleTess=0.1
 frameBorder=0
-framePadX=2
-framePadY=2
 frameRounding=12
-itemSpacingX=2
-itemSpacingY=2
 scrollBarRounding=8
 scrollBarSize=12
 tabRounding=8
+framePad=2,2
+itemSpacing=2,2
 ~Border=1.00,1.00,1.00,0.23
 ~BorderShadow=0.00,0.00,0.00,0.00
 ~CheckMark=0.31,0.39,1.00,1.00

@@ -1,13 +1,23 @@
 #include "UI.h"
 
 //settings
-static int iMaxFontSize = 42;
 static int iFontSize = 32;
 static bool bDarkMode = true;
 static int iCurrentTheme = 0; //is set to the combo selection
 static int iUserWindowWidth = 1600;
 static int iUserWindowHeight = 900;
 static int iLastStoredFontSize = 32;
+
+//limits for settings
+static ImVec2 limitFontSize = ImVec2(10,42);
+static ImVec2 limitScrollBarSize = ImVec2(1,24);
+static ImVec2 limitScrollBarRounding = ImVec2(0,12);
+static ImVec2 limitTabRounding = ImVec2(0,12);
+static ImVec2 limitFrameBorder = ImVec2(0,3);
+static ImVec2 limitFrameRounding = ImVec2(0,12);
+static ImVec2 limitFramePad = ImVec2(0,20);
+static ImVec2 limitItemSpacing = ImVec2(0,20);
+static ImVec2 limitCircleTess = ImVec2(0.10,5.00);
 
 //windows
 static bool bTestWindow_open = false;
@@ -20,6 +30,7 @@ std::map<std::string, int> mColorEnum;
 ImFont *font_main , *font_bold , *font_light;
 ImVec4 clearColor = ImVec4(0.45f,0.55f,0.60f,1.00f);
 GLFWwindow* mainWindow;
+ImGuiStyle* uiStylePtr = NULL;
 
 namespace UI {
     int initialize() {
@@ -49,12 +60,14 @@ namespace UI {
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",iMaxFontSize );
-        font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",iMaxFontSize );
-        font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",iMaxFontSize );
+        font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",limitFontSize.y );
+        font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",limitFontSize.y );
+        font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",limitFontSize.y );
 
         ImGui_ImplGlfw_InitForOpenGL(mainWindow,true);
         ImGui_ImplOpenGL3_Init("#version 130");
+
+        uiStylePtr = &ImGui::GetStyle();
 
         setColorEnumMap();
         vFoundThemes = config::getAllThemeNames();
@@ -65,6 +78,9 @@ namespace UI {
             }
         }
         refreshTheme();
+
+        //set manual settings here (shouldn't change by theme)
+        uiStylePtr->WindowMenuButtonPosition = -1;
 
         return 0;
 
@@ -82,7 +98,7 @@ namespace UI {
     void mainLoop(){
         //poll and handle events (inputs, window resize, etc)
         glfwPollEvents();
-        ImGui::GetIO().FontGlobalScale = float(iFontSize) / float(iMaxFontSize);
+        ImGui::GetIO().FontGlobalScale = float(iFontSize) / float(limitFontSize.y);
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -157,7 +173,7 @@ namespace UI {
         if(ImGui::Button("Default")) { iFontSize = 24; };
         ImGui::SameLine();
         ImGui::PushFont(font_bold);
-        ImGui::SliderInt("Font Size",&iFontSize,10,iMaxFontSize);
+        ImGui::SliderInt("Font Size",&iFontSize,limitFontSize.x,limitFontSize.y);
         ImGui::PopFont();
         if(ImGui::Button("Toggle Dark Mode")) {
             bDarkMode = !bDarkMode;
@@ -189,39 +205,32 @@ namespace UI {
     }
 
     void refreshTheme() {
-        //feels like I should have the style outside this scope so I don't have
-        //recreate the variable everytime I need to refreshTheme
-        ImGuiStyle& uiStyle = ImGui::GetStyle();
-
-        uiStyle.FrameRounding = util::strToFloat(config::getProp(config::theme,"frameRounding"));
-        uiStyle.ItemSpacing = ImVec2(
-            util::strToFloat(config::getProp(config::theme,"itemSpacingX")),
-            util::strToFloat(config::getProp(config::theme,"itemSpacingY")));
-        uiStyle.ItemInnerSpacing = ImVec2(
-            util::strToFloat(config::getProp(config::theme,"itemSpacingX")),
-            util::strToFloat(config::getProp(config::theme,"itemSpacingY")));
-        uiStyle.FramePadding = ImVec2(
-            util::strToFloat(config::getProp(config::theme,"framePadX")),
-            util::strToFloat(config::getProp(config::theme,"framePadY")));
-        uiStyle.TabRounding = util::strToFloat(config::getProp(config::theme,"tabRounding"));
-        uiStyle.FrameBorderSize = util::strToFloat(config::getProp(config::theme,"frameBorder"));
+        uiStylePtr->FrameRounding = util::strToFloat(config::getProp(config::theme,"frameRounding"));
+        uiStylePtr->ItemSpacing = getVec2FromString(config::getProp(config::theme,"itemSpacing"));
+        uiStylePtr->ItemInnerSpacing = getVec2FromString(config::getProp(config::theme,"itemSpacing"));
+        uiStylePtr->FramePadding = getVec2FromString(config::getProp(config::theme,"framePad"));
+        uiStylePtr->TabRounding = util::strToFloat(config::getProp(config::theme,"tabRounding"));
+        uiStylePtr->FrameBorderSize = util::strToFloat(config::getProp(config::theme,"frameBorder"));
+        uiStylePtr->ScrollbarSize = util::strToFloat(config::getProp(config::theme,"scrollBarSize"));
+        uiStylePtr->ScrollbarRounding = util::strToFloat(config::getProp(config::theme,"scrollBarRounding"));
+        uiStylePtr->CircleTessellationMaxError = util::strToFloat(config::getProp(config::theme,"circleTess"));
 
         auto mColorOptions = config::getAllThemeColorValues();
 
         for(auto colOpt : mColorOptions) {
-            uiStyle.Colors[getColorEnum(colOpt.first)] = getColorFromConfig(colOpt.second);
+            uiStylePtr->Colors[getColorEnum(colOpt.first)] = getVec4FromString(colOpt.second);
         }
 
     }
 
-    ImVec4 getColorFromConfig (std::string sColorValue) {
+    ImVec4 getVec4FromString (std::string sVec4Value) {
         ImVec4 output = ImVec4(-1,-1,-1,-1);
         std::string sBuild = "";
-        int iStrLength = sColorValue.length();
+        int iStrLength = sVec4Value.length();
         int iOutputCounter = 0; // 0,1,2,3 = x,y,z,w
 
         for(int i = 0; i < iStrLength; i++) {
-            if(sColorValue[i] == ',') {
+            if(sVec4Value[i] == ',') {
                 switch (iOutputCounter) {
                     case 0:
                         output.x = util::strToFloat(sBuild);
@@ -239,10 +248,37 @@ namespace UI {
                 sBuild.clear();
                 iOutputCounter++;
             } else {
-                sBuild.push_back(sColorValue[i]);
+                sBuild.push_back(sVec4Value[i]);
             }
         }
         output.w = util::strToFloat(sBuild);
+
+        if(output.x == -1 || output.y == -1 || output.z == -1 || output.z == -1) {
+            util::qPrint("Error in getVec4FromString! Output =",output.x,output.y,output.z,output.w);
+        }
+
+        return output;
+
+    }
+
+    ImVec2 getVec2FromString ( std::string sVec2Value ) {
+        ImVec2 output = ImVec2(-1,-1);
+        std::string sBuild = "";
+        int iStringLength = sVec2Value.length();
+
+        for(int i = 0; i < iStringLength; i++) {
+            if(sVec2Value[i] == ',') {
+                output.x = util::strToFloat(sBuild);
+                output.y = util::strToFloat(sVec2Value.substr(i+1,iStringLength - i));
+                break;
+            } else {
+                sBuild.push_back(sVec2Value[i]);
+            }
+        }
+
+        if(output.x == -1 || output.y == -1) {
+            util::qPrint("Error in getVec2FromString! Output =",output.x,output.y);
+        }
 
         return output;
 

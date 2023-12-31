@@ -11,13 +11,10 @@ std::map<std::string, std::string> config::mLoadedConfig{};
 std::vector<std::string> config::vFoundThemes;
 std::map<std::string, std::string> config::mLoadedTheme {};
 std::map<std::string,std::string> config::mDefaultNewTheme {
-    {"darkMode","1"}, //will deprecate this once theme customization is implemented
     {"frameRounding","4"}, //should also modify grabRounding & popupRounding
     {"frameBorder","1"},
-    {"framePadX","6"},
-    {"framePadY","4"},
-    {"itemSpacingX","8"}, //should be used for innerSpacing as well
-    {"itemSpacingY","6"},
+    {"framePad","6,4"},
+    {"itemSpacing","8,6"},
     {"scrollBarSize","14"},
     {"scrollBarRounding","4"},
     {"tabRounding","8"},
@@ -87,7 +84,6 @@ void config::update (configType cfgTo, const char* propertyName, std::string sNe
             saveConfig(cfgTo);
             //when changing theme, load new theme
             if(std::string(propertyName) == "theme") {
-                util::qPrint("Theme updated!");
                 loadConfig(theme);
             }
             break;

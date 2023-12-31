@@ -12,6 +12,7 @@
 #include <filesystem>
 #include <vector>
 #include "../sys/config.h"
+#include "UI_Windows.h"
 
 namespace UI {
     int initialize();
@@ -25,7 +26,8 @@ namespace UI {
     void assignCurrentThemeValueByName(std::string name);
     void tick_sec();
     void refreshTheme();
-    ImVec4 getColorFromConfig(std::string sColorValue);
+    ImVec4 getVec4FromString(std::string sVec4Value);
+    ImVec2 getVec2FromString(std::string sVec2Value);
     int getColorEnum(std::string sColorName);
     void setColorEnumMap();
 }
