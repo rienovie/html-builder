@@ -14,21 +14,50 @@
 #include "../sys/config.h"
 #include "UI_Windows.h"
 
-namespace UI {
-    int initialize();
-    void cleanUp();
-    void mainLoop();
-    void showMainUI();
-    void showTestWindow();
-    void showSettingsWindow();
-    bool mainLoopCondition();
-    void glfw_error_callback(int error, const char* description);
-    void assignCurrentThemeValueByName(std::string name);
-    void tick_sec();
-    void refreshTheme();
-    ImVec4 getVec4FromString(std::string sVec4Value);
-    ImVec2 getVec2FromString(std::string sVec2Value);
-    int getColorEnum(std::string sColorName);
-    void setColorEnumMap();
-}
+void glfw_error_callback(int error, const char* description);
+
+class UI {
+public:
+    static int
+        iFontSize,
+        iCurrentTheme;
+    static ImVec2
+        limitFontSize,
+        limitScrollBarSize,
+        limitScrollBarRounding,
+        limitTabRounding,
+        limitFrameBorder,
+        limitFrameRounding,
+        limitFramePad,
+        limitItemSpacing,
+        limitCircleTess;
+    static std::vector<std::string> vFoundThemes;
+    static ImGuiStyle* uiStylePtr;
+    static ImFont *font_main, *font_bold, *font_light;
+
+    static bool mainLoopCondition();
+    static void mainLoop();
+    static void tick_sec();
+    static void assignCurrentThemeValueByName(std::string sName);
+    static void refreshTheme();
+    static int getColorEnum(std::string sColorName);
+    static ImVec4 getVec4FromString(std::string sVec4Value);
+    static ImVec2 getVec2FromString(std::string sVec2Value);
+
+    UI();
+    ~UI();
+
+private:
+    static int
+        iUserWindowWidth,
+        iUserWindowHeight,
+        iLastStoredFontSize;
+
+    static ImVec4 clearColor;
+    static GLFWwindow *mainWindow;
+    static std::map<std::string,int> mColorEnum;
+
+    static void setColorEnumMap();
+
+};
 

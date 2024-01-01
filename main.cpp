@@ -9,25 +9,30 @@
  * m = map
  * v = vector
  * f = float
+ * w = window
  *
 */
-
-//TODO move ImGui windows into their own file / header
-//TODO remove darkMode and make color customization available
 
 struct rusage memUsage;
 static bool bCloseThreads = false;
 
 int main () {
 
-    config cfg;
+    auto classCFG = new config;
+    UI* classUI = NULL;
 
-    if(UI::initialize()) { return 1; }
+    try {
+        classUI = new UI;
+    } catch (std::string e) {
+        util::qPrint(e);
+        return 1;
+    } catch (...) {
+        util::qPrint("Unknown Throw in UI initialization");
+        return 1;
+    }
 
     std::thread t_sec (tick_sec);
     std::thread t_long (tick_long);
-
-    //UI::setThemeByName(cfg.get(config::system,"theme"));
 
     //main loop
     while(UI::mainLoopCondition()){
@@ -37,8 +42,8 @@ int main () {
 
     //clean up
     bCloseThreads = true;
-    UI::cleanUp();
-
+    delete classCFG;
+    delete classUI;
     t_sec.detach();
     t_long.detach();
 
