@@ -30,6 +30,7 @@ public:
         limitFrameRounding,
         limitFramePad,
         limitItemSpacing,
+        limitSeparatorThickness,
         limitCircleTess;
     static std::vector<std::string> vFoundThemes;
     static ImGuiStyle* uiStylePtr;
@@ -43,6 +44,8 @@ public:
     static int getColorEnum(std::string sColorName);
     static ImVec4 getVec4FromString(std::string sVec4Value);
     static ImVec2 getVec2FromString(std::string sVec2Value);
+    static std::string getStringFromVec2(ImVec2 vec2Value);
+    static std::string getStringFromVec4(ImVec4 vec4Value);
 
     UI();
     ~UI();

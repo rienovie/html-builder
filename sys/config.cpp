@@ -7,38 +7,67 @@ std::map<std::string, std::string> config::mDefaultConfig{
     {"windowHeight","900"},
     {"fontSize","24"}
 };
+bool config::bShouldSaveCfg = false;
 std::map<std::string, std::string> config::mLoadedConfig{};
 std::vector<std::string> config::vFoundThemes;
 std::map<std::string, std::string> config::mLoadedTheme {};
+
+//currently this is hardcoded, but I'm not sure why I did this at the start
+//TODO replace this monstrosity with building this map from a file that cannot be
+//modified; most likely will make the "Default" theme file not be editable from the user
 std::map<std::string,std::string> config::mDefaultNewTheme {
-    {"frameRounding","4"}, //should also modify grabRounding & popupRounding
-    {"frameBorder","1"},
-    {"framePad","6,4"},
-    {"itemSpacing","8,6"},
+    {"frameRounding","4.000000"}, //should also modify grabRounding & popupRounding
+    {"frameBorder","2.000000"},
+    {"framePad","13.000000,6.000000"},
+    {"itemSpacing","14.000000,4.000000"},
     {"scrollBarSize","14"},
-    {"scrollBarRounding","4"},
-    {"tabRounding","8"},
-    {"circleTess","5.00"},
+    {"scrollBarRounding","4.000000"},
+    {"tabRounding","8.000000"},
+    {"circleTess","5.000000"},
+    {"separatorThickness","1.500000"},
     //~ is the marker for color
     {"~Text","1.00,1.00,1.00,1.00"},
     {"~TextDisabled","0.50,0.50,0.50,1.00"},
     {"~WindowBg","0.00,0.04,0.11,0.94"},
-    {"~ChildBg","0.00,0.00,0.00,0.00"},
-    {"~PopupBg","0.00,0.10,0.20,0.94"},
-    {"~Border","1.00,1.00,1.00,0.23"},
-    {"~BorderShadow","0.00,0.00,0.00,0.00"},
-    {"~FrameBg","0.36,0.31,1.00,0.20"},
-    {"~FrameBgHovered","0.31,0.39,1.00,0.62"},
-    {"~FrameBgActive","0.31,0.39,1.00,1.00"},
+    {"~ChildBg","0.000000,0.000000,0.000000,0.000000"},
+    {"~PopupBg","0.000000,0.050000,0.140000,0.970000"},
+    {"~Border","1.000000,1.000000,1.000000,0.230000"},
+    {"~BorderShadow","0.000000,0.000000,0.000000,0.000000"},
+    {"~FrameBg","0.360000,0.310000,1.000000,0.200000"},
+    {"~FrameBgHovered","0.310000,0.390000,1.000000,0.620000"},
+    {"~FrameBgActive","0.310000,0.390000,1.000000,1.000000"},
     {"~TitleBg","0.07,0.06,0.20,1.00"},
     {"~TitleBgActive","0.36,0.31,1.00,0.22"},
     {"~TitleBgCollapsed","0.00,0.00,0.00,0.50"},
-    {"~MenuBarBg","0.00,0.00,0.00,1.00"},
+    {"~MenuBarBg","0.000000,0.000000,0.000000,1.000000"},
     {"~ScrollbarBg","0.36,0.31,1.00,0.10"},
     {"~ScrollbarGrab","0.17,0.22,0.55,1.00"},
     {"~ScrollbarGrabHovered","0.22,0.28,0.71,1.00"},
     {"~ScrollbarGrabActive","0.31,0.39,1.00,1.00"},
-    {"~CheckMark","0.31,0.39,1.00,1.00"},
+    {"~CheckMark","0.310000,0.390000,1.000000,1.000000"},
+    {"~Button","0.26,0.59,0.98,0.40"},
+    {"~ButtonHovered","0.26,0.59,0.98,1.00"},
+    {"~ButtonActive","0.06,0.53,0.98,1.00"},
+    {"~Separator","0.31,0.39,1.00,1.00"},
+    {"~SeparatorHovered","0.31,0.39,1.00,1.00"},
+    {"~SeparatorActive","0.31,0.39,1.00,1.00"},
+    {"~ResizeGrip","0.31,0.39,1.00,1.00"},
+    {"~ResizeGripHovered","0.31,0.39,1.00,1.00"},
+    {"~ResizeGripActive","0.31,0.39,1.00,1.00"},
+    {"~Tab","0.31,0.39,1.00,1.00"},
+    {"~TabHovered","0.31,0.39,1.00,1.00"},
+    {"~TabActive","0.31,0.39,1.00,1.00"},
+    {"~TabUnfocused","0.31,0.39,1.00,1.00"},
+    {"~TabUnfocusedActive","0.31,0.39,1.00,1.00"},
+    {"~DockingPreview","0.31,0.39,1.00,1.00"},
+    {"~DragDropTarget","0.31,0.39,1.00,1.00"},
+    {"~NavHighlight","0.31,0.39,1.00,1.00"},
+    {"~NavWindowingHighlight","0.31,0.39,1.00,1.00"},
+    {"~NavWindowingDimBg","0.31,0.39,1.00,1.00"},
+    {"~ModalWindowDimBg","0.31,0.39,1.00,1.00"},
+    {"~SliderGrab","0.26,0.59,0.98,0.40"},
+    {"~SliderGrabActive","0.06,0.53,0.98,1.00"},
+    {"~TextSelectedBg","0.26,0.59,0.98,1.00"},
 
 };
 
@@ -78,18 +107,18 @@ std::string config::getProp(configType cfgFrom, const char* propertyName ) {
 }
 
 void config::update (configType cfgTo, const char* propertyName, std::string sNewValue) {
+    bShouldSaveCfg = true;
+    //will save config on next tick to limit save calls
     switch(cfgTo){
         case system:
             mLoadedConfig[propertyName] = sNewValue;
-            saveConfig(cfgTo);
-            //when changing theme, load new theme
             if(std::string(propertyName) == "theme") {
+                saveConfig(cfgTo); //force save before load when changing theme
                 loadConfig(theme);
             }
             break;
         case theme:
             mLoadedTheme[propertyName] = sNewValue;
-            saveConfig(cfgTo);
             break;
         default:
             util::qPrint("Attempted to update config type:",cfgTo,"but is not implemented!");
@@ -143,6 +172,7 @@ void config::saveConfig(configType cfgSaveTo) {
         }
         fileOut.close();
     }
+    util::qPrint("Config file saved!");
 }
 
 //this does not feel very efficient but maybe I'll make it better when I am
@@ -327,14 +357,23 @@ std::map<std::string, std::string> config::getConfig ( configType cfgToGet ) {
 std::map<std::string, std::string> config::getAllThemeColorValues() {
     std::map<std::string,std::string> mOutput;
 
-    for(auto colorOption : mLoadedTheme) {
-        if(colorOption.first[0] == '~') {
-            mOutput.insert(colorOption);
+    for(auto themeOption : mLoadedTheme) {
+        if(themeOption.first[0] == '~') {
+            mOutput.insert(themeOption);
         }
     }
 
     return mOutput;
 
 }
+
+void config::checkIfShouldSaveConfigs() {
+    if(bShouldSaveCfg) {
+        bShouldSaveCfg = false;
+        saveConfig(system);
+        saveConfig(theme);
+    }
+}
+
 
 

@@ -29,6 +29,7 @@ ImVec2
     UI::limitFrameRounding = ImVec2(0,12),
     UI::limitFramePad = ImVec2(0,20),
     UI::limitItemSpacing = ImVec2(0,20),
+    UI::limitSeparatorThickness = ImVec2(1,8),
     UI::limitCircleTess = ImVec2(0.10,5.00);
 
 ImFont
@@ -155,14 +156,18 @@ void UI::setColorEnumMap() {
 
 void UI::refreshTheme() {
     uiStylePtr->FrameRounding = util::strToFloat(config::getProp(config::theme,"frameRounding"));
+    uiStylePtr->GrabRounding = uiStylePtr->FrameRounding;
+    uiStylePtr->PopupRounding = uiStylePtr->FrameRounding;
     uiStylePtr->ItemSpacing = getVec2FromString(config::getProp(config::theme,"itemSpacing"));
-    uiStylePtr->ItemInnerSpacing = getVec2FromString(config::getProp(config::theme,"itemSpacing"));
+    uiStylePtr->ItemInnerSpacing = uiStylePtr->ItemSpacing;
     uiStylePtr->FramePadding = getVec2FromString(config::getProp(config::theme,"framePad"));
     uiStylePtr->TabRounding = util::strToFloat(config::getProp(config::theme,"tabRounding"));
     uiStylePtr->FrameBorderSize = util::strToFloat(config::getProp(config::theme,"frameBorder"));
+    uiStylePtr->PopupBorderSize = uiStylePtr->FrameBorderSize;
     uiStylePtr->ScrollbarSize = util::strToFloat(config::getProp(config::theme,"scrollBarSize"));
     uiStylePtr->ScrollbarRounding = util::strToFloat(config::getProp(config::theme,"scrollBarRounding"));
     uiStylePtr->CircleTessellationMaxError = util::strToFloat(config::getProp(config::theme,"circleTess"));
+    uiStylePtr->SeparatorTextBorderSize = util::strToFloat(config::getProp(config::theme,"separatorThickness"));
 
     auto mColorOptions = config::getAllThemeColorValues();
 
@@ -237,3 +242,26 @@ int UI::getColorEnum ( std::string sColorName ) {
     return mColorEnum[sColorName];
 }
 
+std::string UI::getStringFromVec2 ( ImVec2 vec2Value ) {
+    std::string sOutput = "";
+
+    sOutput.append(std::to_string(vec2Value.x));
+    sOutput.append(",");
+    sOutput.append(std::to_string(vec2Value.y));
+
+    return sOutput;
+}
+
+std::string UI::getStringFromVec4 ( ImVec4 vec4Value ) {
+    std::string sOutput = "";
+
+    sOutput.append(std::to_string(vec4Value.x));
+    sOutput.append(",");
+    sOutput.append(std::to_string(vec4Value.y));
+    sOutput.append(",");
+    sOutput.append(std::to_string(vec4Value.z));
+    sOutput.append(",");
+    sOutput.append(std::to_string(vec4Value.w));
+
+    return sOutput;
+}

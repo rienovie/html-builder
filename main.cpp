@@ -1,6 +1,6 @@
 #include "main.h"
 
-/*Variable Naming = prefixVariableName
+/* Variable / Function Naming = prefixVariableName
  * bTestVariable = true;
  * i = int
  * b = bool
@@ -9,7 +9,8 @@
  * m = map
  * v = vector
  * f = float
- * w = window
+ * w = window includes Begin() and End()
+ * sw = subWindow assumes it's within a Begin() and End()
  *
 */
 
@@ -57,6 +58,7 @@ void tick_sec() {
     std::this_thread::sleep_for(std::chrono::seconds(1));
     //util::qPrint("tick");
     UI::tick_sec();
+    //config::checkIfShouldSaveConfigs();
 
     //recursive call
     tick_sec();
@@ -66,6 +68,7 @@ void tick_long() {
     if(bCloseThreads) return;
     std::this_thread::sleep_for(std::chrono::seconds(5));
     util::printMemUse(memUsage);
+    config::checkIfShouldSaveConfigs();
 
     //recursive call
     tick_long();
