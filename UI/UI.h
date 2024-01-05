@@ -31,7 +31,8 @@ public:
         limitFramePad,
         limitItemSpacing,
         limitSeparatorThickness,
-        limitCircleTess;
+        limitCircleTess,
+        limitGrabMinSize;
     static std::vector<std::string> vFoundThemes;
     static ImGuiStyle* uiStylePtr;
     static ImFont *font_main, *font_bold, *font_light;

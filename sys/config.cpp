@@ -7,67 +7,71 @@ std::map<std::string, std::string> config::mDefaultConfig{
     {"windowHeight","900"},
     {"fontSize","24"}
 };
-bool config::bShouldSaveCfg = false;
+bool
+    config::bShouldSaveSystem = false,
+    config::bShouldSaveTheme = false;
 std::map<std::string, std::string> config::mLoadedConfig{};
 std::vector<std::string> config::vFoundThemes;
 std::map<std::string, std::string> config::mLoadedTheme {};
 
-//currently this is hardcoded, but I'm not sure why I did this at the start
-//TODO replace this monstrosity with building this map from a file that cannot be
-//modified; most likely will make the "Default" theme file not be editable from the user
+//this is hardcoded because if the default theme file gets deleted
 std::map<std::string,std::string> config::mDefaultNewTheme {
-    {"frameRounding","4.000000"}, //should also modify grabRounding & popupRounding
-    {"frameBorder","2.000000"},
-    {"framePad","13.000000,6.000000"},
+    {"frameRounding","8.000000"}, //should also modify grabRounding & popupRounding
+    {"frameBorder","1.000000"},
+    {"framePad","14.000000,8.000000"},
     {"itemSpacing","14.000000,4.000000"},
-    {"scrollBarSize","14"},
+    {"scrollBarSize","14.000000"},
     {"scrollBarRounding","4.000000"},
     {"tabRounding","8.000000"},
     {"circleTess","5.000000"},
-    {"separatorThickness","1.500000"},
+    {"separatorThickness","3.000000"},
     //~ is the marker for color
-    {"~Text","1.00,1.00,1.00,1.00"},
-    {"~TextDisabled","0.50,0.50,0.50,1.00"},
-    {"~WindowBg","0.00,0.04,0.11,0.94"},
+    {"~Text","0.000000,0.000000,0.000000,1.000000"},
+    {"~TextDisabled","0.100860,0.197749,0.317585,1.000000"},
+    {"~WindowBg","0.224452,0.337621,0.545098,1.000000"},
     {"~ChildBg","0.000000,0.000000,0.000000,0.000000"},
-    {"~PopupBg","0.000000,0.050000,0.140000,0.970000"},
-    {"~Border","1.000000,1.000000,1.000000,0.230000"},
+    {"~PopupBg","0.192157,0.477278,1.000000,0.968627"},
+    {"~Border","0.000000,0.000000,0.000000,1.000000"},
     {"~BorderShadow","0.000000,0.000000,0.000000,0.000000"},
-    {"~FrameBg","0.360000,0.310000,1.000000,0.200000"},
-    {"~FrameBgHovered","0.310000,0.390000,1.000000,0.620000"},
-    {"~FrameBgActive","0.310000,0.390000,1.000000,1.000000"},
-    {"~TitleBg","0.07,0.06,0.20,1.00"},
-    {"~TitleBgActive","0.36,0.31,1.00,0.22"},
-    {"~TitleBgCollapsed","0.00,0.00,0.00,0.50"},
-    {"~MenuBarBg","0.000000,0.000000,0.000000,1.000000"},
-    {"~ScrollbarBg","0.36,0.31,1.00,0.10"},
-    {"~ScrollbarGrab","0.17,0.22,0.55,1.00"},
-    {"~ScrollbarGrabHovered","0.22,0.28,0.71,1.00"},
-    {"~ScrollbarGrabActive","0.31,0.39,1.00,1.00"},
-    {"~CheckMark","0.310000,0.390000,1.000000,1.000000"},
-    {"~Button","0.26,0.59,0.98,0.40"},
-    {"~ButtonHovered","0.26,0.59,0.98,1.00"},
-    {"~ButtonActive","0.06,0.53,0.98,1.00"},
-    {"~Separator","0.31,0.39,1.00,1.00"},
-    {"~SeparatorHovered","0.31,0.39,1.00,1.00"},
-    {"~SeparatorActive","0.31,0.39,1.00,1.00"},
-    {"~ResizeGrip","0.31,0.39,1.00,1.00"},
-    {"~ResizeGripHovered","0.31,0.39,1.00,1.00"},
-    {"~ResizeGripActive","0.31,0.39,1.00,1.00"},
-    {"~Tab","0.31,0.39,1.00,1.00"},
-    {"~TabHovered","0.31,0.39,1.00,1.00"},
-    {"~TabActive","0.31,0.39,1.00,1.00"},
-    {"~TabUnfocused","0.31,0.39,1.00,1.00"},
-    {"~TabUnfocusedActive","0.31,0.39,1.00,1.00"},
-    {"~DockingPreview","0.31,0.39,1.00,1.00"},
-    {"~DragDropTarget","0.31,0.39,1.00,1.00"},
-    {"~NavHighlight","0.31,0.39,1.00,1.00"},
-    {"~NavWindowingHighlight","0.31,0.39,1.00,1.00"},
-    {"~NavWindowingDimBg","0.31,0.39,1.00,1.00"},
-    {"~ModalWindowDimBg","0.31,0.39,1.00,1.00"},
-    {"~SliderGrab","0.26,0.59,0.98,0.40"},
-    {"~SliderGrabActive","0.06,0.53,0.98,1.00"},
-    {"~TextSelectedBg","0.26,0.59,0.98,1.00"},
+    {"~FrameBg","0.000000,0.362508,0.698163,1.000000"},
+    {"~FrameBgHovered","0.000000,0.517647,1.000000,1.000000"},
+    {"~FrameBgActive","0.000000,0.317647,0.611765,1.000000"},
+    {"~TitleBg","0.194018,0.460280,0.650980,1.000000"},
+    {"~TitleBgActive","0.309804,0.615686,1.000000,1.000000"},
+    {"~TitleBgCollapsed","0.000000,0.000000,0.000000,1.000000"},
+    {"~MenuBarBg","0.131765,0.374145,0.600000,1.000000"},
+    {"~ScrollbarBg","0.360000,0.310000,1.000000,0.100000"},
+    {"~ScrollbarGrab","0.215686,0.234141,1.000000,1.000000"},
+    {"~ScrollbarGrabHovered","0.215686,0.307958,1.000000,1.000000"},
+    {"~ScrollbarGrabActive","0.215686,0.510957,1.000000,1.000000"},
+    {"~CheckMark","0.000000,0.834646,1.000000,1.000000"},
+    {"~Button","0.260000,0.590000,0.980000,0.400000"},
+    {"~ButtonHovered","0.260000,0.590000,0.980000,1.000000"},
+    {"~ButtonActive","0.060000,0.530000,0.980000,1.000000"},
+    {"~Separator","0.000000,0.000000,0.000000,1.000000"},
+    {"~SeparatorHovered","0.100000,0.400000,0.750000,0.780000"},
+    {"~SeparatorActive","0.100000,0.400000,0.750000,1.000000"},
+    {"~ResizeGrip","0.260000,0.590000,0.980000,0.200000"},
+    {"~ResizeGripHovered","0.260000,0.590000,0.980000,0.670000"},
+    {"~ResizeGripActive","0.260000,0.590000,0.980000,0.950000"},
+    {"~Tab","0.180000,0.350000,0.580000,0.860000"},
+    {"~TabHovered","0.258824,0.588235,0.980392,1.000000"},
+    {"~TabActive","0.200000,0.410000,0.680000,1.000000"},
+    {"~TabUnfocused","0.070000,0.100000,0.150000,0.970000"},
+    {"~TabUnfocusedActive","0.140000,0.260000,0.420000,1.000000"},
+    {"~DockingPreview","0.260000,0.590000,0.980000,0.700000"},
+    {"~DragDropTarget","1.000000,1.000000,0.000000,0.900000"},
+    {"~NavHighlight","0.000000,0.517647,1.000000,1.000000"},
+    {"~NavWindowingHighlight","1.000000,1.000000,1.000000,0.700000"},
+    {"~NavWindowingDimBg","0.131765,0.374145,0.600000,1.000000"},
+    {"~ModalWindowDimBg","0.800000,0.800000,0.800000,0.350000"},
+    {"~SliderGrab","0.000000,0.724410,1.000000,1.000000"},
+    {"~SliderGrabActive","0.000000,0.944882,1.000000,1.000000"},
+    {"~TextSelectedBg","0.000000,0.517647,1.000000,1.000000"},
+    {"~Header","0.260000,0.590000,0.980000,0.400000"},
+    {"~HeaderHovered","0.260000,0.590000,0.980000,1.000000"},
+    {"~HeaderActive","0.060000,0.530000,0.980000,1.000000"},
+    {"grabMinSize","30.000000"}
 
 };
 
@@ -107,10 +111,10 @@ std::string config::getProp(configType cfgFrom, const char* propertyName ) {
 }
 
 void config::update (configType cfgTo, const char* propertyName, std::string sNewValue) {
-    bShouldSaveCfg = true;
     //will save config on next tick to limit save calls
     switch(cfgTo){
         case system:
+            bShouldSaveSystem = true;
             mLoadedConfig[propertyName] = sNewValue;
             if(std::string(propertyName) == "theme") {
                 saveConfig(cfgTo); //force save before load when changing theme
@@ -118,6 +122,7 @@ void config::update (configType cfgTo, const char* propertyName, std::string sNe
             }
             break;
         case theme:
+            bShouldSaveTheme = true;
             mLoadedTheme[propertyName] = sNewValue;
             break;
         default:
@@ -130,9 +135,11 @@ void config::saveConfig(configType cfgSaveTo) {
     std::string cfgLocation;
     switch (cfgSaveTo){
         case system:
+            bShouldSaveSystem = false;
             cfgLocation = "../hb.config";
             break;
         case theme:
+            bShouldSaveTheme = false;
             cfgLocation = getThemePathByName(getProp(system,"theme"));
             break;
         default:
@@ -172,11 +179,11 @@ void config::saveConfig(configType cfgSaveTo) {
         }
         fileOut.close();
     }
-    util::qPrint("Config file saved!");
+    util::qPrint((cfgSaveTo == system)?"System":"Theme","config file saved!");
 }
 
 //this does not feel very efficient but maybe I'll make it better when I am
-//a better propgramer
+//a better programmer
 void config::loadConfig(configType cfgLoadFrom) {
     std::string sLine, sBuild, sProp;
     std::vector<std::string> vFoundProps;
@@ -216,6 +223,13 @@ void config::loadConfig(configType cfgLoadFrom) {
                 fileOut << '\n';
             }
             fileOut.close();
+
+            //only time this should be called is when default theme not found,
+            //other themes not found reset to Default theme, this makes sure
+            //the default theme shows up in the theme selection after created
+            if(cfgLoadFrom == theme) {
+                vFoundThemes.push_back("Default");
+            }
         } else {
             util::qPrint("User config at",cfgLoadLocation,"could not be created!");
         }
@@ -259,6 +273,7 @@ void config::loadConfig(configType cfgLoadFrom) {
                     fileOut << "=";
                     fileOut << configOption.second;
                     fileOut << "\n";
+                    (*mConfigLoadPtr)[configOption.first] = configOption.second;
                 }
             }
             fileOut.close();
@@ -301,7 +316,7 @@ void config::setConfigVariableValues (configType cfgTyp, std::vector<std::string
 
 std::string config::getThemePathByName(std::string sName) {
     std::string sOutput;
-    if(!util::searchVector(vFoundThemes,sName)){
+    if(!util::searchVector(vFoundThemes,sName) && sName != "Default"){
         sName = "Default";
         config::update(config::system,"theme",sName);
         //loadConfig(theme);
@@ -368,11 +383,8 @@ std::map<std::string, std::string> config::getAllThemeColorValues() {
 }
 
 void config::checkIfShouldSaveConfigs() {
-    if(bShouldSaveCfg) {
-        bShouldSaveCfg = false;
-        saveConfig(system);
-        saveConfig(theme);
-    }
+    if(bShouldSaveTheme) { saveConfig(theme); }
+    if(bShouldSaveSystem) { saveConfig(system); }
 }
 
 

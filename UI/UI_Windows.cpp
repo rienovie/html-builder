@@ -192,10 +192,10 @@ void win::swThemeOptions() {
     ImGui::SeparatorText("Options");
 
     if(ImGui::SliderFloat("Frame Rounding",
-                       &UI::uiStylePtr->FrameRounding,
-                       UI::limitFrameRounding.x,
-                       UI::limitFrameRounding.y,
-                       "%.0f")) {
+                        &UI::uiStylePtr->FrameRounding,
+                        UI::limitFrameRounding.x,
+                        UI::limitFrameRounding.y,
+                        "%.0f")) {
         //grab & popup = same as frame
         UI::uiStylePtr->GrabRounding = UI::uiStylePtr->FrameRounding;
         UI::uiStylePtr->PopupRounding = UI::uiStylePtr->FrameRounding;
@@ -203,10 +203,10 @@ void win::swThemeOptions() {
     }
 
     if(ImGui::SliderFloat("Frame Border",
-                       &UI::uiStylePtr->FrameBorderSize,
-                       UI::limitFrameBorder.x,
-                       UI::limitFrameBorder.y,
-                       "%.0f")) {
+                        &UI::uiStylePtr->FrameBorderSize,
+                        UI::limitFrameBorder.x,
+                        UI::limitFrameBorder.y,
+                        "%.0f")) {
         //popup same as frame
         UI::uiStylePtr->PopupBorderSize = UI::uiStylePtr->FrameBorderSize;
         config::update(config::theme,"frameBorder",std::to_string(UI::uiStylePtr->FrameBorderSize));
@@ -230,43 +230,51 @@ void win::swThemeOptions() {
     }
 
     if(ImGui::SliderFloat("Separator Thickness",
-                       &UI::uiStylePtr->SeparatorTextBorderSize,
-                       UI::limitSeparatorThickness.x,
-                       UI::limitSeparatorThickness.y,
-                       "%.1f")) {
+                        &UI::uiStylePtr->SeparatorTextBorderSize,
+                        UI::limitSeparatorThickness.x,
+                        UI::limitSeparatorThickness.y,
+                        "%.1f")) {
         config::update(config::theme,"separatorThickness",std::to_string(UI::uiStylePtr->SeparatorTextBorderSize));
     }
 
+    if(ImGui::SliderFloat("Minimum Grab Size",
+                        &UI::uiStylePtr->GrabMinSize,
+                        UI::limitGrabMinSize.x,
+                        UI::limitGrabMinSize.y,
+                        "%.0f")) {
+        config::update(config::theme,"grabMinSize",std::to_string(UI::uiStylePtr->GrabMinSize));
+    }
+
     if(ImGui::SliderFloat("Tab Rounding",
-                       &UI::uiStylePtr->TabRounding,
-                       UI::limitTabRounding.x,
-                       UI::limitTabRounding.y,
-                       "%.0f")) {
+                        &UI::uiStylePtr->TabRounding,
+                        UI::limitTabRounding.x,
+                        UI::limitTabRounding.y,
+                        "%.0f")) {
         config::update(config::theme,"tabRounding",std::to_string(UI::uiStylePtr->TabRounding));
     }
 
     if(ImGui::SliderFloat("Scrollbar Size",
-                       &UI::uiStylePtr->ScrollbarSize,
-                       UI::limitScrollBarSize.x,
-                       UI::limitScrollBarSize.y,
-                       "%.0f")) {
+                        &UI::uiStylePtr->ScrollbarSize,
+                        UI::limitScrollBarSize.x,
+                        UI::limitScrollBarSize.y,
+                        "%.0f")) {
         config::update(config::theme,"scrollBarSize",std::to_string(UI::uiStylePtr->ScrollbarSize));
     }
 
     if(ImGui::SliderFloat("Scrollbar Rounding",
-                       &UI::uiStylePtr->ScrollbarRounding,
-                       UI::limitScrollBarRounding.x,
-                       UI::limitScrollBarRounding.y,
-                       "%.0f")) {
+                        &UI::uiStylePtr->ScrollbarRounding,
+                        UI::limitScrollBarRounding.x,
+                        UI::limitScrollBarRounding.y,
+                        "%.0f")) {
         config::update(config::theme,"scrollBarRounding",std::to_string(UI::uiStylePtr->ScrollbarRounding));
     }
 
     if(ImGui::SliderFloat("Circle Tess",
-                       &UI::uiStylePtr->CircleTessellationMaxError,
-                       UI::limitCircleTess.x,
-                       UI::limitCircleTess.y,
-                       "%.2f",
-                       ImGuiSliderFlags_AlwaysClamp)) {
+                        &UI::uiStylePtr->CircleTessellationMaxError,
+                        UI::limitCircleTess.x,
+                        UI::limitCircleTess.y,
+                        "%.2f",
+                        ImGuiSliderFlags_AlwaysClamp)) {
         config::update(config::theme,"circleTess",std::to_string(UI::uiStylePtr->CircleTessellationMaxError));
     }
 

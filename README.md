@@ -3,7 +3,3 @@
 Just trying to make something that makes more sense to me for building HTML. No idea if it'll be good.
 
 This is my first C++ project and I'm trying to learn ImGui as well.
-
-TODO:
-
-fix UI constructor window height and width, function would return "NULL" instead of 0

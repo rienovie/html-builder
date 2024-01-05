@@ -30,7 +30,8 @@ ImVec2
     UI::limitFramePad = ImVec2(0,20),
     UI::limitItemSpacing = ImVec2(0,20),
     UI::limitSeparatorThickness = ImVec2(1,8),
-    UI::limitCircleTess = ImVec2(0.10,5.00);
+    UI::limitCircleTess = ImVec2(0.10,5.00),
+    UI::limitGrabMinSize = ImVec2(10,80);
 
 ImFont
     *UI::font_main,
@@ -48,13 +49,13 @@ UI::UI() {
     glfwSetErrorCallback(glfw_error_callback);
     if(!glfwInit()) { throw std::string("glfw initialization error"); }
 
-    iUserWindowHeight = util::strToInt(config::getProp(config::system,"windowHeight"));
-    iUserWindowWidth = util::strToInt(config::getProp(config::system,"windowWidth"));
-
     //fallback if not found in config
     //config should have values updated to default for second run
-    if( iUserWindowHeight == 0) { iUserWindowHeight = 480; }
-    if( iUserWindowWidth == 0) { iUserWindowWidth = 640; }
+    std::string sConvertCheck = "";
+    sConvertCheck = config::getProp(config::system,"windowHeight");
+    iUserWindowHeight = (sConvertCheck == "NULL") ? 480 : util::strToInt(sConvertCheck);
+    sConvertCheck = config::getProp(config::system,"windowWidth");
+    iUserWindowWidth = (sConvertCheck == "NULL") ? 640 : util::strToInt(sConvertCheck);
 
     //create window
     mainWindow = glfwCreateWindow( iUserWindowWidth,iUserWindowHeight,"Main Window",NULL,NULL);
@@ -168,6 +169,7 @@ void UI::refreshTheme() {
     uiStylePtr->ScrollbarRounding = util::strToFloat(config::getProp(config::theme,"scrollBarRounding"));
     uiStylePtr->CircleTessellationMaxError = util::strToFloat(config::getProp(config::theme,"circleTess"));
     uiStylePtr->SeparatorTextBorderSize = util::strToFloat(config::getProp(config::theme,"separatorThickness"));
+    uiStylePtr->GrabMinSize = util::strToFloat(config::getProp(config::theme,"grabMinSize"));
 
     auto mColorOptions = config::getAllThemeColorValues();
 

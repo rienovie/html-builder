@@ -28,7 +28,7 @@ private:
     static std::vector<std::string> vFoundThemes;
     static std::map<std::string,std::string> mLoadedTheme;
     static std::map<std::string,std::string> mDefaultNewTheme;
-    static bool bShouldSaveCfg;
+    static bool bShouldSaveSystem, bShouldSaveTheme;
 
     static void loadConfig(configType cfgLoadFrom);
     static void saveConfig(configType cfgSaveTo);
