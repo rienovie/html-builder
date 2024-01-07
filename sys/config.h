@@ -20,13 +20,14 @@ public:
     static std::map<std::string,std::string> getAllThemeColorValues();
     static void checkIfShouldSaveConfigs();
     static void createNewThemeFromCurrent(std::string sNewThemeName);
+    static void findAllThemes();
+    static std::vector<std::string> vFoundThemes;
 
     config();
 
 private:
     static std::map<std::string, std::string> mDefaultConfig;
     static std::map<std::string, std::string> mLoadedConfig;
-    static std::vector<std::string> vFoundThemes;
     static std::map<std::string,std::string> mLoadedTheme;
     static std::map<std::string,std::string> mDefaultNewTheme;
     static bool bShouldSaveSystem, bShouldSaveTheme;
@@ -34,7 +35,6 @@ private:
     static void loadConfig(configType cfgLoadFrom);
     static void saveConfig(configType cfgSaveTo);
     static void setConfigVariableValues(configType cfgtyp, std::vector<std::string>& vFileLines);
-    static void findAllThemes();
     static std::string getThemePathByName(std::string sName);
     static std::string getThemeNameByPath(std::string sPath);
 

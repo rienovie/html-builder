@@ -36,6 +36,7 @@ public:
     static std::vector<std::string> vFoundThemes;
     static ImGuiStyle* uiStylePtr;
     static ImFont *font_main, *font_bold, *font_light;
+    static bool bDefaultThemeActive;
 
     static bool mainLoopCondition();
     static void mainLoop();

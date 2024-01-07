@@ -19,7 +19,7 @@ std::map<std::string,std::string> config::mDefaultNewTheme {
     {"frameRounding","8.000000"}, //should also modify grabRounding & popupRounding
     {"frameBorder","1.000000"},
     {"framePad","14.000000,8.000000"},
-    {"itemSpacing","14.000000,4.000000"},
+    {"itemSpacing","14.000000,8.000000"},
     {"scrollBarSize","14.000000"},
     {"scrollBarRounding","4.000000"},
     {"tabRounding","8.000000"},
@@ -38,7 +38,7 @@ std::map<std::string,std::string> config::mDefaultNewTheme {
     {"~FrameBgActive","0.000000,0.317647,0.611765,1.000000"},
     {"~TitleBg","0.194018,0.460280,0.650980,1.000000"},
     {"~TitleBgActive","0.309804,0.615686,1.000000,1.000000"},
-    {"~MenuBarBg","0.131765,0.374145,0.600000,1.000000"},
+    {"~MenuBarBg","0.000000,0.517647,1.000000,0.313726"},
     {"~ScrollbarBg","0.360000,0.310000,1.000000,0.100000"},
     {"~ScrollbarGrab","0.215686,0.234141,1.000000,1.000000"},
     {"~ScrollbarGrabHovered","0.215686,0.307958,1.000000,1.000000"},
@@ -387,12 +387,31 @@ void config::checkIfShouldSaveConfigs() {
 }
 
 void config::createNewThemeFromCurrent ( std::string sNewThemeName ) {
-    std::string sFileName = "";
-    sFileName.append("../UI/Themes");
-    sFileName.append(sNewThemeName);
-    sFileName.append(".hbtheme");
+    std::string sFilePath = "";
+    sFilePath.append("../UI/Themes/");
+    sFilePath.append(sNewThemeName);
+    sFilePath.append(".hbtheme");
 
+    std::ofstream fileOut;
     //shouldn't need to check if exists because check happens before button can be pressed
-    //TODO working here
+    fileOut.open(sFilePath);
+
+    //populate file with theme values
+    if(fileOut.is_open()) {
+        for(auto themeElement : mLoadedTheme) {
+            fileOut << themeElement.first;
+            fileOut << "=";
+            fileOut << themeElement.second;
+            fileOut << "\n";
+        }
+    } else {
+        util::qPrint("Error creating file",sFilePath);
+    }
+
+    fileOut.close();
+
+    vFoundThemes.push_back(sNewThemeName);
+    update(system,"theme",sNewThemeName);
+
 }
 

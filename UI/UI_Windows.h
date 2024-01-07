@@ -27,4 +27,5 @@ private:
     static void swThemeOptions();
     static void swThemeColors();
     static int themeNameCallback(ImGuiInputTextCallbackData* data);
+    static void BTT(const char* toolTipText);
 };

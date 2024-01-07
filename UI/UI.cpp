@@ -41,6 +41,7 @@ ImFont
 ImVec4 UI::clearColor = ImVec4(0.45,0.55,0.60,1.00);
 std::vector<std::string> UI::vFoundThemes;
 std::map<std::string,int> UI::mColorEnum;
+bool UI::bDefaultThemeActive = false;
 ImGuiStyle *UI::uiStylePtr;
 GLFWwindow *UI::mainWindow;
 
@@ -81,11 +82,7 @@ UI::UI() {
     setColorEnumMap();
     vFoundThemes = config::getAllThemeNames();
     iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
-    for(int i = 0;i<vFoundThemes.size();i++){
-        if(vFoundThemes[i] == config::getProp(config::system,"theme")){
-            iCurrentTheme = i;
-        }
-    }
+    assignCurrentThemeValueByName(config::getProp(config::system,"theme"));
     refreshTheme();
 
     //set manual settings here (shouldn't change by theme)
@@ -140,10 +137,11 @@ void UI::tick_sec() {
 }
 
 void UI::assignCurrentThemeValueByName ( std::string sName ) {
+    bDefaultThemeActive = (sName == "Default");
     for(int i = 0;i<vFoundThemes.size();i++){
         if( vFoundThemes[i] == sName){
             iCurrentTheme = i;
-            break;
+            return;
         }
     }
 }
@@ -285,12 +283,9 @@ void UI::exitApplication() {
 }
 
 void UI::createNewThemeAndSetCurrent ( std::string sName ) {
-    util::qPrint("Called createTheme for theme name",sName);
-    //TODO currently working here
-
     vFoundThemes.push_back(sName);
     config::createNewThemeFromCurrent(sName);
-    config::update(config::system,"theme",sName);
-    refreshTheme();
+    iCurrentTheme = util::searchVector(vFoundThemes,sName,true);
+    bDefaultThemeActive = false;
 }
 

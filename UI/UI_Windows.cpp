@@ -58,7 +58,7 @@ void win::wSettings() {
     ImGui::SliderInt("Font Size",&UI::iFontSize,UI::limitFontSize.x,UI::limitFontSize.y);
     ImGui::PopFont();
 
-    ImGui::Separator();
+    ImGui::NewLine();
 
     ImGui::Text("Create New Theme Based on Current");
     static char cBufNameInput[32] = "";
@@ -171,7 +171,21 @@ void win::wSettings() {
 
     ImGui::SeparatorText("Theme");
 
-    if (ImGui::BeginCombo("Current Theme",UI::vFoundThemes[UI::iCurrentTheme].c_str())){
+    //TODO replace with an icon later
+    if(ImGui::Button("Refresh")) {
+        config::findAllThemes();
+        UI::iCurrentTheme = 0; //makes sure will not be larger than max count
+        //check if current theme file no longer exists
+        if(!util::searchVector(config::vFoundThemes,config::getProp(config::system,"theme"))) {
+            //fallback to Default theme
+            config::update(config::system,"theme","Default");
+        }
+        UI::vFoundThemes = config::getAllThemeNames();
+        UI::assignCurrentThemeValueByName(config::getProp(config::system,"theme"));
+    } BTT("Refresh Theme List");
+
+    ImGui::SameLine();
+    if (ImGui::BeginCombo("Current",UI::vFoundThemes[UI::iCurrentTheme].c_str())){
         //for each theme
         for(int i = 0;i<UI::vFoundThemes.size();i++){
             const bool bSelected = (UI::iCurrentTheme == i);
@@ -180,6 +194,7 @@ void win::wSettings() {
                 //selection change is here
                 config::update(config::system,"theme",UI::vFoundThemes[i]);
                 UI::refreshTheme();
+                UI::bDefaultThemeActive = (UI::vFoundThemes[i] == "Default");
             }
             if( bSelected ) { ImGui::SetItemDefaultFocus(); }
         }
@@ -188,8 +203,10 @@ void win::wSettings() {
 
     //ImGui::NewLine();
     ImGui::Indent();
+    if(UI::bDefaultThemeActive) { ImGui::BeginDisabled(); }
     swThemeOptions();
     swThemeColors();
+    if(UI::bDefaultThemeActive) { ImGui::EndDisabled(); }
     ImGui::Unindent();
 
     ImGui::End();
@@ -334,9 +351,8 @@ void win::swThemeOptions() {
                         "%.2f",
                         ImGuiSliderFlags_AlwaysClamp)) {
         config::update(config::theme,"circleTess",std::to_string(UI::uiStylePtr->CircleTessellationMaxError));
-    }
+    } swCircleTessTT(ImGui::IsItemActive());
 
-    swCircleTessTT(ImGui::IsItemActive());
 }
 
 void win::swThemeColors() {
@@ -357,5 +373,11 @@ int win::themeNameCallback ( ImGuiInputTextCallbackData* data ) {
     static char c = data->EventChar;
     return !((isalnum(c) || c == '_' || c == '-' || c == ' '));
     //will return 0 if valid and 1 if not
+}
+
+void win::BTT ( const char* toolTipText ) {
+    if(ImGui::IsItemActive() || ImGui::IsItemHovered()) {
+        ImGui::SetTooltip("%s",toolTipText);
+    }
 }
 
