@@ -19,10 +19,12 @@ public:
 private:
     static std::map<std::string,bool> mWindowBools;
 
+    static void wMainMenu();
     static void wMain();
     static void wSettings();
     static void wTest();
     static void swCircleTessTT(bool show_samples);
     static void swThemeOptions();
     static void swThemeColors();
+    static int themeNameCallback(ImGuiInputTextCallbackData* data);
 };

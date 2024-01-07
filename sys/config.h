@@ -13,15 +13,16 @@ public:
         theme
     };
 
-
     static std::string getProp(configType cfgFrom, const char* propertyName);
     static std::map<std::string,std::string> getConfig(configType cfgToGet);
     static void update(configType cfgTo, char const* propertyName, std::string sNewValue);
     static std::vector<std::string> getAllThemeNames();
     static std::map<std::string,std::string> getAllThemeColorValues();
     static void checkIfShouldSaveConfigs();
+    static void createNewThemeFromCurrent(std::string sNewThemeName);
 
     config();
+
 private:
     static std::map<std::string, std::string> mDefaultConfig;
     static std::map<std::string, std::string> mLoadedConfig;
@@ -36,4 +37,5 @@ private:
     static void findAllThemes();
     static std::string getThemePathByName(std::string sName);
     static std::string getThemeNameByPath(std::string sPath);
+
 };

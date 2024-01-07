@@ -47,6 +47,8 @@ public:
     static ImVec2 getVec2FromString(std::string sVec2Value);
     static std::string getStringFromVec2(ImVec2 vec2Value);
     static std::string getStringFromVec4(ImVec4 vec4Value);
+    static void exitApplication();
+    static void createNewThemeAndSetCurrent(std::string sName);
 
     UI();
     ~UI();

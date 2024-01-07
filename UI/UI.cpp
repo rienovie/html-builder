@@ -169,6 +169,7 @@ void UI::refreshTheme() {
     uiStylePtr->ScrollbarRounding = util::strToFloat(config::getProp(config::theme,"scrollBarRounding"));
     uiStylePtr->CircleTessellationMaxError = util::strToFloat(config::getProp(config::theme,"circleTess"));
     uiStylePtr->SeparatorTextBorderSize = util::strToFloat(config::getProp(config::theme,"separatorThickness"));
+    uiStylePtr->WindowBorderSize = uiStylePtr->SeparatorTextBorderSize;
     uiStylePtr->GrabMinSize = util::strToFloat(config::getProp(config::theme,"grabMinSize"));
 
     auto mColorOptions = config::getAllThemeColorValues();
@@ -176,6 +177,17 @@ void UI::refreshTheme() {
     for(auto colOpt : mColorOptions) {
         uiStylePtr->Colors[getColorEnum(colOpt.first)] = getVec4FromString(colOpt.second);
     }
+
+    //make dockingEmptyColor darker
+    //TODO need to make this update when user changes color
+    //currently this only updates when changing theme
+    ImVec4 modColor = uiStylePtr->Colors[ImGuiCol_WindowBg];
+    float modVal = float(0.5);
+    modColor.x *= modVal;
+    modColor.y *= modVal;
+    modColor.z *= modVal;
+    modColor.w = 1;
+    uiStylePtr->Colors[ImGuiCol_DockingEmptyBg] = modColor;
 }
 
 ImVec4 UI::getVec4FromString ( std::string sVec4Value ) {
@@ -267,3 +279,18 @@ std::string UI::getStringFromVec4 ( ImVec4 vec4Value ) {
 
     return sOutput;
 }
+
+void UI::exitApplication() {
+    glfwSetWindowShouldClose(mainWindow,GLFW_TRUE);
+}
+
+void UI::createNewThemeAndSetCurrent ( std::string sName ) {
+    util::qPrint("Called createTheme for theme name",sName);
+    //TODO currently working here
+
+    vFoundThemes.push_back(sName);
+    config::createNewThemeFromCurrent(sName);
+    config::update(config::system,"theme",sName);
+    refreshTheme();
+}
+

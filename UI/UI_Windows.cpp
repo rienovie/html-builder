@@ -3,28 +3,52 @@
 std::map<std::string,bool> win::mWindowBools {
     {"demo",false},
     {"settings",false},
-    {"test",false}
+    {"test",false},
+    {"main",false}
 };
 
+void win::wMainMenu() {
+    ImGui::BeginMainMenuBar();
+
+    if(ImGui::BeginMenu("File")) {
+        if(ImGui::MenuItem("Exit")) {
+            UI::exitApplication();
+        }
+
+        ImGui::EndMenu();
+    }
+
+    ImGui::MenuItem("Settings",NULL,&mWindowBools["settings"]);
+
+    if(ImGui::BeginMenu("Windows")) {
+        ImGui::MenuItem("Settings",NULL,&mWindowBools["settings"]);
+        ImGui::MenuItem("ImGui Demo",NULL,&mWindowBools["demo"]);
+
+        ImGui::EndMenu();
+    }
+
+    ImGui::EndMainMenuBar();
+}
+
 void win::mainLoop() {
-    wMain();
+    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+    wMainMenu();
+    if(mWindowBools["main"]) { wMain(); }
     if(mWindowBools["demo"]) { ImGui::ShowDemoWindow(); }
     if(mWindowBools["settings"]) { wSettings(); }
     if(mWindowBools["test"]) { wTest(); }
 }
 
 void win::wMain() {
-    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
     ImGui::Begin("Main",NULL,ImGuiWindowFlags_NoCollapse);
-    if(ImGui::Button("Toggle Test Window")) { mWindowBools["test"] = !mWindowBools["test"]; }
-    if(ImGui::Button("Toggle Demo Window")) { mWindowBools["demo"] = !mWindowBools["demo"]; }
-    if(ImGui::Button("Toggle Settings Window")) { mWindowBools["settings"] = !mWindowBools["settings"]; }
+
     ImGui::End();
 }
 
 void win::wSettings() {
-    ImGui::Begin("Settings",NULL);
+    ImGui::Begin("Settings",&mWindowBools["settings"],ImGuiWindowFlags_NoCollapse);
 
     ImGui::SeparatorText("System");
 
@@ -33,6 +57,43 @@ void win::wSettings() {
     ImGui::PushFont(UI::font_bold);
     ImGui::SliderInt("Font Size",&UI::iFontSize,UI::limitFontSize.x,UI::limitFontSize.y);
     ImGui::PopFont();
+
+    ImGui::Separator();
+
+    ImGui::Text("Create New Theme Based on Current");
+    static char cBufNameInput[32] = "";
+    ImGui::InputTextWithHint("New Theme","New Theme Name",cBufNameInput,32,ImGuiInputTextFlags_CallbackCharFilter,themeNameCallback);
+
+    if(cBufNameInput[0] != '\0') {
+        static bool bFileDoesNotExist;
+        static const char* error;
+        static std::string sBuild;
+
+        bFileDoesNotExist = true;
+        sBuild.clear();
+        error = "";
+
+        //buildString
+        for(int i = 0; i < 32 ; i++) {
+            if(cBufNameInput[i] == '\0') { break; }
+            else sBuild.push_back(cBufNameInput[i]);
+        }
+
+        if(util::searchVector(UI::vFoundThemes,sBuild)) {
+            bFileDoesNotExist = false;
+            error = "Cannot save! Theme already exists!";
+        }
+
+        if(bFileDoesNotExist) {
+            if(ImGui::Button("Save Theme")) {
+                UI::createNewThemeAndSetCurrent(sBuild);
+
+                //I'm honestly not sure if this is the best way but it seems to works so meh
+                cBufNameInput[0] = '\0';
+            }
+        } else ImGui::Text( "%s", error);
+
+    }
 
     /* using this to write to the config file, will probably clean up later
     if(ImGui::Button("CLick")) {
@@ -125,10 +186,7 @@ void win::wSettings() {
         ImGui::EndCombo();
     }
 
-    if(ImGui::Button("Save Theme")) {
-
-    }
-
+    //ImGui::NewLine();
     ImGui::Indent();
     swThemeOptions();
     swThemeColors();
@@ -293,5 +351,11 @@ void win::swThemeColors() {
         }
     }
 
+}
+
+int win::themeNameCallback ( ImGuiInputTextCallbackData* data ) {
+    static char c = data->EventChar;
+    return !((isalnum(c) || c == '_' || c == '-' || c == ' '));
+    //will return 0 if valid and 1 if not
 }
 
