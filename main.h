@@ -7,6 +7,7 @@
 #include "UI/UI.h"
 #include "sys/util.h"
 #include "sys/config.h"
+#include "sys/html.h"
 
 void tick_sec();
 void tick_long();

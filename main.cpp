@@ -21,6 +21,7 @@ int main () {
 
     auto classCFG = new config;
     UI* classUI = NULL;
+    auto classHTML = new html;
 
     try {
         classUI = new UI;
@@ -45,6 +46,7 @@ int main () {
     bCloseThreads = true;
     delete classCFG;
     delete classUI;
+    delete classHTML;
     t_sec.detach();
     t_long.detach();
 

@@ -39,11 +39,36 @@ void win::mainLoop() {
     if(mWindowBools["ImGui Demo"]) { ImGui::ShowDemoWindow(); }
     if(mWindowBools["Settings"]) { wSettings(); }
     if(mWindowBools["Test"]) { wTest(); }
+
+    for(auto file : html::vLoadedHTMLs) {
+        wFileRaw(file);
+    }
 }
+
+void win::wFileRaw ( html::file* filePTR ) {
+    ImGui::Begin(filePTR->sFileName.c_str());
+
+    for(auto sLine : filePTR->vFileLines) {
+        ImGui::Text( "%s", sLine.c_str());
+    }
+
+    ImGui::End();
+}
+
 
 void win::wMain() {
 
     ImGui::Begin("Main",&mWindowBools["Main"],ImGuiWindowFlags_NoCollapse);
+
+    static std::string sFileLocationInput;
+    ImGui::InputTextWithHint("Location","File location",&sFileLocationInput);
+    if(ImGui::Button("Load File")) {
+        html::loadFile(sFileLocationInput);
+    }
+
+    for(auto item : html::vLoadedHTMLs) {
+        ImGui::Text( "%s", item->sFileName.c_str());
+    }
 
     ImGui::End();
 }
@@ -52,7 +77,9 @@ void win::wSettings() {
     ImGui::Begin("Settings",&mWindowBools["Settings"],ImGuiWindowFlags_NoCollapse);
 
     ImGui::SeparatorText("System");
-
+    for(auto item : html::vLoadedHTMLs) {
+        ImGui::Text( "%s", item->sFileLocation.c_str());
+    }
     if(ImGui::Button("Default")) { UI::iFontSize = 24; };
     ImGui::SameLine();
     ImGui::PushFont(UI::font_bold);

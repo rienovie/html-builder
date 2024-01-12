@@ -12,6 +12,7 @@
 #include <string>
 #include <math.h>
 #include <limits.h>
+#include "../sys/html.h"
 
 class win {
 public:
@@ -23,6 +24,7 @@ private:
     static void wMain();
     static void wSettings();
     static void wTest();
+    static void wFileRaw(html::file* filePTR);
     static void swCircleTessTT(bool show_samples);
     static void swThemeOptions();
     static void swThemeColors();
