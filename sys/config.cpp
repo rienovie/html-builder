@@ -415,3 +415,43 @@ void config::createNewThemeFromCurrent ( std::string sNewThemeName ) {
 
 }
 
+std::vector<std::string> config::getFavorites() {
+    std::vector<std::string> vOutput;
+
+    std::string sProp = getProp(system,"Favorites");
+    if(sProp == "NULL") { return vOutput; }
+
+    std::string sBuild = "";
+    int iPropLength = sProp.length();
+
+    for(int i = 0; i < iPropLength; i++) {
+        if(sProp[i] == ',' || i == iPropLength - 1) {
+            vOutput.push_back(sBuild);
+            sBuild.clear();
+        } else { sBuild.push_back(sProp[i]); }
+    }
+
+    return vOutput;
+}
+
+void config::modifyFavorites ( std::string sPath, bool bRemove ) {
+    std::string sCurrentProp = mLoadedConfig["Favorites"];
+    int iCurrentPropLength = sCurrentProp.length();
+    std::string sBuild = "", sNewProp = "";
+
+    if(bRemove) {
+        for(int i = 0; i< iCurrentPropLength; i++) {
+            if(sCurrentProp[i] == ',' || i == iCurrentPropLength - 1) {
+                if(i == iCurrentPropLength - 1) { sBuild.push_back(sCurrentProp[i]); }
+                if(sBuild != sPath) {
+                    sNewProp.append(sBuild);
+                    sNewProp.append(",");
+                }
+                sBuild.clear();
+            } else { sBuild.push_back(sCurrentProp[i]); }
+        }
+    } else {
+
+    }
+}
+

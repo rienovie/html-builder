@@ -22,6 +22,8 @@ public:
     static void createNewThemeFromCurrent(std::string sNewThemeName);
     static void findAllThemes();
     static std::vector<std::string> vFoundThemes;
+    static std::vector<std::string> getFavorites();
+    static void modifyFavorites(std::string sPath,bool bRemove = false);
 
     config();
 

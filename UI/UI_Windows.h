@@ -13,6 +13,7 @@
 #include <math.h>
 #include <limits.h>
 #include "../sys/html.h"
+#include <filesystem>
 
 class win {
 public:
@@ -25,9 +26,10 @@ private:
     static void wSettings();
     static void wTest();
     static void wFileRaw(html::file* filePTR);
+    static void wFileBrowser();
     static void swCircleTessTT(bool show_samples);
     static void swThemeOptions();
     static void swThemeColors();
     static int themeNameCallback(ImGuiInputTextCallbackData* data);
-    static void BTT(const char* toolTipText);
+    static void BasicToolTip(const char* toolTipText);
 };

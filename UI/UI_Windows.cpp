@@ -4,7 +4,8 @@ std::map<std::string,bool> win::mWindowBools {
     {"ImGui Demo",false},
     {"Settings",false},
     {"Test",false},
-    {"Main",false}
+    {"Main",false},
+    {"File Browser",false}
 };
 
 void win::wMainMenu() {
@@ -39,6 +40,7 @@ void win::mainLoop() {
     if(mWindowBools["ImGui Demo"]) { ImGui::ShowDemoWindow(); }
     if(mWindowBools["Settings"]) { wSettings(); }
     if(mWindowBools["Test"]) { wTest(); }
+    if(mWindowBools["File Browser"]) { wFileBrowser(); }
 
     for(auto file : html::vLoadedHTMLs) {
         wFileRaw(file);
@@ -46,7 +48,7 @@ void win::mainLoop() {
 }
 
 void win::wFileRaw ( html::file* filePTR ) {
-    ImGui::Begin(filePTR->sFileName.c_str());
+    ImGui::Begin(filePTR->sFileName.c_str(),NULL,ImGuiWindowFlags_NoCollapse);
 
     for(auto sLine : filePTR->vFileLines) {
         ImGui::Text( "%s", sLine.c_str());
@@ -55,6 +57,19 @@ void win::wFileRaw ( html::file* filePTR ) {
     ImGui::End();
 }
 
+void win::wFileBrowser() {
+    //create
+    static std::vector<std::string> vFavorites, vCurrentDir;
+
+
+    ImGui::Begin("",&mWindowBools["File Browser"],ImGuiWindowFlags_NoCollapse);
+
+    ImGui::SeparatorText("Favorites");
+
+    ImGui::SeparatorText("");
+
+    ImGui::End();
+}
 
 void win::wMain() {
 
@@ -159,7 +174,7 @@ void win::wSettings() {
         }
         UI::vFoundThemes = config::getAllThemeNames();
         UI::assignCurrentThemeValueByName(config::getProp(config::system,"theme"));
-    } BTT("Refresh Theme List");
+    } BasicToolTip("Refresh Theme List");
 
     ImGui::SameLine();
     if (ImGui::BeginCombo("Current",UI::vFoundThemes[UI::iCurrentTheme].c_str())){
@@ -355,7 +370,7 @@ int win::themeNameCallback ( ImGuiInputTextCallbackData* data ) {
     //will return 0 if valid and 1 if not
 }
 
-void win::BTT ( const char* toolTipText ) {
+void win::BasicToolTip ( const char* toolTipText ) {
     if(ImGui::IsItemActive() || ImGui::IsItemHovered()) {
         ImGui::SetTooltip("%s",toolTipText);
     }
