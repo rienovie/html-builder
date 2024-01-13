@@ -58,15 +58,18 @@ void win::wFileRaw ( html::file* filePTR ) {
 }
 
 void win::wFileBrowser() {
-    //create
-    static std::vector<std::string> vFavorites, vCurrentDir;
+    static std::vector<std::string> vCurrentDir;
 
 
-    ImGui::Begin("",&mWindowBools["File Browser"],ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("File Browser",&mWindowBools["File Browser"],ImGuiWindowFlags_NoCollapse);
 
     ImGui::SeparatorText("Favorites");
 
-    ImGui::SeparatorText("");
+    for(auto sItem : UI::vFavorites) {
+        ImGui::Text( "%s", sItem.c_str());
+    }
+
+    ImGui::SeparatorText("Directory Explorer");
 
     ImGui::End();
 }

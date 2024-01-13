@@ -33,10 +33,14 @@ public:
         limitSeparatorThickness,
         limitCircleTess,
         limitGrabMinSize;
-    static std::vector<std::string> vFoundThemes;
+    static std::vector<std::string>
+        vFoundThemes,
+        vFavorites;
     static ImGuiStyle* uiStylePtr;
     static ImFont *font_main, *font_bold, *font_light;
-    static bool bDefaultThemeActive;
+    static bool
+        bDefaultThemeActive,
+        bFavoritesUpdated;
 
     static bool mainLoopCondition();
     static void mainLoop();

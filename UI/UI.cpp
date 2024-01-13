@@ -39,9 +39,13 @@ ImFont
     *UI::font_light;
 
 ImVec4 UI::clearColor = ImVec4(0.45,0.55,0.60,1.00);
-std::vector<std::string> UI::vFoundThemes;
+std::vector<std::string>
+    UI::vFoundThemes,
+    UI::vFavorites;
 std::map<std::string,int> UI::mColorEnum;
-bool UI::bDefaultThemeActive = false;
+bool
+    UI::bDefaultThemeActive = false,
+    UI::bFavoritesUpdated = true; //set to true so it'll run right away
 ImGuiStyle *UI::uiStylePtr;
 GLFWwindow *UI::mainWindow;
 
@@ -133,6 +137,10 @@ void UI::tick_sec() {
     if(iLastStoredFontSize != iFontSize){
         iLastStoredFontSize = iFontSize;
         config::update(config::system,"fontSize",std::to_string(iFontSize));
+    }
+    if(bFavoritesUpdated) {
+        vFavorites = config::getFavorites();
+        bFavoritesUpdated = false;
     }
 }
 
@@ -288,4 +296,3 @@ void UI::createNewThemeAndSetCurrent ( std::string sName ) {
     iCurrentTheme = util::searchVector(vFoundThemes,sName,true);
     bDefaultThemeActive = false;
 }
-

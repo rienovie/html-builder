@@ -5,7 +5,8 @@ std::map<std::string, std::string> config::mDefaultConfig{
     {"theme","Default"},
     {"windowWidth","1600"},
     {"windowHeight","900"},
-    {"fontSize","24"}
+    {"fontSize","24"},
+    {"favorites","/,/home"}
 };
 bool
     config::bShouldSaveSystem = false,
@@ -418,7 +419,7 @@ void config::createNewThemeFromCurrent ( std::string sNewThemeName ) {
 std::vector<std::string> config::getFavorites() {
     std::vector<std::string> vOutput;
 
-    std::string sProp = getProp(system,"Favorites");
+    std::string sProp = getProp(system,"favorites");
     if(sProp == "NULL") { return vOutput; }
 
     std::string sBuild = "";
@@ -426,6 +427,8 @@ std::vector<std::string> config::getFavorites() {
 
     for(int i = 0; i < iPropLength; i++) {
         if(sProp[i] == ',' || i == iPropLength - 1) {
+            //this feels slopy to me but I'm tired and it works so I'll fix later
+            if(i == iPropLength - 1) { sBuild.push_back(sProp[i]); }
             vOutput.push_back(sBuild);
             sBuild.clear();
         } else { sBuild.push_back(sProp[i]); }
@@ -435,13 +438,14 @@ std::vector<std::string> config::getFavorites() {
 }
 
 void config::modifyFavorites ( std::string sPath, bool bRemove ) {
-    std::string sCurrentProp = mLoadedConfig["Favorites"];
+    std::string sCurrentProp = mLoadedConfig["favorites"];
     int iCurrentPropLength = sCurrentProp.length();
     std::string sBuild = "", sNewProp = "";
 
     if(bRemove) {
         for(int i = 0; i< iCurrentPropLength; i++) {
             if(sCurrentProp[i] == ',' || i == iCurrentPropLength - 1) {
+                //this feels slopy to me but I'm tired and it works so I'll fix later
                 if(i == iCurrentPropLength - 1) { sBuild.push_back(sCurrentProp[i]); }
                 if(sBuild != sPath) {
                     sNewProp.append(sBuild);
@@ -451,7 +455,11 @@ void config::modifyFavorites ( std::string sPath, bool bRemove ) {
             } else { sBuild.push_back(sCurrentProp[i]); }
         }
     } else {
-
+        sNewProp = sCurrentProp;
+        sNewProp.append(",");
+        sNewProp.append(sPath);
     }
+
+    update(system,"favorites",sNewProp);
 }
 

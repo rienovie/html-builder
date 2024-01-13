@@ -13,6 +13,8 @@ public:
         theme
     };
 
+    static std::vector<std::string> vFoundThemes;
+
     static std::string getProp(configType cfgFrom, const char* propertyName);
     static std::map<std::string,std::string> getConfig(configType cfgToGet);
     static void update(configType cfgTo, char const* propertyName, std::string sNewValue);
@@ -21,7 +23,6 @@ public:
     static void checkIfShouldSaveConfigs();
     static void createNewThemeFromCurrent(std::string sNewThemeName);
     static void findAllThemes();
-    static std::vector<std::string> vFoundThemes;
     static std::vector<std::string> getFavorites();
     static void modifyFavorites(std::string sPath,bool bRemove = false);
 

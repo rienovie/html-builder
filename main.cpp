@@ -57,22 +57,20 @@ int main () {
 
 void tick_sec() {
     if( bCloseThreads ) return;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
     //util::qPrint("tick");
     UI::tick_sec();
     //config::checkIfShouldSaveConfigs();
 
-    //recursive call
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     tick_sec();
 }
 
 void tick_long() {
     if(bCloseThreads) return;
-    std::this_thread::sleep_for(std::chrono::seconds(5));
-    util::printMemUse(memUsage);
+    //util::printMemUse(memUsage);
     config::checkIfShouldSaveConfigs();
 
-    //recursive call
+    std::this_thread::sleep_for(std::chrono::seconds(5));
     tick_long();
 
 }
