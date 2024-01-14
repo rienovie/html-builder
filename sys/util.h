@@ -4,10 +4,11 @@
 #include <string>
 #include <vector>
 #include <sys/resource.h>
+#include <filesystem>
+
+
 
 namespace util {
-    int strToInt(std::string str);
-    float strToFloat(std::string str);
 
     //quick print
     template <typename T>
@@ -34,6 +35,10 @@ namespace util {
         return (0 - (bReturnIndex));
     }
 
+    int strToInt(std::string str);
+    float strToFloat(std::string str);
+    std::vector<std::string> splitStringOnChar(std::string& sToSplit,char cSplit);
     void printMemUse(rusage& usageRef);
+    bool hasPathPermission(std::filesystem::path pPath, bool bPrintErrors = false);
 
 }

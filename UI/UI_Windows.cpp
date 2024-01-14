@@ -29,6 +29,8 @@ void win::wMainMenu() {
         ImGui::EndMenu();
     }
 
+    ImGui::Text(" |  %.3f ms/frame (%.1f FPS)", 1000.0f / UI::ioPtr->Framerate, UI::ioPtr->Framerate);
+
     ImGui::EndMainMenuBar();
 }
 
@@ -48,7 +50,10 @@ void win::mainLoop() {
 }
 
 void win::wFileRaw ( html::file* filePTR ) {
-    ImGui::Begin(filePTR->sFileName.c_str(),NULL,ImGuiWindowFlags_NoCollapse);
+    //TODO this is broken, should actually call html::closeFile when closed
+    mWindowBools[filePTR->sFileName] = true;
+
+    ImGui::Begin(filePTR->sFileName.c_str(),&mWindowBools[filePTR->sFileName],ImGuiWindowFlags_NoCollapse);
 
     for(auto sLine : filePTR->vFileLines) {
         ImGui::Text( "%s", sLine.c_str());
@@ -58,8 +63,26 @@ void win::wFileRaw ( html::file* filePTR ) {
 }
 
 void win::wFileBrowser() {
-    static std::vector<std::string> vCurrentDir;
+    static std::string sCurrentDir = "/";
+    static std::vector<std::string> vCurrentDirSplit;
+    static std::vector<std::filesystem::path> vAllCurrentDir;
+    static bool bShouldUpdateDir = true;
 
+    if(bShouldUpdateDir) {
+        bShouldUpdateDir = false;
+        vAllCurrentDir.clear();
+        for(auto item : std::filesystem::directory_iterator {sCurrentDir} ) {
+            if(item.path().filename().c_str()[0] == '.' //check if hidden
+                || (item.is_regular_file() && item.path().extension() != ".cpp")
+                //TODO Replace extension above with html when done testing
+            )  {
+                continue;
+            }
+            vAllCurrentDir.push_back(item.path());
+        }
+        vCurrentDirSplit.clear();
+        vCurrentDirSplit = util::splitStringOnChar(sCurrentDir,'/');
+    }
 
     ImGui::Begin("File Browser",&mWindowBools["File Browser"],ImGuiWindowFlags_NoCollapse);
 
@@ -68,8 +91,57 @@ void win::wFileBrowser() {
     for(auto sItem : UI::vFavorites) {
         ImGui::Text( "%s", sItem.c_str());
     }
+    ImGui::SeparatorText("Current Directory");
 
-    ImGui::SeparatorText("Directory Explorer");
+    ImGui::BeginChild("CurDir",ImVec2(0,0),ImGuiChildFlags_AutoResizeY,ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+    if(ImGui::IsWindowHovered() && ImGui::GetScrollX()) {
+
+    }
+    if(ImGui::Button("/")) {
+        sCurrentDir = "/";
+        bShouldUpdateDir = true;
+    }
+
+    //Path buttons
+    for(int i = 0; i < vCurrentDirSplit.size(); i++) {
+        if(vCurrentDirSplit[i] == "") { continue; }
+        ImGui::SameLine();
+        if(ImGui::Button(vCurrentDirSplit[i].c_str())) {
+            std::string sBuildPath = "";
+
+            //append each path piece prior to build full path
+            for(int j = 0; j < i + 1; j++) {
+                sBuildPath.append("/");
+                sBuildPath.append(vCurrentDirSplit[j]);
+            }
+
+            sCurrentDir = sBuildPath;
+            bShouldUpdateDir = true;
+        }
+        ImGui::SameLine();
+        ImGui::TextDisabled("/");
+    }
+
+    ImGui::EndChild();
+
+    //for each in current directory buttons
+    ImGui::BeginChild(sCurrentDir.c_str(),ImVec2(0,0));
+    for(auto pItem : vAllCurrentDir) {
+        if(!util::hasPathPermission(pItem)) { continue; }
+
+        std::string sButtonTxt = pItem.filename();
+        if(std::filesystem::is_directory(pItem)) { sButtonTxt.append("/"); }
+        if(ImGui::Button(sButtonTxt.c_str())) {
+            if(!std::filesystem::is_directory(pItem)) {
+                html::loadFile(pItem);
+                mWindowBools["File Browser"] = false;
+                continue;
+            }
+            sCurrentDir = pItem;
+            bShouldUpdateDir = true;
+        }
+    }
+    ImGui::EndChild();
 
     ImGui::End();
 }
@@ -85,7 +157,7 @@ void win::wMain() {
     }
 
     for(auto item : html::vLoadedHTMLs) {
-        ImGui::Text( "%s", item->sFileName.c_str());
+        ImGui::Text( "%s", item->sFileLocation.c_str());
     }
 
     ImGui::End();
@@ -362,6 +434,15 @@ void win::swThemeColors() {
         i = UI::getColorEnum(item.first);
         if(ImGui::ColorEdit4(ImGui::GetStyleColorName(i),(float*)&UI::uiStylePtr->Colors[i])) {
             config::update(config::theme,item.first.c_str(),UI::getStringFromVec4(UI::uiStylePtr->Colors[i]));
+            if(item.first == "~WindowBg") {
+                ImVec4 modColor = UI::uiStylePtr->Colors[ImGuiCol_WindowBg];
+                float modVal = float(0.5);
+                modColor.x *= modVal;
+                modColor.y *= modVal;
+                modColor.z *= modVal;
+                modColor.w = 1;
+                UI::uiStylePtr->Colors[ImGuiCol_DockingEmptyBg] = modColor;
+            };
         }
     }
 

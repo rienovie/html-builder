@@ -21,11 +21,15 @@ public:
 
         file(std::string sFilePath);
     private:
-
     };
 
+    //public for html class
+    // I would have put the file class below this for visual clarity but it needs
+    // to be put above for the declarations below
     static std::vector<file*> vLoadedHTMLs;
+
     static void loadFile(std::string sFilePath);
+    static void closeFile(std::string sLoadedFileFullPath);
 
     ~html();
 private:

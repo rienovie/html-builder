@@ -9,6 +9,7 @@
  * m = map
  * v = vector
  * f = float
+ * p = path (directory / filesystem path)
  * w = window includes Begin() and End()
  * sw = subWindow assumes it's within a Begin() and End()
  *

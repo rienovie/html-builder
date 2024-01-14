@@ -37,7 +37,11 @@ public:
         vFoundThemes,
         vFavorites;
     static ImGuiStyle* uiStylePtr;
-    static ImFont *font_main, *font_bold, *font_light;
+    static ImGuiIO* ioPtr;
+    static ImFont
+        *font_main,
+        *font_bold,
+        *font_light;
     static bool
         bDefaultThemeActive,
         bFavoritesUpdated;

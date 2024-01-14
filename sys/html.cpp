@@ -42,3 +42,15 @@ html::file::file ( std::string sFilePath ) {
     }
     fileIn.close();
 }
+
+void html::closeFile ( std::string sLoadedFileFullPath ) {
+    int iSize = vLoadedHTMLs.size();
+
+    for(int i = 0;i < iSize;i++){
+        if(vLoadedHTMLs[i]->sFileLocation == sLoadedFileFullPath) {
+            delete vLoadedHTMLs[i];
+            vLoadedHTMLs.erase(vLoadedHTMLs.begin() + i);
+            return;
+        }
+    }
+}

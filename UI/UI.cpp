@@ -48,6 +48,7 @@ bool
     UI::bFavoritesUpdated = true; //set to true so it'll run right away
 ImGuiStyle *UI::uiStylePtr;
 GLFWwindow *UI::mainWindow;
+ImGuiIO *UI::ioPtr;
 
 //CONSTRUCTOR
 UI::UI() {
@@ -71,12 +72,12 @@ UI::UI() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    font_main = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",limitFontSize.y );
-    font_bold = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",limitFontSize.y );
-    font_light = io.Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",limitFontSize.y );
+    ioPtr = &ImGui::GetIO();
+    ioPtr->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    ioPtr->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    font_main = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",limitFontSize.y );
+    font_bold = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",limitFontSize.y );
+    font_light = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",limitFontSize.y );
 
     ImGui_ImplGlfw_InitForOpenGL(mainWindow,true);
     ImGui_ImplOpenGL3_Init("#version 130");
@@ -185,8 +186,6 @@ void UI::refreshTheme() {
     }
 
     //make dockingEmptyColor darker
-    //TODO need to make this update when user changes color
-    //currently this only updates when changing theme
     ImVec4 modColor = uiStylePtr->Colors[ImGuiCol_WindowBg];
     float modVal = float(0.5);
     modColor.x *= modVal;
