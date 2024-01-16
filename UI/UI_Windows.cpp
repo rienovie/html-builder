@@ -87,13 +87,17 @@ void win::wFileBrowser() {
     ImGui::Begin("File Browser",&mWindowBools["File Browser"],ImGuiWindowFlags_NoCollapse);
 
     ImGui::SeparatorText("Favorites");
-
     for(auto sItem : UI::vFavorites) {
         if(ImGui::Button(sItem.c_str())) {
-            sCurrentDir = sItem;
-            bShouldUpdateDir = true;
+            if(std::filesystem::is_regular_file(sItem)) {
+                html::loadFile(sItem);
+            } else {
+                sCurrentDir = sItem;
+                bShouldUpdateDir = true;
+            }
         }
     }
+
     ImGui::SeparatorText("Current Directory");
 
     ImGui::BeginChild("CurDir",ImVec2(0,0),ImGuiChildFlags_AutoResizeY,ImGuiWindowFlags_AlwaysHorizontalScrollbar);
@@ -128,17 +132,24 @@ void win::wFileBrowser() {
     ImGui::EndChild();
 
     //for each in current directory buttons
-    ImGui::BeginChild(sCurrentDir.c_str(),ImVec2(0,0));
-    for(auto pItem : vAllCurrentDir) {
+    ImGui::BeginChild(sCurrentDir.c_str());
+    for(auto &pItem : vAllCurrentDir) {
         if(!util::hasPathPermission(pItem)) { continue; }
 
         std::string sButtonTxt = pItem.filename();
+
+        //this is needed so ImGui creates functional btns for each fav btn
+        ImGui::PushID(&pItem);
+
         if(std::filesystem::is_directory(pItem)) { sButtonTxt.append("/"); }
         if(ImGui::Button("*")) {
             util::qPrint("New Fav button hit",pItem,sButtonTxt);
             config::modifyFavorites(pItem);
             UI::bFavoritesUpdated = true;
         }
+        BasicToolTip("Add to favorites");
+        ImGui::PopID();
+
         ImGui::SameLine();
         if(ImGui::Button(sButtonTxt.c_str())) {
             if(!std::filesystem::is_directory(pItem)) {
@@ -149,6 +160,7 @@ void win::wFileBrowser() {
             sCurrentDir = pItem;
             bShouldUpdateDir = true;
         }
+
     }
     ImGui::EndChild();
 

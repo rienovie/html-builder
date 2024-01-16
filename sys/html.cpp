@@ -3,6 +3,11 @@
 std::vector<html::file*> html::vLoadedHTMLs;
 
 void html::loadFile ( std::string sFilePath ) {
+    //do not open if already open
+    for(auto file : vLoadedHTMLs) {
+        if(file->sFileLocation == sFilePath) { return; }
+    }
+
     if(std::filesystem::exists(sFilePath)) {
         file *newFilePTR = new file(sFilePath);
         vLoadedHTMLs.push_back(newFilePTR);
