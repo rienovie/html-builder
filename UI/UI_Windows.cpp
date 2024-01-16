@@ -89,7 +89,10 @@ void win::wFileBrowser() {
     ImGui::SeparatorText("Favorites");
 
     for(auto sItem : UI::vFavorites) {
-        ImGui::Text( "%s", sItem.c_str());
+        if(ImGui::Button(sItem.c_str())) {
+            sCurrentDir = sItem;
+            bShouldUpdateDir = true;
+        }
     }
     ImGui::SeparatorText("Current Directory");
 
@@ -131,6 +134,12 @@ void win::wFileBrowser() {
 
         std::string sButtonTxt = pItem.filename();
         if(std::filesystem::is_directory(pItem)) { sButtonTxt.append("/"); }
+        if(ImGui::Button("*")) {
+            util::qPrint("New Fav button hit",pItem,sButtonTxt);
+            config::modifyFavorites(pItem);
+            UI::bFavoritesUpdated = true;
+        }
+        ImGui::SameLine();
         if(ImGui::Button(sButtonTxt.c_str())) {
             if(!std::filesystem::is_directory(pItem)) {
                 html::loadFile(pItem);

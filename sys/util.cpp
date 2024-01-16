@@ -34,6 +34,7 @@ namespace util {
 
         for(int i = 0; i < iStrLength; i++) {
             if(sToSplit[i] == cSplit) {
+                if(sBuild.length() == 0) { continue; } //if is blank don't add
                 vOutput.push_back(sBuild);
                 sBuild.clear();
             } else { sBuild.push_back(sToSplit[i]); }

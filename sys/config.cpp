@@ -441,8 +441,10 @@ void config::modifyFavorites ( std::string sPath, bool bRemove ) {
     std::string sCurrentProp = mLoadedConfig["favorites"];
     int iCurrentPropLength = sCurrentProp.length();
     std::string sBuild = "", sNewProp = "";
+    bool bShouldUpdate = true;
 
     if(bRemove) {
+        util::qPrint("Modify favs bRemove true");
         for(int i = 0; i< iCurrentPropLength; i++) {
             if(sCurrentProp[i] == ',' || i == iCurrentPropLength - 1) {
                 //this feels slopy to me but I'm tired and it works so I'll fix later
@@ -455,11 +457,17 @@ void config::modifyFavorites ( std::string sPath, bool bRemove ) {
             } else { sBuild.push_back(sCurrentProp[i]); }
         }
     } else {
-        sNewProp = sCurrentProp;
-        sNewProp.append(",");
-        sNewProp.append(sPath);
+        util::qPrint("Modify favs bRemove false");
+        //make sure to only add if not already added
+        auto vCurrentFavs = util::splitStringOnChar(sCurrentProp,',');
+        if(!util::searchVector(vCurrentFavs,sPath)) {
+            sNewProp = sCurrentProp;
+            sNewProp.append(",");
+            sNewProp.append(sPath);
+        } else { bShouldUpdate = false; }
+
     }
 
-    update(system,"favorites",sNewProp);
+    if(bShouldUpdate) { update(system,"favorites",sNewProp); }
 }
 
