@@ -50,7 +50,11 @@ void win::mainLoop() {
 }
 
 void win::wFileRaw ( html::file* filePTR ) {
-    //TODO this is broken, should actually call html::closeFile when closed
+    if(mWindowBools.find(filePTR->sFileName) != mWindowBools.end() && mWindowBools[filePTR->sFileName] == false) {
+        mWindowBools.erase(filePTR->sFileName);
+        html::closeFile(filePTR->sFileLocation);
+        return;
+    }
     mWindowBools[filePTR->sFileName] = true;
 
     ImGui::Begin(filePTR->sFileName.c_str(),&mWindowBools[filePTR->sFileName],ImGuiWindowFlags_NoCollapse);
@@ -88,6 +92,16 @@ void win::wFileBrowser() {
 
     ImGui::SeparatorText("Favorites");
     for(auto sItem : UI::vFavorites) {
+
+        ImGui::PushID(sItem.c_str());
+        if(ImGui::Button("X")) {
+            config::modifyFavorites(sItem,true);
+            UI::bFavoritesUpdated = true;
+        }
+        BasicToolTip("Remove from favorites");
+        ImGui::PopID();
+
+        ImGui::SameLine();
         if(ImGui::Button(sItem.c_str())) {
             if(std::filesystem::is_regular_file(sItem)) {
                 html::loadFile(sItem);

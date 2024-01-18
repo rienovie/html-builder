@@ -437,6 +437,7 @@ std::vector<std::string> config::getFavorites() {
     return vOutput;
 }
 
+//this function feels like it's not written very efficiently
 void config::modifyFavorites ( std::string sPath, bool bRemove ) {
     std::string sCurrentProp = mLoadedConfig["favorites"];
     int iCurrentPropLength = sCurrentProp.length();
@@ -448,6 +449,7 @@ void config::modifyFavorites ( std::string sPath, bool bRemove ) {
         for(int i = 0; i< iCurrentPropLength; i++) {
             if(sCurrentProp[i] == ',' || i == iCurrentPropLength - 1) {
                 //this feels slopy to me but I'm tired and it works so I'll fix later
+                //...probably
                 if(i == iCurrentPropLength - 1) { sBuild.push_back(sCurrentProp[i]); }
                 if(sBuild != sPath) {
                     sNewProp.append(sBuild);
@@ -455,6 +457,17 @@ void config::modifyFavorites ( std::string sPath, bool bRemove ) {
                 }
                 sBuild.clear();
             } else { sBuild.push_back(sCurrentProp[i]); }
+        }
+        //remove any duplicate or trailing ','
+        int iNewPropLength = sNewProp.length();
+        for(int i = iNewPropLength - 1; i > -1; i--) {
+            if(i == 0) { break; } //can't check before
+            if(
+                (sNewProp[i] == ',' && sNewProp[i-1] == ',') //duplicate
+                || (i == iNewPropLength - 1 && sNewProp[i] == ',') //trailing
+            ){
+                sNewProp.erase(sNewProp.begin() + i);
+            }
         }
     } else {
         util::qPrint("Modify favs bRemove false");
