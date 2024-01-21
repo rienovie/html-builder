@@ -60,7 +60,7 @@ void tick_sec() {
     if( bCloseThreads ) return;
     //util::qPrint("tick");
     UI::tick_sec();
-    //config::checkIfShouldSaveConfigs();
+    config::checkIfShouldSaveConfigs();
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
     tick_sec();
@@ -69,7 +69,7 @@ void tick_sec() {
 void tick_long() {
     if(bCloseThreads) return;
     //util::printMemUse(memUsage);
-    config::checkIfShouldSaveConfigs();
+    //config::checkIfShouldSaveConfigs();
 
     std::this_thread::sleep_for(std::chrono::seconds(5));
     tick_long();

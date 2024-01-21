@@ -14,14 +14,14 @@ void glfw_error_callback ( int error, const char* description ) {
 
 //VARIABLE INITIALIZATION
 int
-    UI::iFontSize = 32,
+    UI::iFontSize = 20,
     UI::iCurrentTheme = 0,
     UI::iUserWindowWidth = 1600,
     UI::iUserWindowHeight = 900,
-    UI::iLastStoredFontSize = 32;
+    UI::iLastStoredFontSize = 20;
 
 ImVec2
-    UI::limitFontSize = ImVec2(10,42),
+    UI::limitFontSize = ImVec2(12,32),
     UI::limitScrollBarSize = ImVec2(1,24),
     UI::limitScrollBarRounding = ImVec2(0,12),
     UI::limitTabRounding = ImVec2(0,12),
@@ -72,12 +72,13 @@ UI::UI() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
+    iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
     ioPtr = &ImGui::GetIO();
     ioPtr->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ioPtr->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    font_main = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf",limitFontSize.y );
-    font_bold = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf",limitFontSize.y );
-    font_light = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf",limitFontSize.y );
+    font_main = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Medium.ttf", 32 );
+    font_bold = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-ExtraBold.ttf", 32 );
+    font_light = ioPtr->Fonts->AddFontFromFileTTF("../fonts/Inconsolata-Light.ttf", 32 );
 
     ImGui_ImplGlfw_InitForOpenGL(mainWindow,true);
     ImGui_ImplOpenGL3_Init("#version 130");
@@ -86,12 +87,13 @@ UI::UI() {
 
     setColorEnumMap();
     vFoundThemes = config::getAllThemeNames();
-    iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
     assignCurrentThemeValueByName(config::getProp(config::system,"theme"));
     refreshTheme();
 
     //set manual settings here (shouldn't change by theme)
     uiStylePtr->WindowMenuButtonPosition = -1;
+
+
 
 }
 
@@ -112,7 +114,7 @@ bool UI::mainLoopCondition() {
 void UI::mainLoop() {
     //poll and handle events (inputs, window resize, etc)
     glfwPollEvents();
-    ImGui::GetIO().FontGlobalScale = float(iFontSize) / float(limitFontSize.y);
+    ImGui::GetIO().FontGlobalScale = float(iFontSize) / 32.0f;
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

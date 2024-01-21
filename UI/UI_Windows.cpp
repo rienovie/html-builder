@@ -45,11 +45,11 @@ void win::mainLoop() {
     if(mWindowBools["File Browser"]) { wFileBrowser(); }
 
     for(auto file : html::vLoadedHTMLs) {
-        wFileRaw(file);
+        wFileRoot(file);
     }
 }
 
-void win::wFileRaw ( html::file* filePTR ) {
+void win::wFileRoot ( html::file* filePTR ) {
     if(mWindowBools.find(filePTR->sFileName) != mWindowBools.end() && mWindowBools[filePTR->sFileName] == false) {
         mWindowBools.erase(filePTR->sFileName);
         html::closeFile(filePTR->sFileLocation);
@@ -59,6 +59,7 @@ void win::wFileRaw ( html::file* filePTR ) {
 
     ImGui::Begin(filePTR->sFileName.c_str(),&mWindowBools[filePTR->sFileName],ImGuiWindowFlags_NoCollapse);
 
+    //raw text
     for(auto sLine : filePTR->vFileLines) {
         ImGui::Text( "%s", sLine.c_str());
     }
@@ -77,7 +78,7 @@ void win::wFileBrowser() {
         vAllCurrentDir.clear();
         for(auto item : std::filesystem::directory_iterator {sCurrentDir} ) {
             if(item.path().filename().c_str()[0] == '.' //check if hidden
-                || (item.is_regular_file() && item.path().extension() != ".cpp")
+                || (item.is_regular_file() && item.path().extension() != ".html")
                 //TODO Replace extension above with html when done testing
             )  {
                 continue;
@@ -205,7 +206,7 @@ void win::wSettings() {
     for(auto item : html::vLoadedHTMLs) {
         ImGui::Text( "%s", item->sFileLocation.c_str());
     }
-    if(ImGui::Button("Default")) { UI::iFontSize = 24; };
+    if(ImGui::Button("Default")) { UI::iFontSize = 20; };
     ImGui::SameLine();
     ImGui::PushFont(UI::font_bold);
     ImGui::SliderInt("Font Size",&UI::iFontSize,UI::limitFontSize.x,UI::limitFontSize.y);

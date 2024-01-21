@@ -25,7 +25,7 @@ private:
     static void wMain();
     static void wSettings();
     static void wTest();
-    static void wFileRaw(html::file* filePTR);
+    static void wFileRoot(html::file* filePTR);
     static void wFileBrowser();
     static void swCircleTessTT(bool show_samples);
     static void swThemeOptions();
