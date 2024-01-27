@@ -40,5 +40,6 @@ namespace util {
     std::vector<std::string> splitStringOnChar(std::string& sToSplit,char cSplit);
     void printMemUse(rusage& usageRef);
     bool hasPathPermission(std::filesystem::path pPath, bool bPrintErrors = false);
+    std::string vectorToSingleStr(std::vector<std::string>& sFullVec,bool bAddNewLines = true);
 
 }

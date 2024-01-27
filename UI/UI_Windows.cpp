@@ -22,7 +22,7 @@ void win::wMainMenu() {
     ImGui::MenuItem("Settings",NULL,&mWindowBools["Settings"]);
 
     if(ImGui::BeginMenu("Windows")) {
-        for(auto item : mWindowBools) {
+        for(auto& item : mWindowBools) {
             ImGui::MenuItem(item.first.c_str(),NULL,&mWindowBools[item.first]);
         }
 
@@ -44,13 +44,14 @@ void win::mainLoop() {
     if(mWindowBools["Test"]) { wTest(); }
     if(mWindowBools["File Browser"]) { wFileBrowser(); }
 
-    for(auto file : html::vLoadedHTMLs) {
+    for(auto& file : html::vLoadedHTMLs) {
         wFileRoot(file);
     }
 }
 
 void win::wFileRoot ( html::file* filePTR ) {
-    if(mWindowBools.find(filePTR->sFileName) != mWindowBools.end() && mWindowBools[filePTR->sFileName] == false) {
+    if(mWindowBools.find(filePTR->sFileName) != mWindowBools.end()
+    && mWindowBools[filePTR->sFileName] == false) {
         mWindowBools.erase(filePTR->sFileName);
         html::closeFile(filePTR->sFileLocation);
         return;
@@ -60,7 +61,7 @@ void win::wFileRoot ( html::file* filePTR ) {
     ImGui::Begin(filePTR->sFileName.c_str(),&mWindowBools[filePTR->sFileName],ImGuiWindowFlags_NoCollapse);
 
     //raw text
-    for(auto sLine : filePTR->vFileLines) {
+    for(auto& sLine : filePTR->vFileLines) {
         ImGui::Text( "%s", sLine.c_str());
     }
 
@@ -76,10 +77,9 @@ void win::wFileBrowser() {
     if(bShouldUpdateDir) {
         bShouldUpdateDir = false;
         vAllCurrentDir.clear();
-        for(auto item : std::filesystem::directory_iterator {sCurrentDir} ) {
+        for(auto& item : std::filesystem::directory_iterator {sCurrentDir} ) {
             if(item.path().filename().c_str()[0] == '.' //check if hidden
                 || (item.is_regular_file() && item.path().extension() != ".html")
-                //TODO Replace extension above with html when done testing
             )  {
                 continue;
             }
@@ -92,7 +92,7 @@ void win::wFileBrowser() {
     ImGui::Begin("File Browser",&mWindowBools["File Browser"],ImGuiWindowFlags_NoCollapse);
 
     ImGui::SeparatorText("Favorites");
-    for(auto sItem : UI::vFavorites) {
+    for(auto& sItem : UI::vFavorites) {
 
         ImGui::PushID(sItem.c_str());
         if(ImGui::Button("X")) {
@@ -148,7 +148,7 @@ void win::wFileBrowser() {
 
     //for each in current directory buttons
     ImGui::BeginChild(sCurrentDir.c_str());
-    for(auto &pItem : vAllCurrentDir) {
+    for(auto& pItem : vAllCurrentDir) {
         if(!util::hasPathPermission(pItem)) { continue; }
 
         std::string sButtonTxt = pItem.filename();
@@ -192,7 +192,7 @@ void win::wMain() {
         html::loadFile(sFileLocationInput);
     }
 
-    for(auto item : html::vLoadedHTMLs) {
+    for(auto& item : html::vLoadedHTMLs) {
         ImGui::Text( "%s", item->sFileLocation.c_str());
     }
 
@@ -203,7 +203,7 @@ void win::wSettings() {
     ImGui::Begin("Settings",&mWindowBools["Settings"],ImGuiWindowFlags_NoCollapse);
 
     ImGui::SeparatorText("System");
-    for(auto item : html::vLoadedHTMLs) {
+    for(auto& item : html::vLoadedHTMLs) {
         ImGui::Text( "%s", item->sFileLocation.c_str());
     }
     if(ImGui::Button("Default")) { UI::iFontSize = 20; };
@@ -466,7 +466,7 @@ void win::swThemeColors() {
 
     auto mColors = config::getAllThemeColorValues();
     int i = 0;
-    for(auto item : mColors) {
+    for(auto& item : mColors) {
         i = UI::getColorEnum(item.first);
         if(ImGui::ColorEdit4(ImGui::GetStyleColorName(i),(float*)&UI::uiStylePtr->Colors[i])) {
             config::update(config::theme,item.first.c_str(),UI::getStringFromVec4(UI::uiStylePtr->Colors[i]));

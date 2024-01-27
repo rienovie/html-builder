@@ -72,5 +72,16 @@ namespace util {
 
     }
 
+    std::string vectorToSingleStr ( std::vector<std::string>& sFullVec, bool bAddNewLines ) {
+        std::string sOutput = "";
+
+        for(auto& s : sFullVec) {
+            sOutput.append(s);
+            if(bAddNewLines) { sOutput.push_back('\n'); }
+        }
+
+        return sOutput;
+    }
+
 
 }

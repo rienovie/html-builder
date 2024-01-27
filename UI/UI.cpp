@@ -183,7 +183,7 @@ void UI::refreshTheme() {
 
     auto mColorOptions = config::getAllThemeColorValues();
 
-    for(auto colOpt : mColorOptions) {
+    for(auto& colOpt : mColorOptions) {
         uiStylePtr->Colors[getColorEnum(colOpt.first)] = getVec4FromString(colOpt.second);
     }
 
@@ -227,7 +227,10 @@ ImVec4 UI::getVec4FromString ( std::string sVec4Value ) {
     }
     output.w = util::strToFloat(sBuild);
 
-    if(output.x == -1 || output.y == -1 || output.z == -1 || output.z == -1) {
+    if(output.x == -1
+    || output.y == -1
+    || output.z == -1
+    || output.z == -1) {
         util::qPrint("Error in getVec4FromString! Output =",output.x,output.y,output.z,output.w);
     }
 

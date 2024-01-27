@@ -243,7 +243,7 @@ void config::loadConfig(configType cfgLoadFrom) {
             sProp.clear();
             sBuild.clear();
             if( sLine.length() == 0) { continue; }
-            for(char cElement : sLine ){
+            for(char& cElement : sLine ){
                 if( cElement == '='){
                     sProp = sBuild;
                     sBuild.clear();
@@ -267,7 +267,7 @@ void config::loadConfig(configType cfgLoadFrom) {
         fileOut.open(cfgLoadLocation,std::ios::app);
         //add any unfound props from default props
         if(fileOut.is_open()){
-            for(auto configOption : *mDefaultLoadPtr ){
+            for(auto& configOption : *mDefaultLoadPtr ){
                 if(!util::searchVector(vFoundProps,configOption.first)) {
                     fileOut << configOption.first;
                     fileOut << "=";
@@ -293,7 +293,7 @@ void config::setConfigVariableValues (configType cfgTyp, std::vector<std::string
         sBuild.clear();
         sNewValue.clear();
 
-        for(char cElement : sLine){
+        for(char& cElement : sLine){
             if( cElement == '=') { //if buildStr has completed
                 sNewValue = getProp(cfgTyp,sBuild.c_str());
 
@@ -372,7 +372,7 @@ std::map<std::string, std::string> config::getConfig ( configType cfgToGet ) {
 std::map<std::string, std::string> config::getAllThemeColorValues() {
     std::map<std::string,std::string> mOutput;
 
-    for(auto themeOption : mLoadedTheme) {
+    for(auto& themeOption : mLoadedTheme) {
         if(themeOption.first[0] == '~') {
             mOutput.insert(themeOption);
         }
@@ -399,7 +399,7 @@ void config::createNewThemeFromCurrent ( std::string sNewThemeName ) {
 
     //populate file with theme values
     if(fileOut.is_open()) {
-        for(auto themeElement : mLoadedTheme) {
+        for(auto& themeElement : mLoadedTheme) {
             fileOut << themeElement.first;
             fileOut << "=";
             fileOut << themeElement.second;
@@ -462,10 +462,8 @@ void config::modifyFavorites ( std::string sPath, bool bRemove ) {
         int iNewPropLength = sNewProp.length();
         for(int i = iNewPropLength - 1; i > -1; i--) {
             if(i == 0) { break; } //can't check before
-            if(
-                (sNewProp[i] == ',' && sNewProp[i-1] == ',') //duplicate
-                || (i == iNewPropLength - 1 && sNewProp[i] == ',') //trailing
-            ){
+            if((sNewProp[i] == ',' && sNewProp[i-1] == ',') //duplicate
+            || (i == iNewPropLength - 1 && sNewProp[i] == ',') /*trailing*/ ) {
                 sNewProp.erase(sNewProp.begin() + i);
             }
         }
