@@ -26,13 +26,33 @@ public:
          * h1 {color:blue;font-size:12px;}
          *
          * stored as:
-         * 1 = h1
-         * 2 = color
-         * 3 = blue
-         * 4 = font-size
-         * 5 = 12px
-                     \/ 1              \/ 2 & 4    \/ 3 & 5   */
+         *
+         *  1     2      3        4       5
+         *  |     |      |        |       |
+         *  h1 { color: blue; font-size: 12px;}
+         *
+         *            1                  2 & 4       3 & 5
+         *            |                    |           |                */
         std::map<std::string,std::map<std::string,std::string>> mStyles;
+
+        /*
+         * I'm currently putting handling css off right now because this is very complicated
+         * and I need a bit more of an application base line before I try to get this to work
+         * the way I have pictured in my head. As of right now, the goal is to have the data stored
+         * in something like:
+         *    map of
+         *      <string (cssSourceFileLocation),
+         *      to
+         *      <vector of similar to mStyles above
+         *
+         * I need a vector because I plan of having a list of all the overwrites for the css style
+         * with file line specified where each overwrite happens for a specific element, but also
+         * will probably need the mStyles subMap of the prop/value definitions to be a vector as well
+         * so the user will be able to catch any duplicated definitions
+         */
+
+
+
     private:
 
     };
