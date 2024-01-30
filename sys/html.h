@@ -6,8 +6,8 @@
 #include <filesystem>
 #include "util.h"
 #include <map>
-#include "../UI/ImGui/imgui.h" //using this for Vec2
 #include <set>
+#include "../UI/ImGui/imgui.h"
 
 /*current theory I'm working with is to have a large html class that has all the elements,
  * current vector of loaded files, and lookup stuff, while having a subclass specific for
@@ -18,6 +18,10 @@
 
 class html {
 public:
+
+    class style;
+    class element;
+    class file;
 
     class style {
     public:
@@ -62,22 +66,29 @@ public:
     class element {
     public:
         std::string
-            sRaw, //element raw not full raw
+            sRawLine, //contains what's in the <> of the element declaration
             sElementName = "Raw"; //Only changed if actual element
         style* stylePtr;
         element* parentPtr;
-        std::set<std::string>* setTerminationsPtr;
+        file* filePtr;
+        ImVec2 indexStartEnd; //this is from the sFullRawFile
         std::vector<element*> vChildrenPtrs;
         std::map<std::string,std::string> mAttributes;
 
-        element(std::set<std::string>& terminations,element* parent,std::string sFullRawElement);
+        element(file& file, element* parent, ImVec2 startEnd);
     private:
+        int iCurrentIndex;
+        ImVec2 getNextElement();
+
 
     };
 
     class file {
     public:
-        std::string sFileLocation, sFileName;
+        std::string
+            sFileLocation,
+            sFileName,
+            sFullRawFile;
         std::vector<std::string> vFileLines;
         std::vector<element*> vElementPtrs;
         std::set<std::string> setTerminations;

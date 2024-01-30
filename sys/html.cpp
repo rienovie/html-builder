@@ -36,6 +36,7 @@ html::file::file ( std::string sFilePath ) {
     }
 
     populateFileLines();
+    sFullRawFile = util::vectorToSingleStr(vFileLines);
     populateElements();
 }
 
@@ -104,13 +105,48 @@ void html::file::populateElements() {
     }
 
     //each element populates it's children when created
-    element* rootElem = new element(setTerminations,NULL,util::vectorToSingleStr(vFileLines));
-    vElementPtrs.push_back(rootElem);
+    element* rootElem = new element(*this,NULL,ImVec2(0,sFullRawFile.length() - 1));
 
 }
 
+//TODO working in this whole section right now
 //constructor element
-html::element::element ( std::set<std::string>& terminations, element* parent, std::string sFullRawElement ) {
-    //TODO working here
+html::element::element ( file& file, element* parent, ImVec2 startEnd ) {
+    //TODO stylePtr and CSS stuff
+    parentPtr = parent;
+    filePtr = &file;
+    indexStartEnd = startEnd;
+    iCurrentIndex = indexStartEnd.x;
+
+    if(!parentPtr) {
+        sElementName = "HTML";
+        filePtr->vElementPtrs.push_back(this);
+
+    } else {
+
+    }
+
+    //this might create a second extra element at the end, TODO should test
+    ImVec2 next;
+    while(iCurrentIndex != indexStartEnd.y) {
+        next = getNextElement();
+        element* nextElem = new element(*filePtr,this,next);
+        iCurrentIndex = next.y;
+    }
+}
+
+//parse thru to get the next
+ImVec2 html::element::getNextElement() {
+    ImVec2 output = ImVec2(iCurrentIndex,iCurrentIndex);
+    std::string sBuild = "";
+    bool bCarrotFound = false;
+
+    //find < or if just raw(text)
+
+    //determine end point by incrementing output.y
+    //if is in terminating set walk to next </thisElement
+    //else walk to next < or (> if carrotFound)
+
+    return output;
 }
 
