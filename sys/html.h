@@ -79,6 +79,7 @@ public:
     private:
         int iCurrentIndex;
         ImVec2 getNextElement();
+        void populateElementValues();
 
 
     };
