@@ -22,9 +22,9 @@ private:
     static std::map<std::string,bool> mWindowBools;
 
     static void wMainMenu();
-    static void wMain();
     static void wSettings();
     static void wTest();
+    static void wHierarchy();
     static void wFileRoot(html::file* filePTR);
     static void wFileBrowser();
     static void swCircleTessTT(bool show_samples);
@@ -32,4 +32,5 @@ private:
     static void swThemeColors();
     static int themeNameCallback(ImGuiInputTextCallbackData* data);
     static void BasicToolTip(const char* toolTipText);
+    static void hierarchyPopulate(html::element* element);
 };

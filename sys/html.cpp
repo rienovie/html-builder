@@ -105,7 +105,7 @@ void html::file::populateElements() {
     }
 
     //each element populates it's children when created
-    element* rootElem = new element(*this,NULL,ImVec2(0,sFullRawFile.length() - 1));
+    new element(*this,NULL,ImVec2(-1,sFullRawFile.length() - 1));
 
 }
 
@@ -118,11 +118,13 @@ html::element::element ( file& file, element* parent, ImVec2 startEnd ) {
     indexStartEnd = startEnd;
     iCurrentIndex = indexStartEnd.x;
 
-    bool bIsElement = false;
+    bool
+        bIsElement = false,
+        bFoundFirst = false;
 
     if(!parentPtr) {
-        sElementName = "HTML";
-        filePtr->vElementPtrs.push_back(this);
+        sElementName = "HTML_ROOT";
+        filePtr->rootElementPtr = this;
 
     } else {
         //determine current element name & values
@@ -130,13 +132,15 @@ html::element::element ( file& file, element* parent, ImVec2 startEnd ) {
 
         //sRawLine setting
         for(int i = iCurrentIndex; i < indexStartEnd.y + 1; i++) {
-            if(filePtr->sFullRawFile[i] == ' '
-            || filePtr->sFullRawFile[i] == '\n'
+            if((filePtr->sFullRawFile[i] == ' ' || filePtr->sFullRawFile[i] == '\n')
+            && !bFoundFirst
             ) {/*Do nothing*/}
             else if(filePtr->sFullRawFile[i] == '<') {
+                bFoundFirst = true;
                 bIsElement = true;
                 sRawLine.push_back(filePtr->sFullRawFile[i]);
             } else {
+                bFoundFirst = true;
                 sRawLine.push_back(filePtr->sFullRawFile[i]);
             }
 
@@ -147,6 +151,8 @@ html::element::element ( file& file, element* parent, ImVec2 startEnd ) {
         }
 
         if(bIsElement) { populateElementValues(); }
+
+        parentPtr->vChildrenPtrs.push_back(this);
     }
 
     //this might create a second extra element at the end, TODO should test
@@ -178,10 +184,12 @@ ImVec2 html::element::getNextElement() {
         if(!bFirstCharFound) {
             if( cCurrent == ' ' || cCurrent == '\n') {/*Do Nothing*/}
             else if( cCurrent == '<'){
+                output.x = i;
                 bFirstCharFound = true;
                 bCarrotFound = true;
                 sBuild.push_back( cCurrent );
             } else {
+                output.x = i;
                 bFirstCharFound = true;
                 sBuild.push_back( cCurrent );
             }

@@ -4,8 +4,8 @@ std::map<std::string,bool> win::mWindowBools {
     {"ImGui Demo",false},
     {"Settings",false},
     {"Test",false},
-    {"Main",false},
-    {"File Browser",false}
+    {"File Browser",false},
+    {"Current Hierarchy",false}
 };
 
 void win::wMainMenu() {
@@ -38,11 +38,11 @@ void win::mainLoop() {
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
     wMainMenu();
-    if(mWindowBools["Main"]) { wMain(); }
     if(mWindowBools["ImGui Demo"]) { ImGui::ShowDemoWindow(); }
     if(mWindowBools["Settings"]) { wSettings(); }
     if(mWindowBools["Test"]) { wTest(); }
     if(mWindowBools["File Browser"]) { wFileBrowser(); }
+    if(mWindowBools["Current Hierarchy"]) { wHierarchy(); }
 
     for(auto& file : html::vLoadedHTMLs) {
         wFileRoot(file);
@@ -182,9 +182,9 @@ void win::wFileBrowser() {
     ImGui::End();
 }
 
-void win::wMain() {
+void win::wTest() {
 
-    ImGui::Begin("Main",&mWindowBools["Main"],ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("Test",&mWindowBools["Test"],ImGuiWindowFlags_NoCollapse);
 
     static std::string sFileLocationInput;
     ImGui::InputTextWithHint("Location","File location",&sFileLocationInput);
@@ -194,6 +194,12 @@ void win::wMain() {
 
     for(auto& item : html::vLoadedHTMLs) {
         ImGui::Text( "%s", item->sFileLocation.c_str());
+    }
+
+    if(ImGui::Button("Print Stuff")) {
+        for(auto& i : html::vLoadedHTMLs[0]->rootElementPtr->vChildrenPtrs) {
+            util::qPrint(i->sElementName);
+        }
     }
 
     ImGui::End();
@@ -318,16 +324,6 @@ void win::wSettings() {
     ImGui::End();
 }
 
-void win::wTest() {
-    ImGui::Begin("Test Window",&mWindowBools["Test"]);
-    ImGui::PushFont(UI::font_light);
-    ImGui::Text("I'm a test window!");
-    ImGui::PopFont();
-    ImGui::PushFont(UI::font_main);
-    if(ImGui::Button("Close")) { mWindowBools["Test"] = false; }
-    ImGui::PopFont();
-    ImGui::End();
-}
 
 void win::swCircleTessTT(bool show_samples) {
     if (show_samples)
@@ -496,3 +492,29 @@ void win::BasicToolTip ( const char* toolTipText ) {
     }
 }
 
+void win::wHierarchy() {
+    if(html::vLoadedHTMLs.size() == 0) {
+        mWindowBools["Current Hierarchy"] = false;
+        return;
+    }
+
+    std::string sTitle = html::vLoadedHTMLs[0]->sFileName;
+    sTitle.append(" (Hierarchy)");
+
+    ImGui::Begin(sTitle.c_str(),&mWindowBools["Current Hierarchy"]);
+
+    hierarchyPopulate(html::vLoadedHTMLs[0]->rootElementPtr);
+
+    ImGui::End();
+}
+
+void win::hierarchyPopulate(html::element* element) {
+    for(auto& child : element->vChildrenPtrs) {
+        ImGui::PushID(child);
+        if(ImGui::TreeNode(child->sRawLine.c_str())) {
+            hierarchyPopulate(child);
+            ImGui::TreePop();
+        }
+        ImGui::PopID();
+    }
+}

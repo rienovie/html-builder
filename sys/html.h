@@ -91,7 +91,7 @@ public:
             sFileName,
             sFullRawFile;
         std::vector<std::string> vFileLines;
-        std::vector<element*> vElementPtrs;
+        element* rootElementPtr;
         std::set<std::string> setTerminations;
 
         file(std::string sFilePath);

@@ -1,0 +1,56 @@
+
+    <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Javascript Learning Challenges</title>
+        <style>
+
+            div {
+                font-style: italic;
+            }
+
+            .btn {
+                color:rgb(0,0,0);
+                background-color: rgb(98, 144, 230);
+                border-color: rgb(30, 0, 114);
+                border-radius: 25%;
+                padding-left: 3%;
+                padding-right: 3%;
+                padding-top: 0.5%;
+                padding-bottom: 0.5%;
+                cursor: pointer;
+            }
+
+            .btn:hover {
+                border-color: rgb(44, 0, 165);
+                background-color: rgb(151, 187, 255);
+            }
+
+        </style>
+    </head>
+    <body>
+        <div>
+            <h1>Javascript Challenges</h1>
+            <select id="challengeSelector" onchange="selectionChanged()">
+                <option value="sumPos">Sum Positive</option>
+                <option value="palendrome">Palendrome</option>
+                <option value="unique">Unique</option>
+                </select>
+            <p id="desc"></p
+            >
+            <form id="mainForm">
+                <p>Input:
+                <input type="text" id="txtInput">
+                <button type="submit" class="btn">Submit</button>
+                </p>
+                Output:
+                <ul id="outputList">
+                </ul>
+            </form>
+        </div>
+        <script src="simpleChallenge.js"></script>
+    </body>
+</html>
+
