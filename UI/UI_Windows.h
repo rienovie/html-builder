@@ -33,4 +33,5 @@ private:
     static int themeNameCallback(ImGuiInputTextCallbackData* data);
     static void BasicToolTip(const char* toolTipText);
     static void hierarchyPopulate(html::element* element);
+    static void wSelectedElement();
 };

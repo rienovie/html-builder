@@ -13,6 +13,7 @@
 #include <vector>
 #include "../sys/config.h"
 #include "UI_Windows.h"
+#include "../sys/html.h"
 
 void glfw_error_callback(int error, const char* description);
 
@@ -45,6 +46,7 @@ public:
     static bool
         bDefaultThemeActive,
         bFavoritesUpdated;
+    static html::element* selectedElement;
 
     static bool mainLoopCondition();
     static void mainLoop();

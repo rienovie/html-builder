@@ -105,13 +105,13 @@ void html::file::populateElements() {
     }
 
     //each element populates it's children when created
-    new element(*this,NULL,ImVec2(-1,sFullRawFile.length() - 1));
+    new element(*this,NULL,int2d(-1,sFullRawFile.length() - 1));
 
 }
 
 //TODO working in this whole section right now
 //constructor element
-html::element::element ( file& file, element* parent, ImVec2 startEnd ) {
+html::element::element ( file& file, element* parent, int2d startEnd ) {
     //TODO stylePtr and CSS stuff
     parentPtr = parent;
     filePtr = &file;
@@ -119,7 +119,6 @@ html::element::element ( file& file, element* parent, ImVec2 startEnd ) {
     iCurrentIndex = indexStartEnd.x;
 
     bool
-        bIsElement = false,
         bFoundFirst = false;
 
     if(!parentPtr) {
@@ -144,19 +143,25 @@ html::element::element ( file& file, element* parent, ImVec2 startEnd ) {
                 sRawLine.push_back(filePtr->sFullRawFile[i]);
             }
 
-            iCurrentIndex++;
             if(bIsElement && filePtr->sFullRawFile[i] == '>') {
                 break;
             }
+            iCurrentIndex++;
         }
 
         if(bIsElement) { populateElementValues(); }
+        if(sRawLine.length() == 0
+        ||(sRawLine[0] == '<' && sRawLine[1] == '/')
+        ) {
+            delete this;
+            return;
+        }
 
         parentPtr->vChildrenPtrs.push_back(this);
     }
 
     //this might create a second extra element at the end, TODO should test
-    ImVec2 next;
+    int2d next;
     while(iCurrentIndex < indexStartEnd.y) {
         next = getNextElement();
         new element(*filePtr,this,next);
@@ -165,9 +170,9 @@ html::element::element ( file& file, element* parent, ImVec2 startEnd ) {
 }
 
 //parse thru to get the next
-ImVec2 html::element::getNextElement() {
+int2d html::element::getNextElement() {
     //y gets incremented before the check in the for loop below
-    ImVec2 output = ImVec2(iCurrentIndex + 1,iCurrentIndex);
+    int2d output = int2d(iCurrentIndex + 1,iCurrentIndex);
     std::string
         sBuild = "",
         sBuiltName = "";

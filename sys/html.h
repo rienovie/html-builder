@@ -7,7 +7,7 @@
 #include "util.h"
 #include <map>
 #include <set>
-#include "../UI/ImGui/imgui.h"
+// #include "../UI/ImGui/imgui.h"
 
 /*current theory I'm working with is to have a large html class that has all the elements,
  * current vector of loaded files, and lookup stuff, while having a subclass specific for
@@ -15,6 +15,8 @@
  *
  * I need to rework this theory to have a better architecture for the program
 */
+
+using util::int2d;
 
 class html {
 public:
@@ -71,14 +73,15 @@ public:
         style* stylePtr;
         element* parentPtr;
         file* filePtr;
-        ImVec2 indexStartEnd; //this is from the sFullRawFile
+        bool bIsElement = false;
+        int2d indexStartEnd; //this is from the sFullRawFile
         std::vector<element*> vChildrenPtrs;
         std::map<std::string,std::string> mAttributes;
 
-        element(file& file, element* parent, ImVec2 startEnd);
+        element(file& file, element* parent, int2d startEnd);
     private:
         int iCurrentIndex;
-        ImVec2 getNextElement();
+        int2d getNextElement();
         void populateElementValues();
 
 

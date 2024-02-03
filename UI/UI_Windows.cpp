@@ -5,7 +5,8 @@ std::map<std::string,bool> win::mWindowBools {
     {"Settings",false},
     {"Test",false},
     {"File Browser",false},
-    {"Current Hierarchy",false}
+    {"Current Hierarchy",false},
+    {"Selected Element", false}
 };
 
 void win::wMainMenu() {
@@ -43,6 +44,7 @@ void win::mainLoop() {
     if(mWindowBools["Test"]) { wTest(); }
     if(mWindowBools["File Browser"]) { wFileBrowser(); }
     if(mWindowBools["Current Hierarchy"]) { wHierarchy(); }
+    if(mWindowBools["Selected Element"]) { wSelectedElement(); }
 
     for(auto& file : html::vLoadedHTMLs) {
         wFileRoot(file);
@@ -57,6 +59,7 @@ void win::wFileRoot ( html::file* filePTR ) {
         return;
     }
     mWindowBools[filePTR->sFileName] = true;
+    mWindowBools["Current Hierarchy"] = true;
 
     ImGui::Begin(filePTR->sFileName.c_str(),&mWindowBools[filePTR->sFileName],ImGuiWindowFlags_NoCollapse);
 
@@ -106,6 +109,7 @@ void win::wFileBrowser() {
         if(ImGui::Button(sItem.c_str())) {
             if(std::filesystem::is_regular_file(sItem)) {
                 html::loadFile(sItem);
+                mWindowBools["File Browser"] = false;
             } else {
                 sCurrentDir = sItem;
                 bShouldUpdateDir = true;
@@ -510,11 +514,87 @@ void win::wHierarchy() {
 
 void win::hierarchyPopulate(html::element* element) {
     for(auto& child : element->vChildrenPtrs) {
+
         ImGui::PushID(child);
-        if(ImGui::TreeNode(child->sRawLine.c_str())) {
-            hierarchyPopulate(child);
-            ImGui::TreePop();
+        const char* cStrName;
+        if(child->vChildrenPtrs.size() != 0) {
+            cStrName = child->sElementName.c_str();
+        } else {
+            cStrName = child->sRawLine.c_str();
         }
+
+        if(ImGui::Button(cStrName)) {
+            UI::selectedElement = child;
+            mWindowBools["Selected Element"] = true;
+        }
+
+        if(child->vChildrenPtrs.size() != 0) {
+            ImGui::SameLine();
+
+            //if only single child with no next children
+            if(child->vChildrenPtrs.size() == 1
+            && child->vChildrenPtrs[0]->vChildrenPtrs.size() == 0
+            ) {
+                hierarchyPopulate(child);
+            } else if(ImGui::TreeNode(cStrName,"Children")) {
+                hierarchyPopulate(child);
+                ImGui::TreePop();
+            }
+        }
+
         ImGui::PopID();
     }
 }
+
+void win::wSelectedElement() {
+    if(UI::selectedElement == NULL) {
+        mWindowBools["Selected Element"] = false;
+        return;
+    }
+
+    html::element* SE = UI::selectedElement;
+
+    ImGui::Begin("Selected Element",&mWindowBools["Selected Element"]);
+
+    ImGui::Text("File: ");
+    ImGui::SameLine();
+    ImGui::Text( "%s", SE->filePtr->sFileName.c_str());
+
+    ImGui::Text("Parent: ");
+    ImGui::SameLine();
+    ImGui::Text("%s", SE->parentPtr->sElementName.c_str());
+
+    ImGui::BeginDisabled();
+    ImGui::Checkbox("bIsElement?",&SE->bIsElement);
+    ImGui::EndDisabled();
+
+    ImGui::Text("Element: ");
+    ImGui::SameLine();
+    ImGui::Text( "%s", SE->sElementName.c_str());
+
+    ImGui::Text("Raw: ");
+    ImGui::Indent();
+    ImGui::Text( "%s", SE->sRawLine.c_str());
+    ImGui::Unindent();
+
+    ImGui::Text("Attributes: ");
+    ImGui::Indent();
+    for(auto& item : SE->mAttributes) {
+        ImGui::Text( "%s", item.first.c_str());
+        ImGui::SameLine();
+        ImGui::Text("=");
+        ImGui::SameLine();
+        ImGui::Text( "%s", item.second.c_str());
+    }
+    ImGui::Unindent();
+
+    ImGui::Text("Children: ");
+    ImGui::Indent();
+    for(auto& item : SE->vChildrenPtrs) {
+        ImGui::Text( "%s", item->sElementName.c_str());
+    }
+    ImGui::Unindent();
+
+    ImGui::End();
+}
+

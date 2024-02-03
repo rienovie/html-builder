@@ -46,9 +46,10 @@ std::map<std::string,int> UI::mColorEnum;
 bool
     UI::bDefaultThemeActive = false,
     UI::bFavoritesUpdated = true; //set to true so it'll run right away
-ImGuiStyle *UI::uiStylePtr;
-GLFWwindow *UI::mainWindow;
-ImGuiIO *UI::ioPtr;
+ImGuiStyle* UI::uiStylePtr = NULL;
+GLFWwindow* UI::mainWindow = NULL;
+ImGuiIO* UI::ioPtr = NULL;
+html::element* UI::selectedElement = NULL;
 
 //CONSTRUCTOR
 UI::UI() {

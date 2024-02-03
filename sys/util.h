@@ -10,6 +10,13 @@
 
 namespace util {
 
+    struct int2d {
+        int x, y;
+
+        int2d(int _x, int _y) : x(_x), y(_y) {};
+        int2d() : x(0), y(0) {};
+    };
+
     //quick print
     template <typename T>
     void qPrint(T output) {
