@@ -56,6 +56,7 @@ void win::wFileRoot ( html::file* filePTR ) {
     && mWindowBools[filePTR->sFileName] == false) {
         mWindowBools.erase(filePTR->sFileName);
         html::closeFile(filePTR->sFileLocation);
+        UI::selectedElement = NULL;
         return;
     }
     mWindowBools[filePTR->sFileName] = true;
@@ -514,6 +515,7 @@ void win::wHierarchy() {
 
 void win::hierarchyPopulate(html::element* element) {
     for(auto& child : element->vChildrenPtrs) {
+        bool bDisable = false; //so EndDisable only runs when beginDisable runs
 
         ImGui::PushID(child);
         const char* cStrName;
@@ -523,9 +525,17 @@ void win::hierarchyPopulate(html::element* element) {
             cStrName = child->sRawLine.c_str();
         }
 
+        if(UI::selectedElement == child) {
+            ImGui::BeginDisabled();
+            bDisable = true;
+        }
         if(ImGui::Button(cStrName)) {
             UI::selectedElement = child;
             mWindowBools["Selected Element"] = true;
+        }
+        if(UI::selectedElement == child && bDisable) {
+            ImGui::EndDisabled();
+            bDisable = false;
         }
 
         if(child->vChildrenPtrs.size() != 0) {
@@ -543,11 +553,13 @@ void win::hierarchyPopulate(html::element* element) {
         }
 
         ImGui::PopID();
+
     }
 }
 
 void win::wSelectedElement() {
-    if(UI::selectedElement == NULL) {
+    if(UI::selectedElement == NULL
+    ||html::vLoadedHTMLs.size() == 0 ) {
         mWindowBools["Selected Element"] = false;
         return;
     }
@@ -572,11 +584,6 @@ void win::wSelectedElement() {
     ImGui::SameLine();
     ImGui::Text( "%s", SE->sElementName.c_str());
 
-    ImGui::Text("Raw: ");
-    ImGui::Indent();
-    ImGui::Text( "%s", SE->sRawLine.c_str());
-    ImGui::Unindent();
-
     ImGui::Text("Attributes: ");
     ImGui::Indent();
     for(auto& item : SE->mAttributes) {
@@ -593,6 +600,13 @@ void win::wSelectedElement() {
     for(auto& item : SE->vChildrenPtrs) {
         ImGui::Text( "%s", item->sElementName.c_str());
     }
+    ImGui::Unindent();
+
+    ImGui::Text("Raw: ");
+    ImGui::Indent();
+    ImGui::BeginChild(SE->sElementName.c_str(),ImVec2(0,0),true);
+    ImGui::Text( "%s", SE->sRawLine.c_str());
+    ImGui::EndChild();
     ImGui::Unindent();
 
     ImGui::End();

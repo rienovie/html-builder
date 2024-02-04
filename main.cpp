@@ -40,7 +40,6 @@ int main () {
     //main loop
     while(UI::mainLoopCondition()){
         UI::mainLoop();
-
     }
 
     //clean up
@@ -50,6 +49,8 @@ int main () {
     delete classHTML;
     t_sec.detach();
     t_long.detach();
+
+    util::qPrint("Process End");
 
     return 0;
 

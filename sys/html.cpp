@@ -9,8 +9,7 @@ void html::loadFile ( std::string sFilePath ) {
     }
 
     if(std::filesystem::exists(sFilePath)) {
-        file *newFilePTR = new file(sFilePath);
-        vLoadedHTMLs.push_back(newFilePTR);
+        vLoadedHTMLs.push_back(new file(sFilePath));
         util::qPrint("Found file",sFilePath);
     } else {
         util::qPrint("Tried to load file at",sFilePath,"but failed!");
@@ -18,8 +17,8 @@ void html::loadFile ( std::string sFilePath ) {
 }
 
 html::~html() {
-    for (auto& item : vLoadedHTMLs) {
-        delete item;
+    for(auto& file : vLoadedHTMLs) {
+        closeFile(file->sFileLocation);
     }
 }
 
@@ -45,6 +44,8 @@ void html::closeFile ( std::string sLoadedFileFullPath ) {
 
     for(int i = 0;i < iSize;i++){
         if(vLoadedHTMLs[i]->sFileLocation == sLoadedFileFullPath) {
+            //will delete all children elements of pointer
+            delete vLoadedHTMLs[i]->rootElementPtr;
             delete vLoadedHTMLs[i];
             vLoadedHTMLs.erase(vLoadedHTMLs.begin() + i);
             return;
@@ -275,4 +276,15 @@ void html::element::populateElementValues() {
             }
         }
     }
+
+    if(!bNameSet) {
+        sElementName = sBuild;
+    }
 }
+
+html::element::~element() {
+    for(auto& element : vChildrenPtrs) {
+        if(element) { delete element; }
+    }
+}
+

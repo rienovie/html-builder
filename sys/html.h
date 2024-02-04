@@ -74,13 +74,15 @@ public:
         element* parentPtr;
         file* filePtr;
         bool bIsElement = false;
-        int2d indexStartEnd; //this is from the sFullRawFile
         std::vector<element*> vChildrenPtrs;
         std::map<std::string,std::string> mAttributes;
 
         element(file& file, element* parent, int2d startEnd);
+        ~element();
     private:
+        int2d indexStartEnd; //this is from the sFullRawFile & only used in construction
         int iCurrentIndex;
+
         int2d getNextElement();
         void populateElementValues();
 
