@@ -83,5 +83,9 @@ namespace util {
         return sOutput;
     }
 
+    int lerpInt ( int iStart, int iEnd, float fLerp ) {
+        return iStart + std::round((float(iEnd) - float(iStart)) * fLerp);
+    }
+
 
 }

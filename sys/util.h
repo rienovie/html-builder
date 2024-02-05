@@ -5,10 +5,12 @@
 #include <vector>
 #include <sys/resource.h>
 #include <filesystem>
+#include <math.h>
 
 
 
 namespace util {
+
 
     struct int2d {
         int x, y;
@@ -48,5 +50,6 @@ namespace util {
     void printMemUse(rusage& usageRef);
     bool hasPathPermission(std::filesystem::path pPath, bool bPrintErrors = false);
     std::string vectorToSingleStr(std::vector<std::string>& sFullVec,bool bAddNewLines = true);
+    int lerpInt(int iStart, int iEnd, float fLerp);
 
 }

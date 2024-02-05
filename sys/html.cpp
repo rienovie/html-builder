@@ -110,7 +110,6 @@ void html::file::populateElements() {
 
 }
 
-//TODO working in this whole section right now
 //constructor element
 html::element::element ( file& file, element* parent, int2d startEnd ) {
     //TODO stylePtr and CSS stuff
@@ -161,7 +160,7 @@ html::element::element ( file& file, element* parent, int2d startEnd ) {
         parentPtr->vChildrenPtrs.push_back(this);
     }
 
-    //this might create a second extra element at the end, TODO should test
+    //this creates an extra empty element at the end, but empty elements get deleted
     int2d next;
     while(iCurrentIndex < indexStartEnd.y) {
         next = getNextElement();

@@ -223,7 +223,30 @@ void win::wSettings() {
     ImGui::SliderInt("Font Size",&UI::iFontSize,UI::limitFontSize.x,UI::limitFontSize.y);
     ImGui::PopFont();
 
-    ImGui::NewLine();
+    /* using this to write to the config file, will probably clean up later
+     * Put the ImGui color copy in the demo window here and uncomment this code
+     *
+    if(ImGui::Button("Apply Color Code")) {
+        ImVec4* colors = ImGui::GetStyle().Colors;
+        colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+        //etc...
+
+        auto mTheColVal = config::getAllThemeColorValues();
+        for(int i = 0; i < ImGuiCol_COUNT;i++) {
+            std::string sBuild = "~";
+            sBuild.append(ImGui::GetStyleColorName(i));
+
+            try {
+                mTheColVal[sBuild]; //try
+                config::update(config::theme,sBuild.c_str(),UI::getStringFromVec4(UI::uiStylePtr->Colors[i]));
+            } catch (const std::out_of_range& e) {
+                util::qPrint(sBuild,"prop not found!");
+                continue;
+            }
+        }
+    } */
+
+    ImGui::SeparatorText("Theme");
 
     ImGui::Text("Create New Theme Based on Current");
     static char cBufNameInput[32] = "";
@@ -260,30 +283,7 @@ void win::wSettings() {
 
     }
 
-    /* using this to write to the config file, will probably clean up later
-     * Put the ImGui color copy in the demo window here and uncomment this code
-     *
-    if(ImGui::Button("Apply Color Code")) {
-        ImVec4* colors = ImGui::GetStyle().Colors;
-        colors[ImGuiCol_Text]                   = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-        //etc...
-
-        auto mTheColVal = config::getAllThemeColorValues();
-        for(int i = 0; i < ImGuiCol_COUNT;i++) {
-            std::string sBuild = "~";
-            sBuild.append(ImGui::GetStyleColorName(i));
-
-            try {
-                mTheColVal[sBuild]; //try
-                config::update(config::theme,sBuild.c_str(),UI::getStringFromVec4(UI::uiStylePtr->Colors[i]));
-            } catch (const std::out_of_range& e) {
-                util::qPrint(sBuild,"prop not found!");
-                continue;
-            }
-        }
-    } */
-
-    ImGui::SeparatorText("Theme");
+    ImGui::NewLine();
 
     //TODO replace with an icon later
     if(ImGui::Button("Refresh")) {
@@ -317,13 +317,15 @@ void win::wSettings() {
 
     //ImGui::NewLine();
     ImGui::Indent();
-    if(UI::bDefaultThemeActive) {
+    if(UI::bDefaultThemeActive && false) {
         ImGui::BeginDisabled();
         ImGui::Text("Cannot modify Default theme");
     }
     swThemeOptions();
     swThemeColors();
-    if(UI::bDefaultThemeActive) { ImGui::EndDisabled(); }
+    if(UI::bDefaultThemeActive && false) {
+        ImGui::EndDisabled();
+    }
     ImGui::Unindent();
 
     ImGui::End();
@@ -465,12 +467,28 @@ void win::swThemeOptions() {
 void win::swThemeColors() {
     ImGui::SeparatorText("Colors");
 
+    ImVec4 col = UI::uiStylePtr->Colors[ImGuiCol_WindowBg];
+    float fUse, fThrowaway;
+    ImGui::ColorConvertRGBtoHSV(col.x,col.y,col.z,fUse,fThrowaway,fThrowaway);
+    int iHue = util::lerpInt(0,255,fUse);
+
+    if(ImGui::SliderInt("Hue",&iHue,0,255)) {
+        //TODO currently working here
+    }
+
+    ImGui::NewLine();
+
     auto mColors = config::getAllThemeColorValues();
     int i = 0;
     for(auto& item : mColors) {
         i = UI::getColorEnum(item.first);
-        if(ImGui::ColorEdit4(ImGui::GetStyleColorName(i),(float*)&UI::uiStylePtr->Colors[i])) {
-            config::update(config::theme,item.first.c_str(),UI::getStringFromVec4(UI::uiStylePtr->Colors[i]));
+        if(ImGui::ColorEdit4(ImGui::GetStyleColorName(i)
+                            ,(float*)&UI::uiStylePtr->Colors[i]
+                            ,ImGuiColorEditFlags_DisplayHSV
+                            | ImGuiColorEditFlags_PickerHueWheel)) {
+            config::update(config::theme
+                            ,item.first.c_str()
+                            ,UI::getStringFromVec4(UI::uiStylePtr->Colors[i]));
             if(item.first == "~WindowBg") {
                 ImVec4 modColor = UI::uiStylePtr->Colors[ImGuiCol_WindowBg];
                 float modVal = float(0.5);
