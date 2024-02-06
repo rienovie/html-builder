@@ -51,6 +51,46 @@ GLFWwindow* UI::mainWindow = NULL;
 ImGuiIO* UI::ioPtr = NULL;
 html::element* UI::selectedElement = NULL;
 
+//these are all the values that are changed with the hue slider
+std::vector<ImGuiCol> UI::vHueModValues {
+    ImGuiCol_Button,
+    ImGuiCol_ButtonActive,
+    ImGuiCol_ButtonHovered,
+    ImGuiCol_CheckMark,
+    ImGuiCol_DockingPreview,
+    ImGuiCol_FrameBg,
+    ImGuiCol_FrameBgActive,
+    ImGuiCol_FrameBgHovered,
+    ImGuiCol_Header,
+    ImGuiCol_HeaderActive,
+    ImGuiCol_HeaderHovered,
+    ImGuiCol_MenuBarBg,
+    ImGuiCol_NavHighlight,
+    ImGuiCol_NavWindowingDimBg,
+    ImGuiCol_NavWindowingHighlight,
+    ImGuiCol_PopupBg,
+    ImGuiCol_ResizeGrip,
+    ImGuiCol_ResizeGripActive,
+    ImGuiCol_ResizeGripHovered,
+    ImGuiCol_ScrollbarBg,
+    ImGuiCol_ScrollbarGrab,
+    ImGuiCol_ScrollbarGrabActive,
+    ImGuiCol_ScrollbarGrabHovered,
+    ImGuiCol_SliderGrab,
+    ImGuiCol_SliderGrabActive,
+    ImGuiCol_Tab,
+    ImGuiCol_TabActive,
+    ImGuiCol_TabHovered,
+    ImGuiCol_TabUnfocused,
+    ImGuiCol_TabUnfocusedActive,
+    ImGuiCol_TextDisabled,
+    ImGuiCol_TextSelectedBg,
+    ImGuiCol_TitleBg,
+    ImGuiCol_TitleBgActive,
+    ImGuiCol_WindowBg,
+    ImGuiCol_DockingEmptyBg
+};
+
 //CONSTRUCTOR
 UI::UI() {
     glfwSetErrorCallback(glfw_error_callback);
@@ -301,3 +341,13 @@ void UI::createNewThemeAndSetCurrent ( std::string sName ) {
     iCurrentTheme = util::searchVector(vFoundThemes,sName,true);
     bDefaultThemeActive = false;
 }
+
+UI::colorHSV UI::getCurrentColorAsHSV ( ImGuiCol eColor ) {
+    colorHSV output;
+    ImVec4 col = uiStylePtr->Colors[eColor];
+
+    ImGui::ColorConvertRGBtoHSV(col.x,col.y,col.z,output.fHue,output.fSat,output.fValue);
+
+    return output;
+}
+

@@ -467,13 +467,39 @@ void win::swThemeOptions() {
 void win::swThemeColors() {
     ImGui::SeparatorText("Colors");
 
-    ImVec4 col = UI::uiStylePtr->Colors[ImGuiCol_WindowBg];
-    float fUse, fThrowaway;
-    ImGui::ColorConvertRGBtoHSV(col.x,col.y,col.z,fUse,fThrowaway,fThrowaway);
-    int iHue = util::lerpInt(0,255,fUse);
+    //sets the initial hue value
+    UI::colorHSV curCol = UI::getCurrentColorAsHSV(ImGuiCol_WindowBg);
+    int iCurrentHue = util::lerpInt(0,255,curCol.fHue);
 
-    if(ImGui::SliderInt("Hue",&iHue,0,255)) {
-        //TODO currently working here
+    if(ImGui::SliderInt("Hue",&iCurrentHue,0,255)) {
+        static ImVec4 colRGB;
+        static UI::colorHSV colHSV;
+        static std::string sPropName;
+
+        for(auto& eColor : UI::vHueModValues) {
+            colRGB = UI::uiStylePtr->Colors[eColor];
+            colHSV = UI::getCurrentColorAsHSV(eColor);
+            colHSV.fHue = float(iCurrentHue) / 255.0f;
+            ImGui::ColorConvertHSVtoRGB(
+                colHSV.fHue,
+                colHSV.fSat,
+                colHSV.fValue,
+                colRGB.x,
+                colRGB.y,
+                colRGB.z
+            );
+
+            UI::uiStylePtr->Colors[eColor] = colRGB;
+
+            //this value is not saved to the config file
+            if(eColor == ImGuiCol_DockingEmptyBg) continue;
+
+            sPropName = "~";
+            sPropName.append(ImGui::GetStyleColorName(eColor));
+            config::update(
+                config::theme, sPropName.c_str(),UI::getStringFromVec4(colRGB)
+            );
+        }
     }
 
     ImGui::NewLine();
@@ -486,9 +512,11 @@ void win::swThemeColors() {
                             ,(float*)&UI::uiStylePtr->Colors[i]
                             ,ImGuiColorEditFlags_DisplayHSV
                             | ImGuiColorEditFlags_PickerHueWheel)) {
-            config::update(config::theme
-                            ,item.first.c_str()
-                            ,UI::getStringFromVec4(UI::uiStylePtr->Colors[i]));
+            config::update(
+                config::theme,
+                item.first.c_str(),
+                UI::getStringFromVec4(UI::uiStylePtr->Colors[i])
+            );
             if(item.first == "~WindowBg") {
                 ImVec4 modColor = UI::uiStylePtr->Colors[ImGuiCol_WindowBg];
                 float modVal = float(0.5);
@@ -497,7 +525,7 @@ void win::swThemeColors() {
                 modColor.z *= modVal;
                 modColor.w = 1;
                 UI::uiStylePtr->Colors[ImGuiCol_DockingEmptyBg] = modColor;
-            };
+            }
         }
     }
 

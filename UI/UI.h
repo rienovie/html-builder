@@ -19,6 +19,14 @@ void glfw_error_callback(int error, const char* description);
 
 class UI {
 public:
+
+    struct colorHSV {
+        float fHue, fSat, fValue;
+
+        colorHSV() : fHue(0), fSat(0), fValue(0) {}
+        colorHSV(float hue, float sat, float value) : fHue(hue), fSat(sat), fValue(value) {}
+    };
+
     static int
         iFontSize,
         iCurrentTheme;
@@ -47,6 +55,7 @@ public:
         bDefaultThemeActive,
         bFavoritesUpdated;
     static html::element* selectedElement;
+    static std::vector<ImGuiCol> vHueModValues;
 
     static bool mainLoopCondition();
     static void mainLoop();
@@ -60,6 +69,7 @@ public:
     static std::string getStringFromVec4(ImVec4 vec4Value);
     static void exitApplication();
     static void createNewThemeAndSetCurrent(std::string sName);
+    static colorHSV getCurrentColorAsHSV(ImGuiCol eColor);
 
     UI();
     ~UI();
