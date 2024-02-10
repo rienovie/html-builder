@@ -44,12 +44,14 @@ namespace util {
         return (0 - (bReturnIndex));
     }
 
-    int strToInt(std::string str);
+    int
+        strToInt(std::string str),
+        lerpInt(int iStart, int iEnd, float fLerp);
+
     float strToFloat(std::string str);
     std::vector<std::string> splitStringOnChar(std::string& sToSplit,char cSplit);
     void printMemUse(rusage& usageRef);
     bool hasPathPermission(std::filesystem::path pPath, bool bPrintErrors = false);
     std::string vectorToSingleStr(std::vector<std::string>& sFullVec,bool bAddNewLines = true);
-    int lerpInt(int iStart, int iEnd, float fLerp);
 
 }

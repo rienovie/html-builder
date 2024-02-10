@@ -21,17 +21,19 @@ public:
 private:
     static std::map<std::string,bool> mWindowBools;
 
-    static void wMainMenu();
-    static void wSettings();
-    static void wTest();
-    static void wHierarchy();
-    static void wFileRoot(html::file* filePTR);
-    static void wFileBrowser();
-    static void swCircleTessTT(bool show_samples);
-    static void swThemeOptions();
-    static void swThemeColors();
+    static void
+        wMainMenu(),
+        wSettings(),
+        wTest(),
+        wHierarchy(),
+        wFileRoot(html::file* filePTR),
+        wFileBrowser(),
+        swCircleTessTT(bool show_samples),
+        swThemeOptions(),
+        swThemeColors(),
+        BasicToolTip(const char* toolTipText),
+        hierarchyPopulate(html::element* element),
+        wSelectedElement();
+
     static int themeNameCallback(ImGuiInputTextCallbackData* data);
-    static void BasicToolTip(const char* toolTipText);
-    static void hierarchyPopulate(html::element* element);
-    static void wSelectedElement();
 };

@@ -2,6 +2,11 @@
 
 std::vector<html::file*> html::vLoadedHTMLs;
 
+//html constructor
+html::html() {
+    //TODO populate elementInfo from config
+}
+
 void html::loadFile ( std::string sFilePath ) {
     //do not open if already open
     for(auto& file : vLoadedHTMLs) {
@@ -286,4 +291,3 @@ html::element::~element() {
         if(element) { delete element; }
     }
 }
-

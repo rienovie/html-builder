@@ -30,6 +30,7 @@ public:
     static int
         iFontSize,
         iCurrentTheme;
+
     static ImVec2
         limitFontSize,
         limitScrollBarSize,
@@ -42,33 +43,42 @@ public:
         limitSeparatorThickness,
         limitCircleTess,
         limitGrabMinSize;
+
     static std::vector<std::string>
         vFoundThemes,
         vFavorites;
-    static ImGuiStyle* uiStylePtr;
-    static ImGuiIO* ioPtr;
+
     static ImFont
         *font_main,
         *font_bold,
         *font_light;
+
     static bool
         bDefaultThemeActive,
         bFavoritesUpdated;
+
+    static ImGuiStyle* uiStylePtr;
+    static ImGuiIO* ioPtr;
     static html::element* selectedElement;
     static std::vector<ImGuiCol> vHueModValues;
 
-    static bool mainLoopCondition();
-    static void mainLoop();
-    static void tick_sec();
-    static void assignCurrentThemeValueByName(std::string sName);
-    static void refreshTheme();
-    static int getColorEnum(std::string sColorName);
+    //functions
+    static void
+        mainLoop(),
+        tick_sec(),
+        assignCurrentThemeValueByName(std::string sName),
+        refreshTheme(),
+        exitApplication(),
+        createNewThemeAndSetCurrent(std::string sName);
+
+    static std::string
+        getStringFromVec2(ImVec2 vec2Value),
+        getStringFromVec4(ImVec4 vec4Value);
+
     static ImVec4 getVec4FromString(std::string sVec4Value);
     static ImVec2 getVec2FromString(std::string sVec2Value);
-    static std::string getStringFromVec2(ImVec2 vec2Value);
-    static std::string getStringFromVec4(ImVec4 vec4Value);
-    static void exitApplication();
-    static void createNewThemeAndSetCurrent(std::string sName);
+    static bool mainLoopCondition();
+    static int getColorEnum(std::string sColorName);
     static colorHSV getCurrentColorAsHSV(ImGuiCol eColor);
 
     UI();

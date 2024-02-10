@@ -9,11 +9,14 @@ std::map<std::string, std::string> config::mDefaultConfig{
     {"favorites","/,/home"}
 };
 bool
+    //TODO shouldSaveElement
     config::bShouldSaveSystem = false,
     config::bShouldSaveTheme = false;
-std::map<std::string, std::string> config::mLoadedConfig{};
+std::map<std::string, std::string>
+    config::mLoadedConfig {},
+    config::mLoadedTheme {},
+    config::mLoadedElementsInfo {};
 std::vector<std::string> config::vFoundThemes;
-std::map<std::string, std::string> config::mLoadedTheme {};
 
 //this is hardcoded because if the default theme file gets deleted
 std::map<std::string,std::string> config::mDefaultNewTheme {
@@ -83,6 +86,7 @@ config::config() {
     findAllThemes();
     loadConfig(system);
     loadConfig(theme);
+    loadConfig(element);
 }
 
 //Returns string of "NULL" if property not found
@@ -97,7 +101,8 @@ std::string config::getProp(configType cfgFrom, const char* propertyName ) {
             mConfigGetPtr = &mLoadedTheme;
             break;
         default:
-            util::qPrint("Attempted to get property value at",cfgFrom,"but is not implemented!");
+            util::qPrint("Attempted to get property value:",propertyName,
+                         "from",cfgFrom,"but is not implemented!");
             //mConfigGetPtr = &mLoadedConfig;
             break;
     }
@@ -144,6 +149,7 @@ void config::saveConfig(configType cfgSaveTo) {
             break;
         default:
             util::qPrint("Attempted to save config type:",cfgSaveTo,"but is not implemented!");
+            return;
             break;
     }
     if(!(std::filesystem::exists(cfgLocation))) {
@@ -185,13 +191,18 @@ void config::saveConfig(configType cfgSaveTo) {
 //this does not feel very efficient but maybe I'll make it better when I am
 //a better programmer
 void config::loadConfig(configType cfgLoadFrom) {
-    std::string sLine, sBuild, sProp;
+    std::string
+        sLine,
+        sBuild,
+        sProp;
     std::vector<std::string> vFoundProps;
     std::string cfgLoadLocation;
     std::map<std::string,std::string>
         *mConfigLoadPtr = &mLoadedConfig,
         *mDefaultLoadPtr = &mDefaultConfig;
 
+    //TODO should change how the default config gets set
+    //maybe create a separate header file with just the default config variables
     switch(cfgLoadFrom){
         case system:
             cfgLoadLocation = "../hb.config";
@@ -202,6 +213,12 @@ void config::loadConfig(configType cfgLoadFrom) {
             cfgLoadLocation = getThemePathByName(getProp(system,"theme"));
             mConfigLoadPtr = &mLoadedTheme;
             mDefaultLoadPtr = &mDefaultNewTheme;
+            break;
+        case element:
+            //TODO right now this breaks down if the file is not found
+            //need to add default config to new file with rewrite of other defaultConfigs
+            cfgLoadLocation = "../sys/elements.hbinfo";
+            mConfigLoadPtr = &mLoadedElementsInfo;
             break;
         default:
             util::qPrint("Attempted to load config type:",cfgLoadFrom,"but is not implemented!");
@@ -239,20 +256,52 @@ void config::loadConfig(configType cfgLoadFrom) {
     std::ifstream fileIn;
     fileIn.open(cfgLoadLocation);
     if(fileIn.is_open()){
-        while(getline(fileIn,sLine )) {
-            sProp.clear();
-            sBuild.clear();
-            if( sLine.length() == 0) { continue; }
-            for(char& cElement : sLine ){
-                if( cElement == '='){
-                    sProp = sBuild;
-                    sBuild.clear();
-                } else {
-                    sBuild.push_back( cElement );
+        if(cfgLoadFrom == element) {
+            bool
+                bElementOpen = false,
+                bNotesOpen = false;
+
+            while(getline(fileIn,sLine)) {
+                for(char& c : sLine) {
+                    if(!bElementOpen) {
+                        if(c == '{') {
+                            sProp = sBuild;
+                            sBuild.clear();
+                            bElementOpen = true;
+                        } else {
+                            sBuild.push_back(c);
+                        }
+                    //Element is open
+                    } else {
+                        if(!bNotesOpen && c == '}') {
+                            (*mConfigLoadPtr)[sProp] = sBuild;
+                            sProp.clear();
+                            sBuild.clear();
+                            bElementOpen = false;
+                            continue;
+                        }
+                        if(c == '{') { bNotesOpen = true; }
+                        if(c == '}') { bNotesOpen = false; }
+                        sBuild.push_back(c);
+                    }
                 }
             }
-            (*mConfigLoadPtr)[sProp] = sBuild;
-            vFoundProps.push_back( sProp );
+        } else {
+            while(getline(fileIn,sLine )) {
+                sProp.clear();
+                sBuild.clear();
+                if( sLine.length() == 0) { continue; }
+                for(char& cElement : sLine ){
+                    if( cElement == '='){
+                        sProp = sBuild;
+                        sBuild.clear();
+                    } else {
+                        sBuild.push_back( cElement );
+                    }
+                }
+                (*mConfigLoadPtr)[sProp] = sBuild;
+                vFoundProps.push_back( sProp );
+            }
         }
 
         fileIn.close();
@@ -260,6 +309,9 @@ void config::loadConfig(configType cfgLoadFrom) {
     } else {
         util::qPrint("User config at", cfgLoadLocation,"could not be opened!");
     }
+
+    //TODO remove this when default configs fixed
+    if(cfgLoadFrom == element) return;
 
     //if any default props did not exist on file
     if(vFoundProps.size() < mDefaultLoadPtr->size()) {

@@ -64,10 +64,15 @@ void win::wFileRoot ( html::file* filePTR ) {
 
     ImGui::Begin(filePTR->sFileName.c_str(),&mWindowBools[filePTR->sFileName],ImGuiWindowFlags_NoCollapse);
 
-    //raw text
-    for(auto& sLine : filePTR->vFileLines) {
-        ImGui::Text( "%s", sLine.c_str());
-    }
+    /* This will not be the way to edit the file, I think it wouldn't make sense
+     * for you to be able to see the generated file content but instead I would want
+     * a preview of the actual page if possible
+     * TODO
+     * I think how I want this to work right now is to have when you edit an element
+     * or something it gets marked as updated and fileStr is then updated on the
+     * tick loop for any elements edited which would then be represented here
+    */
+    ImGui::InputTextMultiline("##",&filePTR->sFullRawFile,ImGui::GetContentRegionAvail(),ImGuiInputTextFlags_ReadOnly);
 
     ImGui::End();
 }
@@ -317,13 +322,13 @@ void win::wSettings() {
 
     //ImGui::NewLine();
     ImGui::Indent();
-    if(UI::bDefaultThemeActive && false) {
+    if(UI::bDefaultThemeActive) {
         ImGui::BeginDisabled();
         ImGui::Text("Cannot modify Default theme");
     }
     swThemeOptions();
     swThemeColors();
-    if(UI::bDefaultThemeActive && false) {
+    if(UI::bDefaultThemeActive) {
         ImGui::EndDisabled();
     }
     ImGui::Unindent();

@@ -7,14 +7,7 @@
 #include "util.h"
 #include <map>
 #include <set>
-// #include "../UI/ImGui/imgui.h"
-
-/*current theory I'm working with is to have a large html class that has all the elements,
- * current vector of loaded files, and lookup stuff, while having a subclass specific for
- * each file that would be used to modify the html file and data on it
- *
- * I need to rework this theory to have a better architecture for the program
-*/
+#include "config.h"
 
 using util::int2d;
 
@@ -24,6 +17,7 @@ public:
     class style;
     class element;
     class file;
+    class elementInfo;
 
     class style {
     public:
@@ -73,7 +67,9 @@ public:
         style* stylePtr;
         element* parentPtr;
         file* filePtr;
-        bool bIsElement = false;
+        bool
+            bIsElement = false,
+            bIsContainer = false;
         std::vector<element*> vChildrenPtrs;
         std::map<std::string,std::string> mAttributes;
 
@@ -85,7 +81,6 @@ public:
 
         int2d getNextElement();
         void populateElementValues();
-
 
     };
 
@@ -101,16 +96,34 @@ public:
 
         file(std::string sFilePath);
     private:
-        void populateFileLines();
-        void populateElements();
+        void
+            populateFileLines(),
+            populateElements();
+    };
+
+    class elementInfo {
+    public:
+        std::string
+            sName,
+            sDescription;
+        bool bContainer;
+        std::vector<std::string>
+            vCommonAttributes,
+            vNotes;
+    private:
+
     };
 
     //public for html class
     static std::vector<file*> vLoadedHTMLs;
+    static std::map<std::string,elementInfo> mElementInfo;
 
-    static void loadFile(std::string sFilePath);
-    static void closeFile(std::string sLoadedFileFullPath);
+    static void
+        loadFile(std::string sFilePath),
+        closeFile(std::string sLoadedFileFullPath),
+        refreshElementsInfo();
 
+    html();
     ~html();
 private:
 
