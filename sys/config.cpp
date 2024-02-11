@@ -8,14 +8,17 @@ std::map<std::string, std::string> config::mDefaultConfig{
     {"fontSize","24"},
     {"favorites","/,/home"}
 };
+
 bool
-    //TODO shouldSaveElement
+    config::bShouldSaveElement = false,
     config::bShouldSaveSystem = false,
     config::bShouldSaveTheme = false;
+
 std::map<std::string, std::string>
     config::mLoadedConfig {},
     config::mLoadedTheme {},
     config::mLoadedElementsInfo {};
+
 std::vector<std::string> config::vFoundThemes;
 
 //this is hardcoded because if the default theme file gets deleted
@@ -100,6 +103,9 @@ std::string config::getProp(configType cfgFrom, const char* propertyName ) {
         case theme:
             mConfigGetPtr = &mLoadedTheme;
             break;
+        case element:
+            mConfigGetPtr = &mLoadedElementsInfo;
+            break;
         default:
             util::qPrint("Attempted to get property value:",propertyName,
                          "from",cfgFrom,"but is not implemented!");
@@ -125,17 +131,22 @@ void config::update (configType cfgTo, const char* propertyName, std::string sNe
                 saveConfig(cfgTo); //force save before load when changing theme
                 loadConfig(theme);
             }
-            break;
+            return;
         case theme:
             bShouldSaveTheme = true;
             mLoadedTheme[propertyName] = sNewValue;
-            break;
+            return;
+        case element:
+            bShouldSaveElement = true;
+            mLoadedElementsInfo[propertyName] = sNewValue;
+            return;
         default:
             util::qPrint("Attempted to update config type:",cfgTo,"but is not implemented!");
-            break;
+            return;
     }
 }
 
+//TODO element here
 void config::saveConfig(configType cfgSaveTo) {
     std::string cfgLocation;
     switch (cfgSaveTo){
@@ -260,6 +271,8 @@ void config::loadConfig(configType cfgLoadFrom) {
             bool
                 bElementOpen = false,
                 bNotesOpen = false;
+            sBuild.clear();
+            sProp.clear();
 
             while(getline(fileIn,sLine)) {
                 for(char& c : sLine) {
@@ -285,6 +298,8 @@ void config::loadConfig(configType cfgLoadFrom) {
                         sBuild.push_back(c);
                     }
                 }
+                sBuild.push_back('\n');
+
             }
         } else {
             while(getline(fileIn,sLine )) {
@@ -338,6 +353,11 @@ void config::loadConfig(configType cfgLoadFrom) {
 }
 
 void config::setConfigVariableValues (configType cfgTyp, std::vector<std::string>& vFileLines ) {
+    if(cfgTyp == element) {
+        util::qPrint("setConfigVariableValues called on Element but should not be called!");
+        return;
+    }
+
     std::string sBuild, sNewValue;
 
     //for each line
@@ -415,6 +435,8 @@ std::map<std::string, std::string> config::getConfig ( configType cfgToGet ) {
             return mLoadedConfig;
         case theme:
             return mLoadedTheme;
+        case element:
+            return mLoadedElementsInfo;
         default:
             util::qPrint("Tried to get config:",cfgToGet,"but is not implemented!");
             return mLoadedConfig;
@@ -437,6 +459,7 @@ std::map<std::string, std::string> config::getAllThemeColorValues() {
 void config::checkIfShouldSaveConfigs() {
     if(bShouldSaveTheme) { saveConfig(theme); }
     if(bShouldSaveSystem) { saveConfig(system); }
+    if(bShouldSaveElement) { saveConfig(element); }
 }
 
 void config::createNewThemeFromCurrent ( std::string sNewThemeName ) {

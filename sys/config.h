@@ -48,6 +48,7 @@ private:
 
     static bool
         bShouldSaveSystem,
+        bShouldSaveElement,
         bShouldSaveTheme;
 
     //functions

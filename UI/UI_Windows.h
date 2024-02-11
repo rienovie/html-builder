@@ -33,7 +33,8 @@ private:
         swThemeColors(),
         BasicToolTip(const char* toolTipText),
         hierarchyPopulate(html::element* element),
-        wSelectedElement();
+        wSelectedElement(),
+        wEditElements();
 
     static int themeNameCallback(ImGuiInputTextCallbackData* data);
 };

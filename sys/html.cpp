@@ -1,10 +1,51 @@
 #include "html.h"
 
 std::vector<html::file*> html::vLoadedHTMLs;
+std::map<std::string,html::elementInfo> html::mElementInfo;
 
 //html constructor
 html::html() {
-    //TODO populate elementInfo from config
+    auto mConfig = config::getConfig(config::element);
+    elementInfo currentElementInfo;
+    int iCurrentVariable = 0; //0 bContainer, 1 desc, 2 commonAttributes, 3 notes
+
+    for(auto& item : mConfig) {
+        currentElementInfo.sName = item.first;
+        std::string sBuild = "";
+        for(int i = 0; i < item.second.length(); i++) {
+            if(item.second[i] == '\n') {
+                if(sBuild.length() > 0) {
+                    if(iCurrentVariable == 3 && sBuild[0] == '}') {
+                        mElementInfo[currentElementInfo.sName] = currentElementInfo;
+                    } else switch(iCurrentVariable) {
+                        case 0:
+                            currentElementInfo.bContainer = util::strToInt(sBuild);
+                            iCurrentVariable++;
+                            break;
+                        case 1:
+                            currentElementInfo.sDescription = sBuild;
+                            iCurrentVariable++;
+                            break;
+                        case 2:
+                            currentElementInfo.vCommonAttributes = util::splitStringOnChar(sBuild,',');
+                            iCurrentVariable++;
+                            break;
+                        case 3:
+                            if(sBuild.length() > 1) {
+                                currentElementInfo.vNotes.push_back(sBuild);
+                            } else util::qPrint(sBuild);
+                            break;
+                        default:
+                            util::qPrint("iCurrentVariable in html constructor out of defined bounds. Value:",iCurrentVariable);
+                            break;
+                    }
+                    sBuild.clear();
+                }
+            } else {
+                sBuild.push_back(item.second[i]);
+            }
+        }
+    }
 }
 
 void html::loadFile ( std::string sFilePath ) {

@@ -6,7 +6,8 @@ std::map<std::string,bool> win::mWindowBools {
     {"Test",false},
     {"File Browser",false},
     {"Current Hierarchy",false},
-    {"Selected Element", false}
+    {"Selected Element", false},
+    {"All Elements", false}
 };
 
 void win::wMainMenu() {
@@ -45,6 +46,7 @@ void win::mainLoop() {
     if(mWindowBools["File Browser"]) { wFileBrowser(); }
     if(mWindowBools["Current Hierarchy"]) { wHierarchy(); }
     if(mWindowBools["Selected Element"]) { wSelectedElement(); }
+    if(mWindowBools["All Elements"]) { wEditElements(); }
 
     for(auto& file : html::vLoadedHTMLs) {
         wFileRoot(file);
@@ -659,6 +661,23 @@ void win::wSelectedElement() {
     ImGui::Text( "%s", SE->sRawLine.c_str());
     ImGui::EndChild();
     ImGui::Unindent();
+
+    ImGui::End();
+}
+
+void win::wEditElements() {
+    ImGui::Begin("All Elements",&mWindowBools["All Elements"]);
+
+    for(auto& item : config::getConfig(config::element)) {
+        ImGui::Text( "%s", item.second.c_str());
+        ImGui::Separator();
+    }
+
+    ImGui::Separator();
+
+    for(auto& item : html::mElementInfo) {
+        ImGui::Text( "%s", item.second.sName.c_str());
+    }
 
     ImGui::End();
 }
