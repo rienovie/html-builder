@@ -236,7 +236,7 @@ void config::loadConfig(configType cfgLoadFrom) {
             cfgLoadLocation = "../hb.config";
             //mConfigLoadPtr = &mLoadedConfig;
             //mDefaultLoadPtr = &mDefaultConfig;
-            break;
+            return;
     }
 
     //create config file if doesn't exist
@@ -270,7 +270,8 @@ void config::loadConfig(configType cfgLoadFrom) {
         if(cfgLoadFrom == element) {
             bool
                 bElementOpen = false,
-                bNotesOpen = false;
+                bNotesOpen = false,
+                bSkipNextNewLine = false;
             sBuild.clear();
             sProp.clear();
 
@@ -281,6 +282,7 @@ void config::loadConfig(configType cfgLoadFrom) {
                             sProp = sBuild;
                             sBuild.clear();
                             bElementOpen = true;
+                            bSkipNextNewLine = true;
                         } else {
                             sBuild.push_back(c);
                         }
@@ -291,6 +293,7 @@ void config::loadConfig(configType cfgLoadFrom) {
                             sProp.clear();
                             sBuild.clear();
                             bElementOpen = false;
+                            bSkipNextNewLine = true;
                             continue;
                         }
                         if(c == '{') { bNotesOpen = true; }
@@ -298,10 +301,12 @@ void config::loadConfig(configType cfgLoadFrom) {
                         sBuild.push_back(c);
                     }
                 }
-                sBuild.push_back('\n');
+                if(!bSkipNextNewLine) {
+                    sBuild.push_back('\n');
+                } else { bSkipNextNewLine = false; }
 
             }
-        } else {
+        } else { //is not element
             while(getline(fileIn,sLine )) {
                 sProp.clear();
                 sBuild.clear();

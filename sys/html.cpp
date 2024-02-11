@@ -17,6 +17,7 @@ html::html() {
                 if(sBuild.length() > 0) {
                     if(iCurrentVariable == 3 && sBuild[0] == '}') {
                         mElementInfo[currentElementInfo.sName] = currentElementInfo;
+                        iCurrentVariable = 0;
                     } else switch(iCurrentVariable) {
                         case 0:
                             currentElementInfo.bContainer = util::strToInt(sBuild);
@@ -33,7 +34,7 @@ html::html() {
                         case 3:
                             if(sBuild.length() > 1) {
                                 currentElementInfo.vNotes.push_back(sBuild);
-                            } else util::qPrint(sBuild);
+                            }
                             break;
                         default:
                             util::qPrint("iCurrentVariable in html constructor out of defined bounds. Value:",iCurrentVariable);

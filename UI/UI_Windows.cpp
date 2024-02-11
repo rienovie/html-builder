@@ -668,17 +668,50 @@ void win::wSelectedElement() {
 void win::wEditElements() {
     ImGui::Begin("All Elements",&mWindowBools["All Elements"]);
 
-    for(auto& item : config::getConfig(config::element)) {
-        ImGui::Text( "%s", item.second.c_str());
-        ImGui::Separator();
+    for(auto& item : html::mElementInfo) {
+        swElementEdit(item.second);
     }
 
-    ImGui::Separator();
-
-    for(auto& item : html::mElementInfo) {
-        ImGui::Text( "%s", item.second.sName.c_str());
+    if(ImGui::Button("Click")) {
+        util::qPrint(html::mElementInfo.size());
     }
 
     ImGui::End();
+}
+
+// ImGui::PushID(&item.second.sName);
+// if(ImGui::InputText("Name",&item.second.sName)) {
+//     util::qPrint("Name updated to:",html::mElementInfo[item.first].sName);
+// }
+// ImGui::PopID();
+//
+// ImGui::PushID(&item.second.sDescription);
+// if(ImGui::InputText("Desc",&item.second.sDescription)) {
+//     util::qPrint("Name updated to:",html::mElementInfo[item.first].sDescription);
+// }
+// ImGui::PopID();
+//
+// ImGui::Separator();
+
+void win::swElementEdit ( html::elementInfo& eInfo ) {
+    ImGui::PushID(&eInfo);
+
+    ImGui::BeginTable("TopBar",2,ImGuiTableFlags_SizingStretchProp);
+
+    ImGui::TableNextColumn();
+    ImGui::Text("Name:");
+    ImGui::SameLine();
+    if(ImGui::InputText("##",&eInfo.sName)){
+        util::qPrint("Name updated to:",html::mElementInfo[eInfo.sName].sName);
+    }
+    ImGui::TableNextColumn();
+    if(ImGui::Checkbox("Container",&eInfo.bContainer)) {
+        util::qPrint("Container changed to:",html::mElementInfo[eInfo.sName].bContainer);
+    }
+
+
+    ImGui::EndTable();
+
+    ImGui::PopID();
 }
 
