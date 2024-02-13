@@ -670,6 +670,7 @@ void win::wEditElements() {
 
     for(auto& item : html::mElementInfo) {
         swElementEdit(item.second);
+        ImGui::Separator();
     }
 
     if(ImGui::Button("Click")) {
@@ -696,18 +697,67 @@ void win::wEditElements() {
 void win::swElementEdit ( html::elementInfo& eInfo ) {
     ImGui::PushID(&eInfo);
 
-    ImGui::BeginTable("TopBar",2,ImGuiTableFlags_SizingStretchProp);
+    ImGui::BeginTable("TopSection",2,ImGuiTableFlags_SizingStretchSame);
 
     ImGui::TableNextColumn();
-    ImGui::Text("Name:");
     ImGui::SameLine();
-    if(ImGui::InputText("##",&eInfo.sName)){
-        util::qPrint("Name updated to:",html::mElementInfo[eInfo.sName].sName);
+    ImGui::Text( "%s", eInfo.sName.c_str());
+
+    //This feels really sloppy but it works for now
+    //TODO Please update this to be done better ;)
+    static bool bNameInit = false;
+    static bool bPopupOpen = false;
+    static std::string sCurrentName;
+    if(ImGui::BeginPopupContextItem(eInfo.sName.c_str())){
+        static std::string sNewName;
+        bPopupOpen = true;
+
+        if(!bNameInit) {
+            sNewName = eInfo.sName;
+            sCurrentName = sNewName;
+            bNameInit = true;
+        }
+        ImGui::InputText("New Name",&sNewName);
+        if(ImGui::Button("Cancel")) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if(sCurrentName == sNewName) { ImGui::BeginDisabled(); }
+        if(ImGui::Button("Apply")) {
+            html::elementInfo elementCopy = eInfo;
+            util::qPrint(elementCopy.sName,sNewName);
+            elementCopy.sName = sNewName;
+            html::mElementInfo[sNewName] = elementCopy;
+            html::mElementInfo.erase(eInfo.sName);
+            ImGui::CloseCurrentPopup();
+            //need to clean up for return
+            bNameInit = false;
+            ImGui::EndPopup();
+            ImGui::EndTable();
+            ImGui::PopID();
+            return;
+        }
+        if(sCurrentName == sNewName) { ImGui::EndDisabled(); }
+
+        ImGui::EndPopup();
+    } else if (bPopupOpen && bNameInit && eInfo.sName == sCurrentName) {
+        bNameInit = false;
+        bPopupOpen = false;
     }
+
+
+
     ImGui::TableNextColumn();
     if(ImGui::Checkbox("Container",&eInfo.bContainer)) {
-        util::qPrint("Container changed to:",html::mElementInfo[eInfo.sName].bContainer);
+        util::qPrint("Container changed to:",html::mElementInfo[eInfo.sName].bContainer,"on",html::mElementInfo[eInfo.sName].sName);
     }
+
+    ImGui::EndTable();
+
+    ImGui::InputText("Desc",&eInfo.sDescription);
+
+    ImGui::BeginTable("BottomSection",2,ImGuiTableFlags_SizingStretchSame);
+
 
 
     ImGui::EndTable();
