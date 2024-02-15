@@ -44,6 +44,17 @@ namespace util {
         return (0 - (bReturnIndex));
     }
 
+    template <typename T>
+    void removeFirst(std::vector<T>& inputVector, T toRemove) {
+        for(int i = 0, last = inputVector.size() - 1; i <= last; i++) {
+            if(inputVector[i] == toRemove) {
+                inputVector.erase(inputVector.begin() + i);
+                return;
+            }
+        }
+        qPrint("Value",toRemove,"was not found in vector!");
+    }
+
     int
         strToInt(std::string str),
         lerpInt(int iStart, int iEnd, float fLerp);

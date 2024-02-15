@@ -694,26 +694,27 @@ void win::wEditElements() {
 //
 // ImGui::Separator();
 
-void win::swElementEdit ( html::elementInfo& eInfo ) {
-    ImGui::PushID(&eInfo);
+void win::swElementEdit ( html::elementInfo& curElInfo ) {
+    ImGui::PushID(&curElInfo );
 
     ImGui::BeginTable("TopSection",2,ImGuiTableFlags_SizingStretchSame);
 
     ImGui::TableNextColumn();
+    ImGui::Text("<");
     ImGui::SameLine();
-    ImGui::Text( "%s", eInfo.sName.c_str());
+    ImGui::Text( "%s", curElInfo.sName.c_str());
 
     //This feels really sloppy but it works for now
     //TODO Please update this to be done better ;)
     static bool bNameInit = false;
     static bool bPopupOpen = false;
     static std::string sCurrentName;
-    if(ImGui::BeginPopupContextItem(eInfo.sName.c_str())){
+    if(ImGui::BeginPopupContextItem( curElInfo.sName.c_str())){
         static std::string sNewName;
         bPopupOpen = true;
 
         if(!bNameInit) {
-            sNewName = eInfo.sName;
+            sNewName = curElInfo.sName;
             sCurrentName = sNewName;
             bNameInit = true;
         }
@@ -724,11 +725,11 @@ void win::swElementEdit ( html::elementInfo& eInfo ) {
         ImGui::SameLine();
         if(sCurrentName == sNewName) { ImGui::BeginDisabled(); }
         if(ImGui::Button("Apply")) {
-            html::elementInfo elementCopy = eInfo;
+            html::elementInfo elementCopy = curElInfo;
             util::qPrint(elementCopy.sName,sNewName);
             elementCopy.sName = sNewName;
             html::mElementInfo[sNewName] = elementCopy;
-            html::mElementInfo.erase(eInfo.sName);
+            html::mElementInfo.erase( curElInfo.sName);
             ImGui::CloseCurrentPopup();
             //need to clean up for return
             bNameInit = false;
@@ -740,25 +741,96 @@ void win::swElementEdit ( html::elementInfo& eInfo ) {
         if(sCurrentName == sNewName) { ImGui::EndDisabled(); }
 
         ImGui::EndPopup();
-    } else if (bPopupOpen && bNameInit && eInfo.sName == sCurrentName) {
+    } else if (bPopupOpen && bNameInit && curElInfo.sName == sCurrentName) {
         bNameInit = false;
         bPopupOpen = false;
     }
+    ImGui::SameLine();
+    ImGui::Text(">");
 
 
 
     ImGui::TableNextColumn();
-    if(ImGui::Checkbox("Container",&eInfo.bContainer)) {
-        util::qPrint("Container changed to:",html::mElementInfo[eInfo.sName].bContainer,"on",html::mElementInfo[eInfo.sName].sName);
+    if(ImGui::Checkbox("Container",&curElInfo.bContainer)) {
+        util::qPrint("Container changed to:",html::mElementInfo[curElInfo.sName].bContainer,"on",html::mElementInfo[curElInfo.sName].sName);
     }
 
     ImGui::EndTable();
 
-    ImGui::InputText("Desc",&eInfo.sDescription);
+    ImGui::InputText("Desc",&curElInfo.sDescription);
 
     ImGui::BeginTable("BottomSection",2,ImGuiTableFlags_SizingStretchSame);
 
+    ImGui::TableNextColumn();
 
+    ImVec2 childSize = ImVec2(0,150);
+
+    ImGui::Text("Common Attributes:");
+    ImGui::Indent();
+    std::string sComAt = "comAt" + curElInfo.sName;
+    ImGui::BeginChild(sComAt.c_str(),childSize);
+    for(auto& comAt : curElInfo.vCommonAttributes) {
+        ImGui::Text( "%s", comAt.c_str());
+        if(ImGui::BeginPopupContextItem((curElInfo.sName + comAt).c_str())) {
+            ImGui::Text( "%s", comAt.c_str());
+            ImGui::SameLine();
+            if(ImGui::Button("Remove")) {
+                util::removeFirst(curElInfo.vCommonAttributes,comAt);
+            }
+            ImGui::EndPopup();
+        }
+    }
+    ImGui::EndChild();
+    ImGui::Unindent();
+
+    ImGui::TableNextColumn();
+
+    ImGui::Text("Notes:");
+    ImGui::Indent();
+    std::string sNotes = "not" + curElInfo.sName;
+    ImGui::BeginChild(sNotes.c_str(),childSize);
+    for(auto& note : curElInfo.vNotes) {
+        ImVec4 color;
+
+        //TODO need to add these color options in the theme customization
+        switch(note[0]) {
+            case '1':
+                color = ImVec4(1,1,0,1);
+                break;
+            case '2':
+                color = ImVec4(1,0.2,0.2,1);
+                break;
+            default:
+                color = UI::uiStylePtr->Colors[ImGuiCol_Text];
+                break;
+        }
+
+        ImGui::TextColored(color ,"%s", note.substr(2).c_str());
+    }
+    ImGui::EndChild();
+    ImGui::Unindent();
+
+    ImGui::TableNextRow();
+    ImGui::TableNextColumn();
+
+    static std::string sNewComAt;
+    ImGui::InputText("##coAt",&sNewComAt);
+    ImGui::SameLine();
+    if(ImGui::Button("Add")) {
+        curElInfo.vCommonAttributes.push_back(sNewComAt);
+        sNewComAt.clear();
+    }
+
+    ImGui::TableNextColumn();
+
+    static std::string sNewNote;
+    ImGui::InputText("##neNo",&sNewNote);
+    ImGui::SameLine();
+    if(ImGui::Button("Add")) {
+        //TODO working here
+
+        sNewNote.clear();
+    }
 
     ImGui::EndTable();
 

@@ -12,6 +12,8 @@ html::html() {
     for(auto& item : mConfig) {
         currentElementInfo.sName = item.first;
         std::string sBuild = "";
+        currentElementInfo.vNotes.clear();
+
         for(int i = 0; i < item.second.length(); i++) {
             if(item.second[i] == '\n') {
                 if(sBuild.length() > 0) {
