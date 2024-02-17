@@ -87,5 +87,9 @@ namespace util {
         return iStart + std::round((float(iEnd) - float(iStart)) * fLerp);
     }
 
+    void flip ( bool& toFlip ) {
+        toFlip = !toFlip;
+    }
+
 
 }

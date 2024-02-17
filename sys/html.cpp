@@ -2,6 +2,7 @@
 
 std::vector<html::file*> html::vLoadedHTMLs;
 std::map<std::string,html::elementInfo> html::mElementInfo;
+html::elementInfo* html::editElement = NULL;
 
 //html constructor
 html::html() {
@@ -17,23 +18,27 @@ html::html() {
         for(int i = 0; i < item.second.length(); i++) {
             if(item.second[i] == '\n') {
                 if(sBuild.length() > 0) {
-                    if(iCurrentVariable == 3 && sBuild[0] == '}') {
+                    if(iCurrentVariable == 4 && sBuild[0] == '}') {
                         mElementInfo[currentElementInfo.sName] = currentElementInfo;
                         iCurrentVariable = 0;
                     } else switch(iCurrentVariable) {
                         case 0:
-                            currentElementInfo.bContainer = util::strToInt(sBuild);
+                            currentElementInfo.sFullName = sBuild;
                             iCurrentVariable++;
                             break;
                         case 1:
-                            currentElementInfo.sDescription = sBuild;
+                            currentElementInfo.bContainer = util::strToInt(sBuild);
                             iCurrentVariable++;
                             break;
                         case 2:
-                            currentElementInfo.vCommonAttributes = util::splitStringOnChar(sBuild,',');
+                            currentElementInfo.sDescription = sBuild;
                             iCurrentVariable++;
                             break;
                         case 3:
+                            currentElementInfo.vCommonAttributes = util::splitStringOnChar(sBuild,',');
+                            iCurrentVariable++;
+                            break;
+                        case 4:
                             if(sBuild.length() > 1) {
                                 currentElementInfo.vNotes.push_back(sBuild);
                             }

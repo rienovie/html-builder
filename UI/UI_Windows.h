@@ -20,6 +20,7 @@ public:
     static void mainLoop();
 private:
     static std::map<std::string,bool> mWindowBools;
+    static std::string sElementNameEdit;
 
     static void
         wMainMenu(),
@@ -34,8 +35,10 @@ private:
         BasicToolTip(const char* toolTipText),
         hierarchyPopulate(html::element* element),
         wSelectedElement(),
-        wEditElements(),
-        swElementEdit(html::elementInfo& eInfo);
+        wAllElements(),
+        wEditElement(),
+        wEditElementName(),
+        swElementInfo(html::elementInfo& elInfo);
 
     static int themeNameCallback(ImGuiInputTextCallbackData* data);
 };

@@ -105,6 +105,7 @@ public:
     public:
         std::string
             sName,
+            sFullName,
             sDescription;
         bool bContainer;
         std::vector<std::string>
@@ -117,6 +118,7 @@ public:
     //public for html class
     static std::vector<file*> vLoadedHTMLs;
     static std::map<std::string,elementInfo> mElementInfo;
+    static elementInfo* editElement;
 
     static void
         loadFile(std::string sFilePath),

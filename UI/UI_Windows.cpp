@@ -7,8 +7,11 @@ std::map<std::string,bool> win::mWindowBools {
     {"File Browser",false},
     {"Current Hierarchy",false},
     {"Selected Element", false},
-    {"All Elements", false}
+    {"All Elements", false},
+    {"Edit Element",false},
+    {"Edit Element Name",false}
 };
+std::string win::sElementNameEdit;
 
 void win::wMainMenu() {
     ImGui::BeginMainMenuBar();
@@ -46,7 +49,9 @@ void win::mainLoop() {
     if(mWindowBools["File Browser"]) { wFileBrowser(); }
     if(mWindowBools["Current Hierarchy"]) { wHierarchy(); }
     if(mWindowBools["Selected Element"]) { wSelectedElement(); }
-    if(mWindowBools["All Elements"]) { wEditElements(); }
+    if(mWindowBools["All Elements"]) { wAllElements(); }
+    if(mWindowBools["Edit Element"]) { wEditElement(); }
+    if(mWindowBools["Edit Element Name"]) { wEditElementName(); }
 
     for(auto& file : html::vLoadedHTMLs) {
         wFileRoot(file);
@@ -213,6 +218,17 @@ void win::wTest() {
             util::qPrint(i->sElementName);
         }
     }
+    ImGui::PushFont(UI::font_main);
+    ImGui::Text("Font Main");
+    ImGui::PopFont();
+
+    ImGui::PushFont(UI::font_bold);
+    ImGui::Text("Font Bold");
+    ImGui::PopFont();
+
+    ImGui::PushFont(UI::font_light);
+    ImGui::Text("Font Light");
+    ImGui::PopFont();
 
     ImGui::End();
 }
@@ -665,134 +681,72 @@ void win::wSelectedElement() {
     ImGui::End();
 }
 
-void win::wEditElements() {
-    ImGui::Begin("All Elements",&mWindowBools["All Elements"]);
-
-    for(auto& item : html::mElementInfo) {
-        swElementEdit(item.second);
-        ImGui::Separator();
+void win::wEditElement() {
+    if(!html::editElement) {
+        mWindowBools["Edit Element"] = false;
+        return;
     }
 
-    if(ImGui::Button("Click")) {
-        util::qPrint(html::mElementInfo.size());
-    }
+    ImGui::Begin("Edit Element",&mWindowBools["Edit Element"]);
 
-    ImGui::End();
-}
-
-// ImGui::PushID(&item.second.sName);
-// if(ImGui::InputText("Name",&item.second.sName)) {
-//     util::qPrint("Name updated to:",html::mElementInfo[item.first].sName);
-// }
-// ImGui::PopID();
-//
-// ImGui::PushID(&item.second.sDescription);
-// if(ImGui::InputText("Desc",&item.second.sDescription)) {
-//     util::qPrint("Name updated to:",html::mElementInfo[item.first].sDescription);
-// }
-// ImGui::PopID();
-//
-// ImGui::Separator();
-
-void win::swElementEdit ( html::elementInfo& curElInfo ) {
-    ImGui::PushID(&curElInfo );
-
-    ImGui::BeginTable("TopSection",2,ImGuiTableFlags_SizingStretchSame);
-
+    ImGui::BeginTable("Top",2,ImGuiTableFlags_SizingStretchProp);
     ImGui::TableNextColumn();
+    if(ImGui::Button("Edit Name")) {
+        util::flip(mWindowBools["Edit Element Name"]);
+    }
+    ImGui::SameLine();
     ImGui::Text("<");
     ImGui::SameLine();
-    ImGui::Text( "%s", curElInfo.sName.c_str());
-
-    //This feels really sloppy but it works for now
-    //TODO Please update this to be done better ;)
-    static bool bNameInit = false;
-    static bool bPopupOpen = false;
-    static std::string sCurrentName;
-    if(ImGui::BeginPopupContextItem( curElInfo.sName.c_str())){
-        static std::string sNewName;
-        bPopupOpen = true;
-
-        if(!bNameInit) {
-            sNewName = curElInfo.sName;
-            sCurrentName = sNewName;
-            bNameInit = true;
-        }
-        ImGui::InputText("New Name",&sNewName);
-        if(ImGui::Button("Cancel")) {
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::SameLine();
-        if(sCurrentName == sNewName) { ImGui::BeginDisabled(); }
-        if(ImGui::Button("Apply")) {
-            html::elementInfo elementCopy = curElInfo;
-            util::qPrint(elementCopy.sName,sNewName);
-            elementCopy.sName = sNewName;
-            html::mElementInfo[sNewName] = elementCopy;
-            html::mElementInfo.erase( curElInfo.sName);
-            ImGui::CloseCurrentPopup();
-            //need to clean up for return
-            bNameInit = false;
-            ImGui::EndPopup();
-            ImGui::EndTable();
-            ImGui::PopID();
-            return;
-        }
-        if(sCurrentName == sNewName) { ImGui::EndDisabled(); }
-
-        ImGui::EndPopup();
-    } else if (bPopupOpen && bNameInit && curElInfo.sName == sCurrentName) {
-        bNameInit = false;
-        bPopupOpen = false;
-    }
+    ImGui::Text("%s", html::editElement->sName.c_str());
     ImGui::SameLine();
     ImGui::Text(">");
-
-
-
     ImGui::TableNextColumn();
-    if(ImGui::Checkbox("Container",&curElInfo.bContainer)) {
-        util::qPrint("Container changed to:",html::mElementInfo[curElInfo.sName].bContainer,"on",html::mElementInfo[curElInfo.sName].sName);
-    }
-
+    ImGui::Checkbox("Container",&html::editElement->bContainer);
     ImGui::EndTable();
 
-    ImGui::InputText("Desc",&curElInfo.sDescription);
+    ImGui::InputText("Full Name",&html::editElement->sFullName);
 
-    ImGui::BeginTable("BottomSection",2,ImGuiTableFlags_SizingStretchSame);
+    ImGui::InputText("Desc",&html::editElement->sDescription);
 
-    ImGui::TableNextColumn();
-
-    ImVec2 childSize = ImVec2(0,150);
-
+    static ImVec2 childSize = ImVec2(0,150);
     ImGui::Text("Common Attributes:");
     ImGui::Indent();
-    std::string sComAt = "comAt" + curElInfo.sName;
-    ImGui::BeginChild(sComAt.c_str(),childSize);
-    for(auto& comAt : curElInfo.vCommonAttributes) {
-        ImGui::Text( "%s", comAt.c_str());
-        if(ImGui::BeginPopupContextItem((curElInfo.sName + comAt).c_str())) {
-            ImGui::Text( "%s", comAt.c_str());
+    static std::string sNewComAt;
+    ImGui::InputText("##coAt",&sNewComAt);
+    ImGui::SameLine();
+    if(ImGui::Button("Add")) {
+        html::editElement->vCommonAttributes.push_back(sNewComAt);
+        sNewComAt.clear();
+    }
+    ImGui::BeginChild("ComAt",ImVec2(0,ImGui::GetTextLineHeight() * 2 + UI::uiStylePtr->ScrollbarSize),
+                      ImGuiChildFlags_Border,ImGuiWindowFlags_HorizontalScrollbar);
+    int iLast = html::editElement->vCommonAttributes.size() - 1;
+    std::string sCurComAt;
+    ImGui::NewLine(); //need to add new line for the auto sameLine in the for loop
+    for(int i = 0; i <= iLast; i++) {
+        sCurComAt = html::editElement->vCommonAttributes[i];
+        if(i != 0) {
             ImGui::SameLine();
+            ImGui::Text(",");
+        }
+        ImGui::SameLine();
+        ImGui::Text( "%s", sCurComAt.c_str());
+        if(ImGui::BeginPopupContextItem(sCurComAt.c_str())) {
+            ImGui::Text( "%s", sCurComAt.c_str());
             if(ImGui::Button("Remove")) {
-                util::removeFirst(curElInfo.vCommonAttributes,comAt);
+                util::removeFirst(html::editElement->vCommonAttributes,sCurComAt);
             }
             ImGui::EndPopup();
         }
     }
     ImGui::EndChild();
     ImGui::Unindent();
-
-    ImGui::TableNextColumn();
-
     ImGui::Text("Notes:");
     ImGui::Indent();
-    std::string sNotes = "not" + curElInfo.sName;
-    ImGui::BeginChild(sNotes.c_str(),childSize);
-    for(auto& note : curElInfo.vNotes) {
+    ImGui::BeginChild("Notes",childSize,ImGuiChildFlags_Border);
+    for(std::string& note : html::editElement->vNotes) {
         ImVec4 color;
-
-        //TODO need to add these color options in the theme customization
+        //TODO need to add these color options in theme customization
         switch(note[0]) {
             case '1':
                 color = ImVec4(1,1,0,1);
@@ -804,36 +758,131 @@ void win::swElementEdit ( html::elementInfo& curElInfo ) {
                 color = UI::uiStylePtr->Colors[ImGuiCol_Text];
                 break;
         }
-
-        ImGui::TextColored(color ,"%s", note.substr(2).c_str());
+        ImGui::TextColored(color,"%s", note.substr(2).c_str());
     }
     ImGui::EndChild();
     ImGui::Unindent();
-
-    ImGui::TableNextRow();
-    ImGui::TableNextColumn();
-
-    static std::string sNewComAt;
-    ImGui::InputText("##coAt",&sNewComAt);
-    ImGui::SameLine();
-    if(ImGui::Button("Add")) {
-        curElInfo.vCommonAttributes.push_back(sNewComAt);
-        sNewComAt.clear();
-    }
-
-    ImGui::TableNextColumn();
-
     static std::string sNewNote;
     ImGui::InputText("##neNo",&sNewNote);
-    ImGui::SameLine();
     if(ImGui::Button("Add")) {
-        //TODO working here
-
+        util::qPrint("click");
         sNewNote.clear();
     }
 
-    ImGui::EndTable();
+    ImGui::End();
+}
 
-    ImGui::PopID();
+void win::wEditElementName() {
+    ImGui::Begin("Edit Element Name",&mWindowBools["Edit Element Name"]);
+    ImGui::InputText("New Name",&sElementNameEdit);
+    if(ImGui::Button("Cancel")) {
+        mWindowBools["Edit Element Name"] = false;
+        ImGui::End();
+        return;
+    }
+    bool bCheck = false;
+    if(sElementNameEdit.length() == 0
+    || html::mElementInfo.find(sElementNameEdit) != html::mElementInfo.end()) {
+        bCheck = true;
+        ImGui::BeginDisabled();
+    }
+    ImGui::SameLine();
+    if(ImGui::Button("Apply")) {
+        html::elementInfo elementCopy = *html::editElement;
+        std::string sOldName = html::editElement->sName;
+        util::qPrint(sOldName,"renamed to",sElementNameEdit);
+        elementCopy.sName = sElementNameEdit;
+        html::mElementInfo[sElementNameEdit] = elementCopy;
+        html::editElement = &html::mElementInfo[sElementNameEdit];
+        html::mElementInfo.erase(sOldName);
+        mWindowBools["Edit Element Name"] = false;
+    }
+    if(bCheck) { ImGui::EndDisabled(); }
+
+    ImGui::End();
+}
+
+void win::wAllElements() {
+    ImGui::Begin("All Elements",&mWindowBools["All Elements"]);
+
+    for(auto& item : html::mElementInfo) {
+        swElementInfo(item.second);
+        ImGui::Separator();
+    }
+
+    ImGui::End();
+}
+
+void win::swElementInfo ( html::elementInfo& elInfo ) {
+    ImGui::BeginTable("TopLine",2,ImGuiTableFlags_SizingStretchSame);
+    ImGui::TableNextColumn();
+    ImGui::Text("<");
+    ImGui::SameLine();
+    ImGui::PushFont(UI::font_bold);
+    ImGui::Text( "%s", elInfo.sName.c_str());
+    ImGui::PopFont();
+    ImGui::SameLine();
+    ImGui::Text(">");
+    if(elInfo.bContainer) {
+        ImGui::SameLine();
+        ImGui::PushFont(UI::font_light);
+        ImGui::TextDisabled("Container");
+        ImGui::PopFont();
+    }
+    ImGui::TableNextColumn();
+    if(ImGui::SmallButton("Edit Element")) {
+        html::editElement = &elInfo;
+        sElementNameEdit = elInfo.sName;
+        mWindowBools["Edit Element"] = true;
+    }
+    ImGui::EndTable();
+    ImGui::Text( "%s", elInfo.sFullName.c_str());
+
+    ImGui::Indent();
+    ImGui::PushFont(UI::font_light);
+    ImGui::TextWrapped( "%s", elInfo.sDescription.c_str());
+    ImGui::PopFont();
+    ImGui::Unindent();
+
+    ImGui::BeginTable("BottomLine",1,ImGuiTableFlags_SizingStretchSame);
+    ImGui::TableNextColumn();
+    ImGui::Text("Common Attributes:");
+    ImGui::Indent();
+    std::string sComAtCombined;
+    int iLast = elInfo.vCommonAttributes.size() - 1;
+    for(int i = 0; i <= iLast; i++) {
+        if(i != 0) { sComAtCombined.push_back(','); }
+        sComAtCombined.append(elInfo.vCommonAttributes[i]);
+    }
+    ImGui::PushFont(UI::font_light);
+    ImGui::TextWrapped( "%s", sComAtCombined.c_str());
+    ImGui::PopFont();
+    ImGui::Unindent();
+    ImGui::TableNextRow();
+    ImGui::TableNextColumn();
+    if(elInfo.vNotes.size() != 0) {
+        ImGui::Text("Notes:");
+        ImGui::Indent();
+        ImGui::PushFont(UI::font_light);
+        for(std::string& note : elInfo.vNotes) {
+            ImVec4 color;
+            //TODO need to add these color options in theme customization
+            switch(note[0]) {
+                case '1':
+                    color = ImVec4(1,1,0,1);
+                    break;
+                case '2':
+                    color = ImVec4(1,0.2,0.2,1);
+                    break;
+                default:
+                    color = UI::uiStylePtr->Colors[ImGuiCol_Text];
+                    break;
+            }
+            ImGui::TextColored(color,"%s", note.substr(2).c_str());
+        }
+        ImGui::PopFont();
+        ImGui::Unindent();
+    }
+    ImGui::EndTable();
 }
 
