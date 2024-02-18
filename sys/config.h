@@ -31,7 +31,8 @@ public:
 
     static std::map<std::string,std::string>
         getConfig(configType cfgToGet),
-        getAllThemeColorValues();
+        getAllThemeColorValues(),
+        getAllCustomColorValues();
 
     static std::string getProp(configType cfgFrom, const char* propertyName);
 

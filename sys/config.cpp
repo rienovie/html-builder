@@ -32,6 +32,7 @@ std::map<std::string,std::string> config::mDefaultNewTheme {
     {"tabRounding","8.000000"},
     {"circleTess","5.000000"},
     {"separatorThickness","3.000000"},
+    {"grabMinSize","30.000000"},
     //~ is the marker for color
     {"~Text","0.000000,0.000000,0.000000,1.000000"},
     {"~TextDisabled","0.100860,0.197749,0.317585,1.000000"},
@@ -77,7 +78,9 @@ std::map<std::string,std::string> config::mDefaultNewTheme {
     {"~Header","0.260000,0.590000,0.980000,0.400000"},
     {"~HeaderHovered","0.260000,0.590000,0.980000,1.000000"},
     {"~HeaderActive","0.060000,0.530000,0.980000,1.000000"},
-    {"grabMinSize","30.000000"}
+    //$ is the symbol for customColors
+    {"$Warning","1.000000,0.988235,0.000000,1.000000"},
+    {"$Critical","0.705882,0.000000,0.000000,1.000000"}
 
 };
 
@@ -561,4 +564,17 @@ void config::modifyFavorites ( std::string sPath, bool bRemove ) {
 
     if(bShouldUpdate) { update(system,"favorites",sNewProp); }
 }
+
+std::map<std::string, std::string> config::getAllCustomColorValues() {
+    std::map<std::string, std::string> mOutput;
+
+    for(auto& item : mLoadedTheme) {
+        if(item.first[0] == '$') {
+            mOutput.insert(item);
+        }
+    }
+
+    return mOutput;
+}
+
 

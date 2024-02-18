@@ -50,6 +50,7 @@ ImGuiStyle* UI::uiStylePtr = NULL;
 GLFWwindow* UI::mainWindow = NULL;
 ImGuiIO* UI::ioPtr = NULL;
 html::element* UI::selectedElement = NULL;
+std::map<std::string,ImVec4> UI::mCustomColorProps;
 
 //these are all the values that are changed with the hue slider
 std::vector<ImGuiCol> UI::vHueModValues {
@@ -223,7 +224,6 @@ void UI::refreshTheme() {
     uiStylePtr->GrabMinSize = util::strToFloat(config::getProp(config::theme,"grabMinSize"));
 
     auto mColorOptions = config::getAllThemeColorValues();
-
     for(auto& colOpt : mColorOptions) {
         uiStylePtr->Colors[getColorEnum(colOpt.first)] = getVec4FromString(colOpt.second);
     }
@@ -236,6 +236,13 @@ void UI::refreshTheme() {
     modColor.z *= modVal;
     modColor.w = 1;
     uiStylePtr->Colors[ImGuiCol_DockingEmptyBg] = modColor;
+
+    auto mCustCols = config::getAllCustomColorValues();
+    for(auto& custCol : mCustCols) {
+        mCustomColorProps[custCol.first.substr(1)] = getVec4FromString(custCol.second);
+    }
+
+
 }
 
 ImVec4 UI::getVec4FromString ( std::string sVec4Value ) {

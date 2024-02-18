@@ -43,7 +43,7 @@ void win::mainLoop() {
     ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
     wMainMenu();
-    if(mWindowBools["ImGui Demo"]) { ImGui::ShowDemoWindow(); }
+    if(mWindowBools["ImGui Demo"]) { ImGui::ShowDemoWindow(&mWindowBools["ImGui Demo"]); }
     if(mWindowBools["Settings"]) { wSettings(); }
     if(mWindowBools["Test"]) { wTest(); }
     if(mWindowBools["File Browser"]) { wFileBrowser(); }
@@ -531,9 +531,9 @@ void win::swThemeColors() {
     int i = 0;
     for(auto& item : mColors) {
         i = UI::getColorEnum(item.first);
-        if(ImGui::ColorEdit4(ImGui::GetStyleColorName(i)
-                            ,(float*)&UI::uiStylePtr->Colors[i]
-                            ,ImGuiColorEditFlags_DisplayHSV
+        if(ImGui::ColorEdit4(ImGui::GetStyleColorName(i),
+                            (float*)&UI::uiStylePtr->Colors[i],
+                            ImGuiColorEditFlags_DisplayHSV
                             | ImGuiColorEditFlags_PickerHueWheel)) {
             config::update(
                 config::theme,
@@ -549,6 +549,20 @@ void win::swThemeColors() {
                 modColor.w = 1;
                 UI::uiStylePtr->Colors[ImGuiCol_DockingEmptyBg] = modColor;
             }
+        }
+    }
+
+    for(auto& item : UI::mCustomColorProps) {
+        if(ImGui::ColorEdit4(item.first.c_str(),
+                            (float*)&UI::mCustomColorProps[item.first],
+                            ImGuiColorEditFlags_DisplayHSV
+                            | ImGuiColorEditFlags_PickerHueWheel)) {
+            std::string sApp = "$";
+            sApp.append(item.first);
+            config::update(
+                config::theme,
+                sApp.c_str(),
+                UI::getStringFromVec4(UI::mCustomColorProps[item.first]));
         }
     }
 
@@ -712,7 +726,11 @@ void win::wEditElement() {
     ImGui::Text("Common Attributes:");
     ImGui::Indent();
     static std::string sNewComAt;
-    ImGui::InputText("##coAt",&sNewComAt);
+    if(ImGui::InputText("##coAt",&sNewComAt,ImGuiInputTextFlags_EnterReturnsTrue)) {
+        html::editElement->vCommonAttributes.push_back(sNewComAt);
+        sNewComAt.clear();
+        ImGui::SetKeyboardFocusHere(-1);
+    }
     ImGui::SameLine();
     if(ImGui::Button("Add")) {
         html::editElement->vCommonAttributes.push_back(sNewComAt);
@@ -739,42 +757,74 @@ void win::wEditElement() {
             ImGui::EndPopup();
         }
     }
+
     ImGui::EndChild();
     ImGui::Unindent();
     ImGui::Text("Notes:");
     ImGui::Indent();
+    static int iNoteType = 0;
+    ImGui::RadioButton("Default",&iNoteType,0);
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Text,UI::mCustomColorProps["Warning"]);
+    ImGui::RadioButton("Warning",&iNoteType,1);
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Text,UI::mCustomColorProps["Critical"]);
+    ImGui::RadioButton("Critical",&iNoteType,2);
+    ImGui::PopStyleColor();
+    static std::string sNewNote = "";
+    if(iNoteType) {
+        ImGui::PushStyleColor(ImGuiCol_Text,
+                              UI::mCustomColorProps[(iNoteType == 1 ? "Warning" : "Critical")]);
+    }
+    if(ImGui::InputText("##neNo",&sNewNote,ImGuiInputTextFlags_EnterReturnsTrue)) {
+        newNote(sNewNote,iNoteType);
+        ImGui::SetKeyboardFocusHere(-1);
+    }
+    if(iNoteType) { ImGui::PopStyleColor(); }
+    //ImGui::SameLine();
+    ImGui::SameLine();
+    if(ImGui::Button("Add Note")) {
+        newNote(sNewNote,iNoteType);
+    }
     ImGui::BeginChild("Notes",childSize,ImGuiChildFlags_Border);
     for(std::string& note : html::editElement->vNotes) {
         ImVec4 color;
         //TODO need to add these color options in theme customization
         switch(note[0]) {
             case '1':
-                color = ImVec4(1,1,0,1);
+                color = UI::mCustomColorProps["Warning"];
                 break;
             case '2':
-                color = ImVec4(1,0.2,0.2,1);
+                color = UI::mCustomColorProps["Critical"];
                 break;
             default:
                 color = UI::uiStylePtr->Colors[ImGuiCol_Text];
                 break;
         }
         ImGui::TextColored(color,"%s", note.substr(2).c_str());
+        if(ImGui::BeginPopupContextItem(note.c_str())) {
+            ImGui::TextColored(color,"%s", note.substr(2).c_str());
+            if(ImGui::Button("Remove")) {
+                util::removeFirst(html::editElement->vNotes,note);
+                ImGui::EndPopup();
+                break;
+            }
+            ImGui::EndPopup();
+        }
     }
     ImGui::EndChild();
     ImGui::Unindent();
-    static std::string sNewNote;
-    ImGui::InputText("##neNo",&sNewNote);
-    if(ImGui::Button("Add")) {
-        util::qPrint("click");
-        sNewNote.clear();
-    }
 
     ImGui::End();
 }
 
 void win::wEditElementName() {
     ImGui::Begin("Edit Element Name",&mWindowBools["Edit Element Name"]);
-    ImGui::InputText("New Name",&sElementNameEdit);
+    bool bEnterHit = false;
+    if(ImGui::InputText("New Name",&sElementNameEdit,ImGuiInputTextFlags_EnterReturnsTrue)) {
+        bEnterHit = true;
+    }
     if(ImGui::Button("Cancel")) {
         mWindowBools["Edit Element Name"] = false;
         ImGui::End();
@@ -784,10 +834,11 @@ void win::wEditElementName() {
     if(sElementNameEdit.length() == 0
     || html::mElementInfo.find(sElementNameEdit) != html::mElementInfo.end()) {
         bCheck = true;
+        bEnterHit = false;
         ImGui::BeginDisabled();
     }
     ImGui::SameLine();
-    if(ImGui::Button("Apply")) {
+    if(ImGui::Button("Apply") || bEnterHit) {
         html::elementInfo elementCopy = *html::editElement;
         std::string sOldName = html::editElement->sName;
         util::qPrint(sOldName,"renamed to",sElementNameEdit);
@@ -869,10 +920,10 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
             //TODO need to add these color options in theme customization
             switch(note[0]) {
                 case '1':
-                    color = ImVec4(1,1,0,1);
+                    color = UI::mCustomColorProps["Warning"];
                     break;
                 case '2':
-                    color = ImVec4(1,0.2,0.2,1);
+                    color = UI::mCustomColorProps["Critical"];
                     break;
                 default:
                     color = UI::uiStylePtr->Colors[ImGuiCol_Text];
@@ -885,4 +936,17 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
     }
     ImGui::EndTable();
 }
+
+void win::newNote ( std::string& sNewNote, int& iNoteType ) {
+    std::string sNewNoteAppended = "";
+    sNewNoteAppended.append(std::to_string(iNoteType));
+    sNewNoteAppended.push_back(',');
+    sNewNoteAppended.append(sNewNote);
+    if(sNewNote.length() > 0
+    && !util::searchVector(html::editElement->vNotes,sNewNoteAppended)) {
+        html::editElement->vNotes.push_back(sNewNoteAppended);
+    }
+    sNewNote.clear();
+}
+
 
