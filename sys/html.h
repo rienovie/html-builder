@@ -111,6 +111,8 @@ public:
         std::vector<std::string>
             vCommonAttributes,
             vNotes;
+
+        void update();
     private:
 
     };

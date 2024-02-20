@@ -715,7 +715,9 @@ void win::wEditElement() {
     ImGui::SameLine();
     ImGui::Text(">");
     ImGui::TableNextColumn();
-    ImGui::Checkbox("Container",&html::editElement->bContainer);
+    if(ImGui::Checkbox("Container",&html::editElement->bContainer)) {
+        html::editElement->update();
+    }
     ImGui::EndTable();
 
     ImGui::InputText("Full Name",&html::editElement->sFullName);
@@ -727,13 +729,19 @@ void win::wEditElement() {
     ImGui::Indent();
     static std::string sNewComAt;
     if(ImGui::InputText("##coAt",&sNewComAt,ImGuiInputTextFlags_EnterReturnsTrue)) {
-        html::editElement->vCommonAttributes.push_back(sNewComAt);
+        if(!util::searchVector(html::editElement->vCommonAttributes,sNewComAt)) {
+            html::editElement->vCommonAttributes.push_back(sNewComAt);
+            html::editElement->update();
+        }
         sNewComAt.clear();
         ImGui::SetKeyboardFocusHere(-1);
     }
     ImGui::SameLine();
     if(ImGui::Button("Add")) {
-        html::editElement->vCommonAttributes.push_back(sNewComAt);
+        if(!util::searchVector(html::editElement->vCommonAttributes,sNewComAt)) {
+            html::editElement->vCommonAttributes.push_back(sNewComAt);
+            html::editElement->update();
+        }
         sNewComAt.clear();
     }
     ImGui::BeginChild("ComAt",ImVec2(0,ImGui::GetTextLineHeight() * 2 + UI::uiStylePtr->ScrollbarSize),
@@ -753,6 +761,7 @@ void win::wEditElement() {
             ImGui::Text( "%s", sCurComAt.c_str());
             if(ImGui::Button("Remove")) {
                 util::removeFirst(html::editElement->vCommonAttributes,sCurComAt);
+                html::editElement->update();
             }
             ImGui::EndPopup();
         }
@@ -790,7 +799,6 @@ void win::wEditElement() {
     ImGui::BeginChild("Notes",childSize,ImGuiChildFlags_Border);
     for(std::string& note : html::editElement->vNotes) {
         ImVec4 color;
-        //TODO need to add these color options in theme customization
         switch(note[0]) {
             case '1':
                 color = UI::mCustomColorProps["Warning"];
@@ -807,6 +815,7 @@ void win::wEditElement() {
             ImGui::TextColored(color,"%s", note.substr(2).c_str());
             if(ImGui::Button("Remove")) {
                 util::removeFirst(html::editElement->vNotes,note);
+                html::editElement->update();
                 ImGui::EndPopup();
                 break;
             }
@@ -847,6 +856,7 @@ void win::wEditElementName() {
         html::editElement = &html::mElementInfo[sElementNameEdit];
         html::mElementInfo.erase(sOldName);
         mWindowBools["Edit Element Name"] = false;
+        html::editElement->update();
     }
     if(bCheck) { ImGui::EndDisabled(); }
 
@@ -945,6 +955,7 @@ void win::newNote ( std::string& sNewNote, int& iNoteType ) {
     if(sNewNote.length() > 0
     && !util::searchVector(html::editElement->vNotes,sNewNoteAppended)) {
         html::editElement->vNotes.push_back(sNewNoteAppended);
+        html::editElement->update();
     }
     sNewNote.clear();
 }

@@ -4,18 +4,9 @@ anchor
 Together with its href attribute, creates a hyperlink to web pages, files, email addresses, locations within the current page, or anything else a URL can address.
 href,target,title,id,class,download
 {
-2,This is a test note that is Critical
-0,This is a test note that is basic
-1,This is a test note that is warning
-0,This is a test note that is basic
-}
-}
-ul{
-unordered list
-1
-Represents an unordered list of items, typically rendered as a bulleted list.
-type,id,class,style,title
-{
+0,Basic Note
+1,Warning Note
+2,Critical Note
 }
 }
 ol{
@@ -24,9 +15,19 @@ ordered list
 Represents an ordered list of items - typically rendered as a numbered list.
 type,start,reversed,id,class
 {
-2,This is a test note that is Critical
-0,This is a test note that is basic
-1,This is a test note that is warning
-0,This is a test note that is basic
+0,Basic Note
+1,Warning Note
+2,Critical Note
+}
+}
+ul{
+unordered list
+1
+Represents an unordered list of items, typically rendered as a bulleted list.
+type,id,class,style,title
+{
+2,Critical Note
+1,Warning Note
+0,Basic Note
 }
 }

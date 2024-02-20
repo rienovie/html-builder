@@ -83,6 +83,18 @@ namespace util {
         return sOutput;
     }
 
+    std::string vectorToSingleStr ( std::vector<std::string>& sFullVec, std::string sBetweenEach, bool bSkipLast ) {
+        std::string sOutput = "";
+
+        for(int i = 0, iLast = sFullVec.size() - 1; i <= iLast; i++) {
+            sOutput.append(sFullVec[i]);
+            if(i == iLast && bSkipLast) { continue; }
+            else { sOutput.append(sBetweenEach); }
+        }
+
+        return sOutput;
+    }
+
     int lerpInt ( int iStart, int iEnd, float fLerp ) {
         return iStart + std::round((float(iEnd) - float(iStart)) * fLerp);
     }

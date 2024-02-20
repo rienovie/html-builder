@@ -340,3 +340,23 @@ html::element::~element() {
         if(element) { delete element; }
     }
 }
+
+void html::elementInfo::update() {
+    std::string sConfigValue = "";
+
+    sConfigValue.append(sFullName);
+    sConfigValue.push_back('\n');
+    sConfigValue.append(std::to_string(bContainer));
+    sConfigValue.push_back('\n');
+    sConfigValue.append(sDescription);
+    sConfigValue.push_back('\n');
+    sConfigValue.append(util::vectorToSingleStr(vCommonAttributes,std::string(",")));
+    sConfigValue.push_back('\n');
+    sConfigValue.append(std::string("{\n"));
+    sConfigValue.append(util::vectorToSingleStr(vNotes));
+    sConfigValue.append(std::string("}"));
+
+    config::update(config::element,sName.c_str(),sConfigValue);
+
+}
+

@@ -151,15 +151,24 @@ void config::update (configType cfgTo, const char* propertyName, std::string sNe
 
 //TODO element here
 void config::saveConfig(configType cfgSaveTo) {
-    std::string cfgLocation;
+    std::string
+        cfgLocation,
+        sPrintOut;
     switch (cfgSaveTo){
         case system:
+            sPrintOut = "System";
             bShouldSaveSystem = false;
             cfgLocation = "../hb.config";
             break;
         case theme:
+            sPrintOut = "Theme";
             bShouldSaveTheme = false;
             cfgLocation = getThemePathByName(getProp(system,"theme"));
+            break;
+        case element:
+            sPrintOut = "Element Info";
+            bShouldSaveElement = false;
+            cfgLocation = "../sys/elements.hbinfo";
             break;
         default:
             util::qPrint("Attempted to save config type:",cfgSaveTo,"but is not implemented!");
@@ -170,7 +179,7 @@ void config::saveConfig(configType cfgSaveTo) {
         util::qPrint("Config file not found at",cfgLocation,"\n","Attempting to create file...");
         loadConfig(cfgSaveTo);
         return;
-    } else { //config file exists
+    } else if(cfgSaveTo != element) { //config file exists
         std::ifstream fileIn;
         std::ofstream fileOut;
         std::string sLine;
@@ -192,14 +201,46 @@ void config::saveConfig(configType cfgSaveTo) {
         fileIn.close();
         fileOut.open(cfgLocation,std::ios::out | std::ios::trunc);
         if(fileOut.is_open()){
-            for(std::string ln : vFileLines ){
+            for(std::string& ln : vFileLines ){
                 fileOut << ln;
                 fileOut << "\n";
             }
         }
         fileOut.close();
+    } else { //config exists and is element
+        std::ofstream fileOut;
+        std::vector<std::string> vOutputLines;
+        std::string
+            sOutput = "",
+            sBuild = "";
+
+        for(auto& item : mLoadedElementsInfo) {
+            sOutput.append(item.first);
+            sOutput.append("{\n");
+            sOutput.append(item.second);
+            sOutput.append("\n}\n");
+        }
+        //this makes sure no blank lines will be output
+        for(auto& c : sOutput) {
+            if(c == '\n') {
+                if(sBuild.length() == 0) { continue; }
+                vOutputLines.push_back(sBuild);
+                sBuild.clear();
+            } else { sBuild.push_back(c); }
+        }
+
+        fileOut.open(cfgLocation,std::ios::trunc);
+
+        if(fileOut.is_open()) {
+            for(auto& ln : vOutputLines) {
+                fileOut << ln;
+                fileOut << '\n';
+            }
+        }
+
+        fileOut.close();
     }
-    util::qPrint((cfgSaveTo == system)?"System":"Theme","config file saved!");
+    util::qPrint(sPrintOut,"config file saved!");
 }
 
 //this does not feel very efficient but maybe I'll make it better when I am
@@ -243,6 +284,7 @@ void config::loadConfig(configType cfgLoadFrom) {
     }
 
     //create config file if doesn't exist
+    //TODO Fix broken element info doesn't exist here
     if (!(std::filesystem::exists(cfgLoadLocation))) {
         std::ofstream fileOut;
         fileOut.open(cfgLoadLocation);
@@ -289,8 +331,7 @@ void config::loadConfig(configType cfgLoadFrom) {
                         } else {
                             sBuild.push_back(c);
                         }
-                    //Element is open
-                    } else {
+                    } else { //Element is open
                         if(!bNotesOpen && c == '}') {
                             (*mConfigLoadPtr)[sProp] = sBuild;
                             sProp.clear();
