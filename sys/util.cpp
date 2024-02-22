@@ -103,5 +103,12 @@ namespace util {
         toFlip = !toFlip;
     }
 
+    void toLowercase ( std::string& sToModify ) {
+        for(char& c : sToModify) {
+            c = std::tolower(c);
+        }
+    }
+
+
 
 }

@@ -63,10 +63,12 @@ namespace util {
     std::vector<std::string> splitStringOnChar(std::string& sToSplit,char cSplit);
     bool hasPathPermission(std::filesystem::path pPath, bool bPrintErrors = false);
 
-    std::string vectorToSingleStr(std::vector<std::string>& sFullVec,bool bAddNewLines = true);
-    std::string vectorToSingleStr(std::vector<std::string>& sFullVec,std::string sBetweenEach,bool bSkipLast = true);
+    std::string
+        vectorToSingleStr(std::vector<std::string>& sFullVec,bool bAddNewLines = true),
+        vectorToSingleStr(std::vector<std::string>& sFullVec,std::string sBetweenEach,bool bSkipLast = true);
 
     void
         printMemUse(rusage& usageRef),
-        flip(bool& toFlip);
+        flip(bool& toFlip),
+        toLowercase(std::string& sToModify);
 }

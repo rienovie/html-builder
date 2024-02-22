@@ -720,9 +720,13 @@ void win::wEditElement() {
     }
     ImGui::EndTable();
 
-    ImGui::InputText("Full Name",&html::editElement->sFullName);
+    if(ImGui::InputText("Full Name",&html::editElement->sFullName,ImGuiInputTextFlags_EnterReturnsTrue)) {
+        html::editElement->update();
+    }
 
-    ImGui::InputText("Desc",&html::editElement->sDescription);
+    if(ImGui::InputText("Desc",&html::editElement->sDescription,ImGuiInputTextFlags_EnterReturnsTrue)) {
+        html::editElement->update();
+    }
 
     static ImVec2 childSize = ImVec2(0,150);
     ImGui::Text("Common Attributes:");
@@ -866,10 +870,36 @@ void win::wEditElementName() {
 void win::wAllElements() {
     ImGui::Begin("All Elements",&mWindowBools["All Elements"]);
 
-    for(auto& item : html::mElementInfo) {
-        swElementInfo(item.second);
+    static std::string sSearch;
+    static bool bSearchConfirm = false;
+
+    if(ImGui::InputText("Search",&sSearch, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
+        util::qPrint("Hit");
+        bSearchConfirm = true;
+    }
+
+    ImGui::BeginChild("All Elements",ImVec2(0,0),ImGuiChildFlags_Border);
+    if(sSearch.length() != 0 && html::mElementInfo.find(sSearch) == html::mElementInfo.end()) {
+        if(ImGui::Button("Add New Element") || bSearchConfirm) {
+            bSearchConfirm = false;
+            html::elementInfo newElement;
+            newElement.sName = sSearch;
+            html::mElementInfo[sSearch] = newElement;
+            newElement.update();
+            html::editElement = &html::mElementInfo[sSearch];
+            mWindowBools["Edit Element"] = true;
+            sSearch.clear();
+        }
         ImGui::Separator();
     }
+
+    for(auto& item : html::mElementInfo) {
+        if(sSearch.length() == 0 || !item.second.sName.find(sSearch)) {
+            swElementInfo(item.second);
+            ImGui::Separator();
+        }
+    }
+    ImGui::EndChild();
 
     ImGui::End();
 }
@@ -927,7 +957,6 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
         ImGui::PushFont(UI::font_light);
         for(std::string& note : elInfo.vNotes) {
             ImVec4 color;
-            //TODO need to add these color options in theme customization
             switch(note[0]) {
                 case '1':
                     color = UI::mCustomColorProps["Warning"];

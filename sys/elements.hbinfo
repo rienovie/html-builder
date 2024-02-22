@@ -1,19 +1,27 @@
 a{
-anchor
-1
-Together with its href attribute, creates a hyperlink to web pages, files, email addresses, locations within the current page, or anything else a URL can address.
-href,target,title,id,class,download
+f=anchor
+c=1
+d=Together with its href attribute, creates a hyperlink to web pages, files, email addresses, locations within the current page, or anything else a URL can address.
+a=href,target,title,id,class,download
 {
 0,Basic Note
 1,Warning Note
 2,Critical Note
 }
 }
+meta{
+f=metadata
+c=0
+d=Represents metadata that cannot be represented by other HTML meta-related elements, like <base>, <link>, <script>, <style>, and <title>.
+a=name,charset,http-equiv,itemprop
+{
+}
+}
 ol{
-ordered list
-1
-Represents an ordered list of items - typically rendered as a numbered list.
-type,start,reversed,id,class
+f=ordered list
+c=1
+d=Represents an ordered list of items - typically rendered as a numbered list.
+a=type,start,reversed,id,class
 {
 0,Basic Note
 1,Warning Note
@@ -21,10 +29,10 @@ type,start,reversed,id,class
 }
 }
 ul{
-unordered list
-1
-Represents an unordered list of items, typically rendered as a bulleted list.
-type,id,class,style,title
+f=unordered list
+c=1
+d=Represents an unordered list of items, typically rendered as a bulleted list.
+a=type,id,class,style,title
 {
 2,Critical Note
 1,Warning Note

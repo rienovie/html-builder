@@ -9,6 +9,7 @@ html::html() {
     auto mConfig = config::getConfig(config::element);
     elementInfo currentElementInfo;
     int iCurrentVariable = 0; //0 bContainer, 1 desc, 2 commonAttributes, 3 notes
+    bool bCurVarDetermined = false;
 
     for(auto& item : mConfig) {
         currentElementInfo.sName = item.first;
@@ -16,23 +17,44 @@ html::html() {
         currentElementInfo.vNotes.clear();
 
         for(int i = 0; i < item.second.length(); i++) {
+            if(!bCurVarDetermined && item.second[i] == '=') {
+                switch(sBuild[0]) {
+                    case 'f':
+                        iCurrentVariable = 0;
+                        break;
+                    case 'c':
+                        iCurrentVariable = 1;
+                        break;
+                    case 'd':
+                        iCurrentVariable = 2;
+                        break;
+                    case 'a':
+                        iCurrentVariable = 3;
+                        break;
+                    default:
+                        util::qPrint("Error parsing .hbinfo! Expected f|c|d|a but recieved:",sBuild[0]);
+                        break;
+                }
+                bCurVarDetermined = true;
+                sBuild.clear();
+                continue;
+            }
+
             if(item.second[i] == '\n') {
                 if(sBuild.length() > 0) {
                     if(iCurrentVariable == 4 && sBuild[0] == '}') {
                         mElementInfo[currentElementInfo.sName] = currentElementInfo;
                         iCurrentVariable = 0;
+                        bCurVarDetermined = false;
                     } else switch(iCurrentVariable) {
                         case 0:
                             currentElementInfo.sFullName = sBuild;
-                            iCurrentVariable++;
                             break;
                         case 1:
                             currentElementInfo.bContainer = util::strToInt(sBuild);
-                            iCurrentVariable++;
                             break;
                         case 2:
                             currentElementInfo.sDescription = sBuild;
-                            iCurrentVariable++;
                             break;
                         case 3:
                             currentElementInfo.vCommonAttributes = util::splitStringOnChar(sBuild,',');
@@ -48,6 +70,7 @@ html::html() {
                             break;
                     }
                     sBuild.clear();
+                    if(iCurrentVariable != 4) { bCurVarDetermined = false; }
                 }
             } else {
                 sBuild.push_back(item.second[i]);
@@ -344,12 +367,13 @@ html::element::~element() {
 void html::elementInfo::update() {
     std::string sConfigValue = "";
 
+    sConfigValue.append("f=");
     sConfigValue.append(sFullName);
-    sConfigValue.push_back('\n');
+    sConfigValue.append("\nc=");
     sConfigValue.append(std::to_string(bContainer));
-    sConfigValue.push_back('\n');
+    sConfigValue.append("\nd=");
     sConfigValue.append(sDescription);
-    sConfigValue.push_back('\n');
+    sConfigValue.append("\na=");
     sConfigValue.append(util::vectorToSingleStr(vCommonAttributes,std::string(",")));
     sConfigValue.push_back('\n');
     sConfigValue.append(std::string("{\n"));

@@ -107,7 +107,7 @@ public:
             sName,
             sFullName,
             sDescription;
-        bool bContainer;
+        bool bContainer = false;
         std::vector<std::string>
             vCommonAttributes,
             vNotes;
@@ -125,7 +125,7 @@ public:
     static void
         loadFile(std::string sFilePath),
         closeFile(std::string sLoadedFileFullPath),
-        refreshElementsInfo();
+        refreshElementsInfo(); //TODO not sure what I was doing with this
 
     html();
     ~html();
