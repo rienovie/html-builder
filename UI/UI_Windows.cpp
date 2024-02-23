@@ -718,6 +718,36 @@ void win::wEditElement() {
     if(ImGui::Checkbox("Container",&html::editElement->bContainer)) {
         html::editElement->update();
     }
+    ImGui::SameLine();
+    if(ImGui::Button("Delete")) {
+        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+        ImGui::SetNextWindowPos(center,ImGuiCond_Appearing,ImVec2(0.5f,0.5f));
+        ImGui::OpenPopup("Delete Element");
+    }
+    if(ImGui::BeginPopupModal("Delete Element",NULL,ImGuiWindowFlags_AlwaysAutoResize)) {
+
+        ImGui::BeginTable("TopTable",1,ImGuiTableFlags_SizingStretchSame);
+        ImGui::TableNextColumn();
+        ImGui::Text("Are you sure you wish to delete <%s> from the element list?",html::editElement->sName.c_str());
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::Text("This cannot be undone!");
+        ImGui::EndTable();
+
+        ImGui::BeginTable("BotTable",2,ImGuiTableFlags_SizingStretchSame);
+        ImGui::TableNextColumn();
+        ImGui::SetItemDefaultFocus();
+        if(ImGui::Button("No don't delete")) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::TableNextColumn();
+        if(ImGui::Button("Yes delete")) {
+            //TODO implement element delete
+        }
+        ImGui::EndTable();
+
+        ImGui::EndPopup();
+    }
     ImGui::EndTable();
 
     if(ImGui::InputText("Full Name",&html::editElement->sFullName,ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -762,7 +792,7 @@ void win::wEditElement() {
         ImGui::SameLine();
         ImGui::Text( "%s", sCurComAt.c_str());
         if(ImGui::BeginPopupContextItem(sCurComAt.c_str())) {
-            ImGui::Text( "%s", sCurComAt.c_str());
+            ImGui::TextWrapped( "%s", sCurComAt.c_str());
             if(ImGui::Button("Remove")) {
                 util::removeFirst(html::editElement->vCommonAttributes,sCurComAt);
                 html::editElement->update();
@@ -814,9 +844,15 @@ void win::wEditElement() {
                 color = UI::uiStylePtr->Colors[ImGuiCol_Text];
                 break;
         }
-        ImGui::TextColored(color,"%s", note.substr(2).c_str());
+        ImGui::Text("-");
+        ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Text,color);
+        ImGui::TextWrapped("%s", note.substr(2).c_str());
+        ImGui::PopStyleColor();
         if(ImGui::BeginPopupContextItem(note.c_str())) {
-            ImGui::TextColored(color,"%s", note.substr(2).c_str());
+            ImGui::PushStyleColor(ImGuiCol_Text,color);
+            ImGui::TextWrapped("%s", note.substr(2).c_str());
+            ImGui::PopStyleColor();
             if(ImGui::Button("Remove")) {
                 util::removeFirst(html::editElement->vNotes,note);
                 html::editElement->update();
@@ -879,11 +915,13 @@ void win::wAllElements() {
     }
 
     ImGui::BeginChild("All Elements",ImVec2(0,0),ImGuiChildFlags_Border);
-    if(sSearch.length() != 0 && html::mElementInfo.find(sSearch) == html::mElementInfo.end()) {
+    if(sSearch.length() != 0
+    && html::mElementInfo.find(sSearch) == html::mElementInfo.end()) {
         if(ImGui::Button("Add New Element") || bSearchConfirm) {
             bSearchConfirm = false;
             html::elementInfo newElement;
             newElement.sName = sSearch;
+            newElement.sFullName = sSearch;
             html::mElementInfo[sSearch] = newElement;
             newElement.update();
             html::editElement = &html::mElementInfo[sSearch];
@@ -894,7 +932,10 @@ void win::wAllElements() {
     }
 
     for(auto& item : html::mElementInfo) {
-        if(sSearch.length() == 0 || !item.second.sName.find(sSearch)) {
+        if(sSearch.length() == 0
+        || item.second.sName.find(sSearch) != std::string::npos
+        || item.second.sFullName.find(sSearch) != std::string::npos
+        ) {
             swElementInfo(item.second);
             ImGui::Separator();
         }
@@ -937,20 +978,22 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
 
     ImGui::BeginTable("BottomLine",1,ImGuiTableFlags_SizingStretchSame);
     ImGui::TableNextColumn();
-    ImGui::Text("Common Attributes:");
-    ImGui::Indent();
-    std::string sComAtCombined;
-    int iLast = elInfo.vCommonAttributes.size() - 1;
-    for(int i = 0; i <= iLast; i++) {
-        if(i != 0) { sComAtCombined.push_back(','); }
-        sComAtCombined.append(elInfo.vCommonAttributes[i]);
+    if(elInfo.vCommonAttributes.size() > 0) {
+        ImGui::Text("Common Attributes:");
+        ImGui::Indent();
+        std::string sComAtCombined;
+        int iLast = elInfo.vCommonAttributes.size() - 1;
+        for(int i = 0; i <= iLast; i++) {
+            if(i != 0) { sComAtCombined.push_back(','); }
+            sComAtCombined.append(elInfo.vCommonAttributes[i]);
+        }
+        ImGui::PushFont(UI::font_light);
+        ImGui::TextWrapped( "%s", sComAtCombined.c_str());
+        ImGui::PopFont();
+        ImGui::Unindent();
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
     }
-    ImGui::PushFont(UI::font_light);
-    ImGui::TextWrapped( "%s", sComAtCombined.c_str());
-    ImGui::PopFont();
-    ImGui::Unindent();
-    ImGui::TableNextRow();
-    ImGui::TableNextColumn();
     if(elInfo.vNotes.size() != 0) {
         ImGui::Text("Notes:");
         ImGui::Indent();
@@ -968,7 +1011,13 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
                     color = UI::uiStylePtr->Colors[ImGuiCol_Text];
                     break;
             }
-            ImGui::TextColored(color,"%s", note.substr(2).c_str());
+            ImGui::PushFont(UI::font_main);
+            ImGui::Text("-");
+            ImGui::PopFont();
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Text,color);
+            ImGui::TextWrapped("%s", note.substr(2).c_str());
+            ImGui::PopStyleColor();
         }
         ImGui::PopFont();
         ImGui::Unindent();

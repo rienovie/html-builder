@@ -10,6 +10,7 @@ html::html() {
     elementInfo currentElementInfo;
     int iCurrentVariable = 0; //0 bContainer, 1 desc, 2 commonAttributes, 3 notes
     bool bCurVarDetermined = false;
+    int iLineCount = 0; //used to check if just a full blank line
 
     for(auto& item : mConfig) {
         currentElementInfo.sName = item.first;
@@ -41,7 +42,7 @@ html::html() {
             }
 
             if(item.second[i] == '\n') {
-                if(sBuild.length() > 0) {
+                if(iLineCount > 0) {
                     if(iCurrentVariable == 4 && sBuild[0] == '}') {
                         mElementInfo[currentElementInfo.sName] = currentElementInfo;
                         iCurrentVariable = 0;
@@ -57,7 +58,11 @@ html::html() {
                             currentElementInfo.sDescription = sBuild;
                             break;
                         case 3:
-                            currentElementInfo.vCommonAttributes = util::splitStringOnChar(sBuild,',');
+                            if(sBuild.length() > 0) {
+                                currentElementInfo.vCommonAttributes = util::splitStringOnChar(sBuild,',');
+                            } else {
+                                currentElementInfo.vCommonAttributes.clear();
+                            }
                             iCurrentVariable++;
                             break;
                         case 4:
@@ -71,8 +76,10 @@ html::html() {
                     }
                     sBuild.clear();
                     if(iCurrentVariable != 4) { bCurVarDetermined = false; }
+                    iLineCount = 0;
                 }
             } else {
+                iLineCount++;
                 sBuild.push_back(item.second[i]);
             }
         }

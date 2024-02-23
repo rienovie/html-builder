@@ -2,11 +2,44 @@ a{
 f=anchor
 c=1
 d=Together with its href attribute, creates a hyperlink to web pages, files, email addresses, locations within the current page, or anything else a URL can address.
-a=href,target,title,id,class,download
+a=href,target,title,download
 {
-0,Basic Note
-1,Warning Note
-2,Critical Note
+}
+}
+base{
+f=base
+c=0
+d=Specifies the base URL to use for all relative URLs in a document. There can be only one such element in a document.
+a=href,target
+{
+1,Must have href attribute, target attribute, or both.
+1,Must come before other elements with attribute values that are URLs.
+}
+}
+head{
+f=head
+c=1
+d=Contains machine-readable information (metadata) about the document, like its title, scripts, and stylesheets.
+a=
+{
+0,Primarily holds information for machine processing, not human-readability.
+0,For human-visible information, like top-level headings and listed authors, see the <header> element.
+}
+}
+html{
+f=hypertext markup language
+c=0
+d=Represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.
+a=
+{
+}
+}
+link{
+f=link
+c=0
+d=Specifies relationships between the current document and an external resource. This element is most commonly used to link to CSS but is also used to establish site icons (both "favicon" style icons and icons for the home screen and apps on mobile devices) among other things.
+a=href,rel,type,media,as
+{
 }
 }
 meta{
@@ -23,9 +56,6 @@ c=1
 d=Represents an ordered list of items - typically rendered as a numbered list.
 a=type,start,reversed,id,class
 {
-0,Basic Note
-1,Warning Note
-2,Critical Note
 }
 }
 ul{
@@ -34,8 +64,5 @@ c=1
 d=Represents an unordered list of items, typically rendered as a bulleted list.
 a=type,id,class,style,title
 {
-2,Critical Note
-1,Warning Note
-0,Basic Note
 }
 }
