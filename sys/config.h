@@ -19,6 +19,7 @@ public:
 
     //functions
     static void
+        removeProp(configType cfgTo,char const* propertyName),
         update(configType cfgTo, char const* propertyName, std::string sNewValue),
         checkIfShouldSaveConfigs(),
         createNewThemeFromCurrent(std::string sNewThemeName),

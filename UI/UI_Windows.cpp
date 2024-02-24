@@ -742,7 +742,14 @@ void win::wEditElement() {
         }
         ImGui::TableNextColumn();
         if(ImGui::Button("Yes delete")) {
-            //TODO implement element delete
+            config::removeProp(config::element,html::editElement->sName.c_str());
+            html::mElementInfo.erase(html::editElement->sName);
+            html::editElement = NULL;
+            ImGui::EndTable();
+            ImGui::EndPopup();
+            ImGui::EndTable();
+            ImGui::End();
+            return;
         }
         ImGui::EndTable();
 
@@ -778,7 +785,8 @@ void win::wEditElement() {
         }
         sNewComAt.clear();
     }
-    ImGui::BeginChild("ComAt",ImVec2(0,ImGui::GetTextLineHeight() * 2 + UI::uiStylePtr->ScrollbarSize),
+    ImGui::BeginChild("ComAt",
+                      ImVec2(0,ImGui::GetTextLineHeight() * 2 + UI::uiStylePtr->ScrollbarSize),
                       ImGuiChildFlags_Border,ImGuiWindowFlags_HorizontalScrollbar);
     int iLast = html::editElement->vCommonAttributes.size() - 1;
     std::string sCurComAt;
@@ -908,13 +916,18 @@ void win::wAllElements() {
 
     static std::string sSearch;
     static bool bSearchConfirm = false;
+    static int iFoundElements = 0;
 
     if(ImGui::InputText("Search",&sSearch, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
         util::qPrint("Hit");
         bSearchConfirm = true;
     }
 
+    ImGui::SameLine();
+    ImGui::Text("(Found %d)",iFoundElements);
+
     ImGui::BeginChild("All Elements",ImVec2(0,0),ImGuiChildFlags_Border);
+    iFoundElements = 0;
     if(sSearch.length() != 0
     && html::mElementInfo.find(sSearch) == html::mElementInfo.end()) {
         if(ImGui::Button("Add New Element") || bSearchConfirm) {
@@ -923,9 +936,9 @@ void win::wAllElements() {
             newElement.sName = sSearch;
             newElement.sFullName = sSearch;
             html::mElementInfo[sSearch] = newElement;
-            newElement.update();
             html::editElement = &html::mElementInfo[sSearch];
             mWindowBools["Edit Element"] = true;
+            newElement.update();
             //sSearch.clear();
         }
         ImGui::Separator();
@@ -937,6 +950,7 @@ void win::wAllElements() {
         || item.second.sFullName.find(sSearch) != std::string::npos
         ) {
             swElementInfo(item.second);
+            iFoundElements++;
             ImGui::Separator();
         }
     }

@@ -149,7 +149,6 @@ void config::update (configType cfgTo, const char* propertyName, std::string sNe
     }
 }
 
-//TODO element here
 void config::saveConfig(configType cfgSaveTo) {
     std::string
         cfgLocation,
@@ -616,6 +615,34 @@ std::map<std::string, std::string> config::getAllCustomColorValues() {
     }
 
     return mOutput;
+}
+
+void config::removeProp ( configType cfgTo, const char* propertyName ) {
+    auto* ConfigMapPtr = &mLoadedConfig;
+
+    switch(cfgTo) {
+        case system:
+            bShouldSaveSystem = true;
+            break;
+        case theme:
+            bShouldSaveTheme = true;
+            ConfigMapPtr = &mLoadedTheme;
+            break;
+        case element:
+            bShouldSaveElement = true;
+            ConfigMapPtr = &mLoadedElementsInfo;
+            break;
+        default:
+            util::qPrint("Tried to remove prop",propertyName,"from config",cfgTo,"but config does not exist!");
+            return;
+    }
+
+    if(ConfigMapPtr->find(propertyName) == ConfigMapPtr->end()) {
+        util::qPrint("Property",propertyName,"was not found on config",cfgTo);
+        return;
+    }
+
+    ConfigMapPtr->erase(propertyName);
 }
 
 
