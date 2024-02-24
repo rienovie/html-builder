@@ -107,7 +107,7 @@ public:
             sName,
             sFullName,
             sDescription;
-        bool bContainer = false;
+        bool bContainer = true;
         std::vector<std::string>
             vCommonAttributes,
             vNotes;

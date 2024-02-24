@@ -6,14 +6,192 @@ a=href,target,title,download
 {
 }
 }
+address{
+f=address
+c=1
+d=Indicates the enclosed HTML provides contact information for a person or an organization.
+a=
+{
+0,Can only be used to represent the contact information for its nearest <article> or <body> element ancestor.
+0,Should not contain more information than the contact information, like a publication date (which belongs in a <time> element)
+}
+}
+article{
+f=article
+c=1
+d=Represents a self-contained composition in a document, page, application, or site which is intended to be independently ditributable or reusable.
+a=
+{
+0,Should be identified, typically by including a heading element as a child.
+}
+}
+aside{
+f=aside
+c=1
+d=Represents a portion of a document whose content is only indirectly related to the document's main content.
+a=
+{
+0,Frequently presented as sidebars or call-out boxes.
+1,Do not use to tag parenthesized text, as this kind of text is considered part of the main flow.
+}
+}
 base{
 f=base
 c=0
-d=Specifies the base URL to use for all relative URLs in a document. There can be only one such element in a document.
+d=Specifies the base URL to use for all relative URLs in a document.
 a=href,target
 {
 1,Must have href attribute, target attribute, or both.
 1,Must come before other elements with attribute values that are URLs.
+1,There can only be one within a document.
+}
+}
+blockquote{
+f=block quotation
+c=1
+d=Indicates the enclosed text is an extended quotation, often including a URL for the source using the "cite" attribute.
+a=cite
+{
+0,Usually rendered visually by indentation and changed with CSS "margin-left" and/or "margin-right"
+}
+}
+body{
+f=body
+c=1
+d=Represents the content of an HTML document.
+a=
+{
+1,There can only be one within a document.
+}
+}
+dd{
+f=description details
+c=1
+d=Provides the description, definition, or value for the precedding term <dt> in a description list <dl>
+a=
+{
+}
+}
+div{
+f=division
+c=1
+d=Generic container for flow content.
+a=
+{
+0,Has no effect on content or layout until styled with CSS.
+}
+}
+dl{
+f=description list
+c=1
+d=Encloses a list of groups of terms <dt> and descriptions <dd>.
+a=
+{
+1,Do not use this to create indentation on a page.
+}
+}
+dt{
+f=description term
+c=1
+d=Specifies a term in a description or definition list.
+a=
+{
+1,Must be used inside <dl>.
+0,Multiple <dt> in a row indicate several terms that are all defined by the immediate next <dd>.
+}
+}
+figcaption{
+f=figure caption
+c=1
+d=Represents a caption or legend describing the rest of the contents of its parent <figure> element.
+a=
+{
+}
+}
+figure{
+f=figure
+c=1
+d=Self-contained content.
+a=
+{
+0,Usually an image, illustration, diagram, or code snippet.
+0,Use <figcaption> to include a caption.
+}
+}
+footer{
+f=footer
+c=1
+d=Represents a footer for its nearest ancestor sectioning content or sectioning root.
+a=
+{
+0,Typically contains information about the author of the section, copyright data, or links to related documents.
+0,Contact info should go inside an <address> tag.
+}
+}
+h1{
+f=heading one
+c=1
+d=Heading Elements <h1> thru <h6> represent six levels of section headings.
+a=
+{
+0,Creates a block-level box in layout, starting on a new line and taking full width available.
+1,Do not use to resize text, use CSS "font-size" property instead.
+1,Do not skip heading levels: always start from <h1> followed by <h2> etc.
+}
+}
+h2{
+f=heading two
+c=1
+d=Heading Elements <h1> thru <h6> represent six levels of section headings.
+a=
+{
+0,Creates a block-level box in layout, starting on a new line and taking full width available.
+1,Do not use to resize text, use CSS "font-size" property instead.
+1,Do not skip heading levels: always start from <h1> followed by <h2> etc.
+}
+}
+h3{
+f=heading three
+c=1
+d=Heading Elements <h1> thru <h6> represent six levels of section headings.
+a=
+{
+0,Creates a block-level box in layout, starting on a new line and taking full width available.
+1,Do not use to resize text, use CSS "font-size" property instead.
+1,Do not skip heading levels: always start from <h1> followed by <h2> etc.
+}
+}
+h4{
+f=heading four
+c=1
+d=Heading Elements <h1> thru <h6> represent six levels of section headings.
+a=
+{
+0,Creates a block-level box in layout, starting on a new line and taking full width available.
+1,Do not use to resize text, use CSS "font-size" property instead.
+1,Do not skip heading levels: always start from <h1> followed by <h2> etc.
+}
+}
+h5{
+f=heading five
+c=1
+d=Heading Elements <h1> thru <h6> represent six levels of section headings.
+a=
+{
+0,Creates a block-level box in layout, starting on a new line and taking full width available.
+1,Do not use to resize text, use CSS "font-size" property instead.
+1,Do not skip heading levels: always start from <h1> followed by <h2> etc.
+}
+}
+h6{
+f=heading six
+c=1
+d=Heading Elements <h1> thru <h6> represent six levels of section headings.
+a=
+{
+0,Creates a block-level box in layout, starting on a new line and taking full width available.
+1,Do not use to resize text, use CSS "font-size" property instead.
+1,Do not skip heading levels: always start from <h1> followed by <h2> etc.
 }
 }
 head{
@@ -26,20 +204,73 @@ a=
 0,For human-visible information, like top-level headings and listed authors, see the <header> element.
 }
 }
+header{
+f=header
+c=1
+d=Represents introductory content, typically a group of introductory or navigational aids.
+a=
+{
+}
+}
+hgroup{
+f=heading group
+c=1
+d=Heading grouped with any secondary content, such as subheadings, an alternative title, or a tagline.
+a=
+{
+}
+}
+hr{
+f=horizonal rule / thematic break
+c=0
+d=Thematic break between paragraph-level elements.
+a=
+{
+}
+}
 html{
 f=hypertext markup language
-c=0
-d=Represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.
+c=1
+d=Represents the root (top-level element) of an HTML document.
 a=
+{
+1,All other elements must be descendants of this element.
+}
+}
+li{
+f=list item
+c=1
+d=Represents an item contained within <ol>, <ul>, or <menu>.
+a=value
 {
 }
 }
 link{
 f=link
 c=0
-d=Specifies relationships between the current document and an external resource. This element is most commonly used to link to CSS but is also used to establish site icons (both "favicon" style icons and icons for the home screen and apps on mobile devices) among other things.
+d=Specifies relationships between the current document and an external resource.
 a=href,rel,type,media,as
 {
+0,Most commonly used to link to CSS but is also used to establish site icons among other things.
+}
+}
+main{
+f=main
+c=1
+d=Dominant content of the body of a document.
+a=
+{
+0,Doesn't contribute to the document's outline or affect the DOM's concept of the structure of the page.
+}
+}
+menu{
+f=menu
+c=1
+d=A semantic alternative to <ul>.
+a=
+{
+0,This and <ul> both represent an unordered list of items.
+1,In earlier versions of HTML, this had an additional use case as a context menu, however this is considered obsolete and not in spec.
 }
 }
 meta{
@@ -50,12 +281,74 @@ a=name,charset,http-equiv,itemprop
 {
 }
 }
+nav{
+f=nav
+c=1
+d=A section of a page whose purpose is to provide navigation links, either within the current document or to other documents.
+a=
+{
+}
+}
 ol{
 f=ordered list
 c=1
-d=Represents an ordered list of items - typically rendered as a numbered list.
+d=Represents an ordered list of items.
 a=type,start,reversed,id,class
 {
+0,Typically rendered as a numbered list.
+}
+}
+p{
+f=paragraph
+c=1
+d=A block-level element that represents a paragraph.
+a=
+{
+1,Will automatically close if another block-level element is parsed before the closing tag.
+}
+}
+pre{
+f=preformatted text
+c=1
+d=Contains text that is presented exactly as written in HTML file.
+a=
+{
+1,Whitespace inside this element is displayed as written.
+1,If you have to display reserved characters ( <,>,&," ) they must be escaped using their respective HTML entity.
+}
+}
+search{
+f=search
+c=1
+d=Contains a set of form controls or other content related to performing a search or filtering operation.
+a=
+{
+}
+}
+section{
+f=section
+c=1
+d=Generic standalone section of a document which doesn't have a more specific semantic element to represent it.
+a=
+{
+1,Should always have a heading, with very few exceptions.
+}
+}
+style{
+f=style
+c=1
+d=Contains style information (CSS) for a document or part of a document.
+a=
+{
+}
+}
+title{
+f=title
+c=1
+d=Defines the document's title that is shown in a browser's title bar or a page's tab.
+a=
+{
+0,Only contains text; tags will be ignored.
 }
 }
 ul{

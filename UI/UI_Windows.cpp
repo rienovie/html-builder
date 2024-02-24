@@ -926,7 +926,7 @@ void win::wAllElements() {
             newElement.update();
             html::editElement = &html::mElementInfo[sSearch];
             mWindowBools["Edit Element"] = true;
-            sSearch.clear();
+            //sSearch.clear();
         }
         ImGui::Separator();
     }
@@ -968,6 +968,7 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
         mWindowBools["Edit Element"] = true;
     }
     ImGui::EndTable();
+    ImGui::Indent();
     ImGui::Text( "%s", elInfo.sFullName.c_str());
 
     ImGui::Indent();
@@ -1023,6 +1024,7 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
         ImGui::Unindent();
     }
     ImGui::EndTable();
+    ImGui::Unindent();
 }
 
 void win::newNote ( std::string& sNewNote, int& iNoteType ) {
