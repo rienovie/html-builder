@@ -24,6 +24,15 @@ a=
 0,Should not contain more information than the contact information, like a publication date (which belongs in a <time> element)
 }
 }
+area{
+f=area
+c=0
+d=Defines an area inside an image map that has predefined clickable areas.
+a=shape,alt,coords,href
+{
+1,This is only used within a <map>.
+}
+}
 article{
 f=article
 c=1
@@ -41,6 +50,14 @@ a=
 {
 0,Frequently presented as sidebars or call-out boxes.
 1,Do not use to tag parenthesized text, as this kind of text is considered part of the main flow.
+}
+}
+audio{
+f=audio
+c=1
+d=Used to embed sound content in documents.
+a=
+{
 }
 }
 b{
@@ -337,6 +354,15 @@ a=
 0,Used for idiomatic text, technical terms, taxonomical designations, etc.
 }
 }
+img{
+f=img
+c=0
+d=Embeds an image into the document.
+a=src,alt
+{
+1,"src" & "alt" are required attributes.
+}
+}
 kbd{
 f=keyboard input
 c=1
@@ -369,6 +395,15 @@ d=Dominant content of the body of a document.
 a=
 {
 0,Doesn't contribute to the document's outline or affect the DOM's concept of the structure of the page.
+}
+}
+map{
+f=map
+c=1
+d=Used with <area> to define an image map.
+a=name
+{
+1,If "id" attribute is used, it must be the same value as "name" attribute.
 }
 }
 mark{
@@ -571,6 +606,15 @@ a=
 0,Only contains text; tags will be ignored.
 }
 }
+track{
+f=track
+c=0
+d=Used as a child of media elements <audio> & <video> that lets you specify timed text tracts or time-based data.
+a=default,kind,label,src,srclang
+{
+1,A media element cannot have more than one <track> with the same "kind", "srclang", and "label".
+}
+}
 u{
 f=unarticulated annotation / underline
 c=1
@@ -595,6 +639,14 @@ d=Represents the name of a variable in a mathematical expression or a programmin
 a=
 {
 1,Do not use for italicizing, instead use CSS "font-style".
+}
+}
+video{
+f=video
+c=1
+d=Embeds a media player which supports video playback into the document.
+a=autoplay,controls,loop,src
+{
 }
 }
 wbr{
