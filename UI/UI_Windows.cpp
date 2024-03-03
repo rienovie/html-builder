@@ -246,6 +246,35 @@ void win::wSettings() {
     ImGui::SliderInt("Font Size",&UI::iFontSize,UI::limitFontSize.x,UI::limitFontSize.y);
     ImGui::PopFont();
 
+    ImGui::NewLine();
+    if(ImGui::Button("Fetch HTML Elements")) {
+        /* This should be done in another area because it'll become quite complicated
+
+         * use curl for https://developer.mozilla.org/en-US/docs/Web/HTML/Element
+         * parse thru html for these sections:
+
+        aria-labelledby="main_root"
+        a ria-labelledby="document_metadata"
+        aria-labelledby="sectioning_root"
+        aria-labelledby="content_sectioning"
+        aria-labelledby="text_content"
+        aria-labelledby="inline_text_semantics"
+        aria-labelledby="image_and_multimedia"
+        aria-labelledby="embedded_content"
+        aria-labelledby="svg_and_mathml"
+        aria-labelledby="scripting"
+        aria-labelledby="demarcating_edits"
+        aria-labelledby="table_content"
+        aria-labelledby="forms"
+        aria-labelledby="interactive_elements"
+        aria-labelledby="web_components"
+        aria-labelledby="obsolete_and_deprecated_elements"
+
+        populate all elements that are not already defined
+        to clean just delete elements.hbinfo
+        */
+    } BasicToolTip("Gets elements from Mozilla Web Docs");
+
     /* using this to write to the config file, will probably clean up later
      * Put the ImGui color copy in the demo window here and uncomment this code
      *

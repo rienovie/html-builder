@@ -60,6 +60,7 @@ int main () {
 void tick_sec() {
     if( bCloseThreads ) return;
     std::this_thread::sleep_for(std::chrono::seconds(1));
+    if( bCloseThreads ) return;
     //util::qPrint("tick");
 
     UI::tick_sec();
@@ -70,6 +71,7 @@ void tick_sec() {
 void tick_long() {
     if(bCloseThreads) return;
     std::this_thread::sleep_for(std::chrono::seconds(5));
+    if( bCloseThreads ) return;
     //util::printMemUse(memUsage);
     //config::checkIfShouldSaveConfigs();
 
