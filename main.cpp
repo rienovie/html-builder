@@ -23,6 +23,7 @@ int main () {
     auto classCFG = new config;
     UI* classUI = NULL;
     auto classHTML = new html;
+    auto classFetch = new fetch;
 
     try {
         classUI = new UI;
@@ -47,6 +48,7 @@ int main () {
     delete classCFG;
     delete classUI;
     delete classHTML;
+    delete classFetch;
     t_sec.detach();
     t_long.detach();
 

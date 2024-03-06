@@ -8,6 +8,7 @@
 #include "sys/util.h"
 #include "sys/config.h"
 #include "sys/html.h"
+#include "sys/fetch.h"
 
 void tick_sec();
 void tick_long();

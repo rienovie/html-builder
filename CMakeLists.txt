@@ -12,6 +12,7 @@ set(SOURCES
     sys/config.cpp
     UI/UI_Windows.cpp
     sys/html.cpp
+    sys/fetch.cpp
 )
 
 add_library(imgui
