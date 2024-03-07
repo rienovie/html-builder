@@ -33,7 +33,8 @@ target_include_directories(imgui PUBLIC
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(CURL REQUIRED)
 
 add_executable(html-builder ${SOURCES})
 
-target_link_libraries(html-builder imgui OpenGL::GL glfw)
+target_link_libraries(html-builder imgui OpenGL::GL glfw ${CURL_LIBRARIES})

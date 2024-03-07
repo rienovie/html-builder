@@ -5,18 +5,16 @@
 #include <map>
 #include "util.h"
 #include <thread>
-#include <vector>
+#include <queue>
 
 class fetch {
 public:
     enum fetchStatus {
         notActive,
         init,
-        curlInit,
         fetching,
         fetchSuccess,
-        curlClean,
-        completed
+        error
     };
 
     struct fetchData {
@@ -34,5 +32,7 @@ public:
 
     static fetchData& fetchUrl(std::string sUrl);
 private:
-    static void threadFunc(fetchData& data);
+    static std::queue<fetchData*> pendingFetches;
+
+    static void threadFunc();
 };

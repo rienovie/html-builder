@@ -248,7 +248,10 @@ void win::wSettings() {
 
     ImGui::NewLine();
     if(ImGui::Button("Fetch HTML Elements")) {
-        /* This should be done in another area because it'll become quite complicated
+        /* TODO working here
+         * Getting html is done now need to link to this and test
+         * Get HTML from fetch class
+         * This should be done in another area because it'll become quite complicated
 
          * use curl for https://developer.mozilla.org/en-US/docs/Web/HTML/Element
          * parse thru html for these sections:
