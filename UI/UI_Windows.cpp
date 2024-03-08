@@ -234,6 +234,8 @@ void win::wTest() {
 }
 
 void win::wSettings() {
+    static fetch::fetchData* fetchPtr = NULL;
+
     ImGui::Begin("Settings",&mWindowBools["Settings"],ImGuiWindowFlags_NoCollapse);
 
     ImGui::SeparatorText("System");
@@ -276,7 +278,45 @@ void win::wSettings() {
         populate all elements that are not already defined
         to clean just delete elements.hbinfo
         */
+        fetchPtr = fetch::fetchUrl("https://developer.mozilla.org/en-US/docs/Web/HTML/Element");
+        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+        ImGui::SetNextWindowPos(center,ImGuiCond_Appearing,ImVec2(0.5f,0.5f));
+        ImGui::OpenPopup("Fetching Elements");
+
     } BasicToolTip("Gets elements from Mozilla Web Docs");
+    if(ImGui::BeginPopupModal("Fetching Elements",NULL,ImGuiWindowFlags_AlwaysAutoResize)) {
+        static std::string sCurrentFetchStatus;
+        if(!fetchPtr) { util::qPrint("fetchPtr not valid but modal was called!"); }
+        switch (fetchPtr->currentStatus) {
+            case fetch::notActive:
+                sCurrentFetchStatus = "Not Active";
+                break;
+            case fetch::init:
+                sCurrentFetchStatus = "Initializing...";
+                break;
+            case fetch::fetching:
+                sCurrentFetchStatus = "Fetching from URL...";
+                break;
+            case fetch::fetchSuccess:
+                sCurrentFetchStatus = "Populating Elements...";
+                html::parseHtmlForElementInfos(fetchPtr->sHtml);
+                fetchPtr = NULL;
+                ImGui::CloseCurrentPopup();
+                return;
+            case fetch::error:
+                sCurrentFetchStatus = fetchPtr->sError;
+                if(ImGui::Button("Close")) {
+                    fetchPtr = NULL;
+                    ImGui::CloseCurrentPopup();
+                }
+                break;
+        };
+        ImGui::Text("Getting Elements from Mozilla Web Docs...");
+        ImGui::Text( "%s", fetchPtr->sUrl.c_str());
+        ImGui::ProgressBar(fetchPtr->currentStatus/3,ImVec2(500,0),sCurrentFetchStatus.c_str());
+
+        ImGui::EndPopup();
+    }
 
     /* using this to write to the config file, will probably clean up later
      * Put the ImGui color copy in the demo window here and uncomment this code
@@ -300,6 +340,7 @@ void win::wSettings() {
             }
         }
     } */
+
 
     ImGui::SeparatorText("Theme");
 

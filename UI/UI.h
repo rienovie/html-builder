@@ -14,6 +14,7 @@
 #include "../sys/config.h"
 #include "UI_Windows.h"
 #include "../sys/html.h"
+#include "../sys/fetch.h"
 
 void glfw_error_callback(int error, const char* description);
 

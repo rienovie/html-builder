@@ -30,7 +30,7 @@ public:
 
     static std::map<std::string,fetchData> mLoadedHtmls;
 
-    static fetchData& fetchUrl(std::string sUrl);
+    static fetchData* fetchUrl(std::string sUrl);
 private:
     static std::queue<fetchData*> pendingFetches;
 

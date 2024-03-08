@@ -391,3 +391,28 @@ void html::elementInfo::update() {
 
 }
 
+//specifically designed for the Mozilla page
+void html::parseHtmlForElementInfos ( std::string sMozHtml ) {
+    const std::string aSections [16] {
+        "aria-labelledby=\"main_root\"",
+        "aria-labelledby=\"document_metadata\"",
+        "aria-labelledby=\"sectioning_root\"",
+        "aria-labelledby=\"content_sectioning\"",
+        "aria-labelledby=\"text_content\"",
+        "aria-labelledby=\"inline_text_semantics\"",
+        "aria-labelledby=\"image_and_multimedia\"",
+        "aria-labelledby=\"embedded_content\"",
+        "aria-labelledby=\"svg_and_mathml\"",
+        "aria-labelledby=\"scripting\"",
+        "aria-labelledby=\"demarcating_edits\"",
+        "aria-labelledby=\"table_content\"",
+        "aria-labelledby=\"forms\"",
+        "aria-labelledby=\"interactive_elements\"",
+        "aria-labelledby=\"web_components\"",
+        "aria-labelledby=\"obsolete_and_deprecated_elements\""
+    };
+
+    util::qPrint(sMozHtml);
+}
+
+

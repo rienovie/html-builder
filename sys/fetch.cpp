@@ -3,11 +3,11 @@
 std::map<std::string,fetch::fetchData> fetch::mLoadedHtmls;
 std::queue<fetch::fetchData*> fetch::pendingFetches;
 
-fetch::fetchData& fetch::fetchUrl ( std::string sUrl ) {
-    if(mLoadedHtmls.find(sUrl) != mLoadedHtmls.end()) {
-        return mLoadedHtmls.at(sUrl);
+fetch::fetchData* fetch::fetchUrl ( std::string sUrl ) {
+    if(mLoadedHtmls.find(sUrl) != mLoadedHtmls.end() && !mLoadedHtmls.at(sUrl).bError) {
+        return &mLoadedHtmls.at(sUrl);
     }
-    mLoadedHtmls.emplace(sUrl,fetchData(sUrl));
+    mLoadedHtmls.insert_or_assign(sUrl,fetchData(sUrl));
     fetchData* dataPtr = &mLoadedHtmls.at(sUrl);
 
     dataPtr->currentStatus = init;
@@ -15,14 +15,17 @@ fetch::fetchData& fetch::fetchUrl ( std::string sUrl ) {
     if(pendingFetches.empty()) {
         pendingFetches.push(dataPtr);
         std::thread fetchThread(threadFunc);
+        fetchThread.detach();
     } else {
         pendingFetches.push(dataPtr);
     }
 
-    return *dataPtr;
+    return dataPtr;
 }
 
 void fetch::threadFunc () {
+    util::qPrint("Boop");
+    std::this_thread::sleep_for(std::chrono::seconds(5));;
     curl_global_init(CURL_GLOBAL_DEFAULT);
     CURL* curl = curl_easy_init();
 
@@ -40,6 +43,7 @@ void fetch::threadFunc () {
                 currentPtr->bError = true;
                 currentPtr->sError = curl_easy_strerror(request);
                 currentPtr->currentStatus = error;
+                util::qPrint(currentPtr->sError);
             } else {
                 currentPtr->currentStatus = fetchSuccess;
             }
