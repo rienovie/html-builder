@@ -33,6 +33,7 @@ public:
     static fetchData* fetchUrl(std::string sUrl);
 private:
     static std::queue<fetchData*> pendingFetches;
+    static size_t curlWriteCallback(char* ptr, size_t size, size_t nmemb, std::string* data);
 
     static void threadFunc();
 };

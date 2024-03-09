@@ -250,34 +250,6 @@ void win::wSettings() {
 
     ImGui::NewLine();
     if(ImGui::Button("Fetch HTML Elements")) {
-        /* TODO working here
-         * Getting html is done now need to link to this and test
-         * Get HTML from fetch class
-         * This should be done in another area because it'll become quite complicated
-
-         * use curl for https://developer.mozilla.org/en-US/docs/Web/HTML/Element
-         * parse thru html for these sections:
-
-        aria-labelledby="main_root"
-        a ria-labelledby="document_metadata"
-        aria-labelledby="sectioning_root"
-        aria-labelledby="content_sectioning"
-        aria-labelledby="text_content"
-        aria-labelledby="inline_text_semantics"
-        aria-labelledby="image_and_multimedia"
-        aria-labelledby="embedded_content"
-        aria-labelledby="svg_and_mathml"
-        aria-labelledby="scripting"
-        aria-labelledby="demarcating_edits"
-        aria-labelledby="table_content"
-        aria-labelledby="forms"
-        aria-labelledby="interactive_elements"
-        aria-labelledby="web_components"
-        aria-labelledby="obsolete_and_deprecated_elements"
-
-        populate all elements that are not already defined
-        to clean just delete elements.hbinfo
-        */
         fetchPtr = fetch::fetchUrl("https://developer.mozilla.org/en-US/docs/Web/HTML/Element");
         ImVec2 center = ImGui::GetMainViewport()->GetCenter();
         ImGui::SetNextWindowPos(center,ImGuiCond_Appearing,ImVec2(0.5f,0.5f));
@@ -302,6 +274,8 @@ void win::wSettings() {
                 html::parseHtmlForElementInfos(fetchPtr->sHtml);
                 fetchPtr = NULL;
                 ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                ImGui::End();
                 return;
             case fetch::error:
                 sCurrentFetchStatus = fetchPtr->sError;

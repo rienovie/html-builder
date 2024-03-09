@@ -392,8 +392,8 @@ void html::elementInfo::update() {
 }
 
 //specifically designed for the Mozilla page
-void html::parseHtmlForElementInfos ( std::string sMozHtml ) {
-    const std::string aSections [16] {
+void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
+    std::set<std::string> setSections {
         "aria-labelledby=\"main_root\"",
         "aria-labelledby=\"document_metadata\"",
         "aria-labelledby=\"sectioning_root\"",
@@ -412,7 +412,30 @@ void html::parseHtmlForElementInfos ( std::string sMozHtml ) {
         "aria-labelledby=\"obsolete_and_deprecated_elements\""
     };
 
-    util::qPrint(sMozHtml);
+    std::string sBuild = "";
+    bool
+        bInsideSection = false,
+        bCarrotSearch = false,
+        bTDFound = false;
+
+    //TODO working here
+    for(char c : sMozillaHtml) {
+        if(bInsideSection) {
+            if(bTDFound) {
+
+            } else if(bCarrotSearch) {
+
+            }
+        } else {
+            if(c == ' ' || c == '>' || c == '\n') {
+                if(setSections.find(sBuild) != setSections.end()) { bInsideSection = true; }
+                sBuild.clear();
+            } else {
+                sBuild.push_back(c);
+            }
+        }
+    }
+
 }
 
 

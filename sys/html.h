@@ -125,7 +125,7 @@ public:
     static void
         loadFile(std::string sFilePath),
         closeFile(std::string sLoadedFileFullPath),
-        parseHtmlForElementInfos(std::string sMozHtml);
+        parseHtmlForElementInfos(std::string sMozillaHtml);
 
     html();
     ~html();

@@ -23,9 +23,15 @@ fetch::fetchData* fetch::fetchUrl ( std::string sUrl ) {
     return dataPtr;
 }
 
+size_t fetch::curlWriteCallback(char* ptr, size_t size, size_t nmemb, std::string* data) {
+    size_t dataSize = size * nmemb;
+    data->append(ptr, dataSize);
+    return dataSize;
+}
+
 void fetch::threadFunc () {
     util::qPrint("Boop");
-    std::this_thread::sleep_for(std::chrono::seconds(5));;
+    std::this_thread::sleep_for(std::chrono::seconds(1));;
     curl_global_init(CURL_GLOBAL_DEFAULT);
     CURL* curl = curl_easy_init();
 
@@ -35,6 +41,7 @@ void fetch::threadFunc () {
             currentPtr->currentStatus = fetching;
 
             curl_easy_setopt(curl,CURLOPT_URL,currentPtr->sUrl.c_str());
+            curl_easy_setopt(curl,CURLOPT_WRITEFUNCTION,curlWriteCallback);
             curl_easy_setopt(curl,CURLOPT_WRITEDATA,&currentPtr->sHtml);
 
             CURLcode request = curl_easy_perform(curl);
