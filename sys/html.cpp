@@ -412,19 +412,59 @@ void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
         "aria-labelledby=\"obsolete_and_deprecated_elements\""
     };
 
-    std::string sBuild = "";
+    html::elementInfo elementBuild;
+
+    std::string
+        sBuild = "",
+        sTDBuild = "";
     bool
         bInsideSection = false,
-        bCarrotSearch = false,
-        bTDFound = false;
+        bCarrotSearch = false, //I think technically it's not a carrot but meh
+        bTDFound = false,
+        bElementStarted = false;
 
-    //TODO working here
+    //There is a lot of if statements here, TODO simplify this later
     for(char c : sMozillaHtml) {
         if(bInsideSection) {
             if(bTDFound) {
-
+                if(bCarrotSearch) {
+                    sBuild.push_back(c);
+                    if(c == '>') {
+                        bCarrotSearch = false;
+                        if(sBuild == "</td>") {
+                            sBuild.clear();
+                            bTDFound = false;
+                            if(bElementStarted) {
+                                elementBuild.sDescription = sTDBuild;
+                                sTDBuild.clear();
+                                bElementStarted = false;
+                                if(mElementInfo.find(elementBuild.sName) == mElementInfo.end()) {
+                                    mElementInfo.emplace(elementBuild.sName,elementBuild);
+                                    elementBuild.clearData();
+                                }
+                            } else {
+                                parseAndSetElementFromHtmlFirstLine(elementBuild,sTDBuild);
+                                bElementStarted = true;
+                                sTDBuild.clear();
+                            }
+                        }
+                    }
+                } else if(c == '<') {
+                    bCarrotSearch = true;
+                    sTDBuild.append(sBuild);
+                    sBuild.clear();
+                    sBuild.push_back(c);
+                } else sBuild.push_back(c);
             } else if(bCarrotSearch) {
-
+                if(c == '>') {
+                    bCarrotSearch = false;
+                    if(sBuild == "td") { bTDFound = true; }
+                    sBuild.clear();
+                } else {
+                    sBuild.push_back(c);
+                }
+            } else if(c == '<') {
+                bCarrotSearch = true;
             }
         } else {
             if(c == ' ' || c == '>' || c == '\n') {
@@ -438,4 +478,38 @@ void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
 
 }
 
+void html::elementInfo::clearData() {
+    sName.clear();
+    sFullName.clear();
+    sDescription.clear();
+    sWebLink.clear();
+    bContainer = true;
+    vCommonAttributes.clear();
+    vNotes.clear();
+}
+
+void html::parseAndSetElementFromHtmlFirstLine ( elementInfo& buildElement, std::string sLine ) {
+    int iLength = sLine.length();
+    std::string sBuild = "";
+    bool
+        bBuildStarted = false,
+        bLinkFinished = false;
+
+    for(char c : sLine) {
+        if(bBuildStarted) {
+            if(c == '"' || c =='&') {
+                bBuildStarted = false;
+                if(bLinkFinished) {
+                    buildElement.sName = sBuild;
+                    buildElement.sFullName = sBuild;
+                    return;
+                } else {
+                    buildElement.sWebLink = sBuild;
+                    sBuild.clear();
+                    bLinkFinished = true;
+                }
+            } else { sBuild.push_back(c); }
+        } else if(c == '"' || c == ';') { bBuildStarted = true; }
+    }
+}
 

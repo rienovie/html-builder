@@ -106,13 +106,15 @@ public:
         std::string
             sName,
             sFullName,
-            sDescription;
+            sDescription,
+            sWebLink;
         bool bContainer = true;
         std::vector<std::string>
             vCommonAttributes,
             vNotes;
 
         void update();
+        void clearData();
     private:
 
     };
@@ -130,5 +132,5 @@ public:
     html();
     ~html();
 private:
-
+    static void parseAndSetElementFromHtmlFirstLine(elementInfo& buildElement,std::string sLine);
 };
