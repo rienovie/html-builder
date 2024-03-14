@@ -132,5 +132,7 @@ public:
     html();
     ~html();
 private:
-    static void parseAndSetElementFromHtmlFirstLine(elementInfo& buildElement,std::string sLine);
+    static void
+        parseAndSetElementFromHtmlFirstLine(elementInfo& buildElement,std::string sLine),
+        santizeDesc(std::string& desc);
 };

@@ -14,6 +14,14 @@ a=
 {
 }
 }
+acronym{
+f=acronym
+c=1
+d=Allows authors to clearly indicate a sequence of characters that compose an acronym or abbreviation for a word.
+a=
+{
+}
+}
 address{
 f=address
 c=1
@@ -99,6 +107,14 @@ a=dir
 0,rtl = right to left
 }
 }
+big{
+f=big
+c=1
+d=Renders the enclosed text at a font size one level larger than the surrounding text (medium becomes large, for example). The size is capped at the browser's maximum permitted font size.
+a=
+{
+}
+}
 blockquote{
 f=block quotation
 c=1
@@ -126,6 +142,38 @@ a=
 2,Do not use to create margins between paragraphs, wrap them in <p> and use CSS "margin" property.
 }
 }
+button{
+f=button
+c=1
+d=An interactive element activated by a user with a mouse, keyboard, finger, voice command, or other assistive technology. Once activated, it performs an action, such as submitting a form or opening a dialog.
+a=
+{
+}
+}
+canvas{
+f=canvas
+c=1
+d=Container element to use with either the canvas scripting API or the WebGL API to draw graphics and animations.
+a=
+{
+}
+}
+caption{
+f=caption
+c=1
+d=Specifies the caption (or title) of a table.
+a=
+{
+}
+}
+center{
+f=center
+c=1
+d=Displays its block-level or inline contents centered horizontally within its containing element.
+a=
+{
+}
+}
 cite{
 f=citation
 c=1
@@ -144,6 +192,30 @@ a=
 0,To represent multiple lines of code, wrap this within a <pre> element.
 }
 }
+col{
+f=col
+c=1
+d=Defines one or more columns in a column group represented by its implicit or explicit parent <colgroup> element. The <col> element is only valid as a child of a <colgroup> element that has no span attribute defined.
+a=
+{
+}
+}
+colgroup{
+f=colgroup
+c=1
+d=Defines a group of columns within a table.
+a=
+{
+}
+}
+content{
+f=content
+c=1
+d=An obsolete part of the Web Components suite of technologies—was used inside of Shadow DOM as an insertion point, and wasn't meant to be used in ordinary HTML. It has now been replaced by the <slot> element, which creates a point in the DOM at which a shadow DOM can be inserted. Consider using <slot> instead.
+a=
+{
+}
+}
 data{
 f=data
 c=1
@@ -153,10 +225,34 @@ a=value
 1,If the content is time or date related use <time>.
 }
 }
+datalist{
+f=datalist
+c=1
+d=Contains a set of <option> elements that represent the permissible or recommended options available to choose from within other controls.
+a=
+{
+}
+}
 dd{
 f=description details
 c=1
 d=Provides the description, definition, or value for the precedding term <dt> in a description list <dl>
+a=
+{
+}
+}
+del{
+f=del
+c=1
+d=Represents a range of text that has been deleted from a document. This can be used when rendering "track changes" or source code diff information, for example. The <ins> element can be used for the opposite purpose: to indicate text that has been added to the document.
+a=
+{
+}
+}
+details{
+f=details
+c=1
+d=Creates a disclosure widget in which information is visible only when the widget is toggled into an "open" state. A summary or label must be provided using the <summary> element.
 a=
 {
 }
@@ -169,6 +265,22 @@ a=title,id
 {
 0,The ancestor <p>, <dt>/<dd> pairing, or the nearest section ancestor of the this is considered to be the definition of the term.
 1,If this has "title" attribute it must contain the term being defined and no other text.
+}
+}
+dialog{
+f=dialog
+c=1
+d=Represents a dialog box or other interactive component, such as a dismissible alert, inspector, or subwindow.
+a=
+{
+}
+}
+dir{
+f=dir
+c=1
+d=Container for a directory of files and/or folders, potentially with styles and icons applied by the user agent. Do not use this obsolete element; instead, you should use the <ul> element for lists, including lists of files.
+a=
+{
 }
 }
 div{
@@ -208,6 +320,22 @@ a=
 1,Should not be used to italicize text, use CSS "font-style" instead.
 }
 }
+embed{
+f=embed
+c=1
+d=Embeds external content at the specified point in the document. This content is provided by an external application or other source of interactive content such as a browser plug-in.
+a=
+{
+}
+}
+fieldset{
+f=fieldset
+c=1
+d=Used to group several controls as well as labels (<label>) within a web form.
+a=
+{
+}
+}
 figcaption{
 f=figure caption
 c=1
@@ -226,6 +354,14 @@ a=
 0,Use <figcaption> to include a caption.
 }
 }
+font{
+f=font
+c=1
+d=Defines the font size, color and face for its content.
+a=
+{
+}
+}
 footer{
 f=footer
 c=1
@@ -234,6 +370,30 @@ a=
 {
 0,Typically contains information about the author of the section, copyright data, or links to related documents.
 0,Contact info should go inside an <address> tag.
+}
+}
+form{
+f=form
+c=1
+d=Represents a document section containing interactive controls for submitting information.
+a=
+{
+}
+}
+frame{
+f=frame
+c=1
+d=Defines a particular area in which another HTML document can be displayed. A frame should be used within a <frameset>.
+a=
+{
+}
+}
+frameset{
+f=frameset
+c=1
+d=Used to contain <frame> elements.
+a=
+{
 }
 }
 h1{
@@ -354,6 +514,22 @@ a=
 0,Used for idiomatic text, technical terms, taxonomical designations, etc.
 }
 }
+iframe{
+f=iframe
+c=1
+d=Represents a nested browsing context, embedding another HTML page into the current one.
+a=
+{
+}
+}
+image{
+f=image
+c=1
+d=An ancient and poorly supported precursor to the <img> element. It should not be used.
+a=
+{
+}
+}
 img{
 f=img
 c=0
@@ -363,10 +539,42 @@ a=src,alt
 1,"src" & "alt" are required attributes.
 }
 }
+input{
+f=input
+c=1
+d=Used to create interactive controls for web-based forms to accept data from the user; a wide variety of types of input data and control widgets are available, depending on the device and user agent. The <input> element is one of the most powerful and complex in all of HTML due to the sheer number of combinations of input types and attributes.
+a=
+{
+}
+}
+ins{
+f=ins
+c=1
+d=Represents a range of text that has been added to a document. You can use the <del> element to similarly represent a range of text that has been deleted from the document.
+a=
+{
+}
+}
 kbd{
 f=keyboard input
 c=1
 d=Represents a span of inline text denoting textual user input from a keyboard, voice input, or any other text entry device.
+a=
+{
+}
+}
+label{
+f=label
+c=1
+d=Represents a caption for an item in a user interface.
+a=
+{
+}
+}
+legend{
+f=legend
+c=1
+d=Represents a caption for the content of its parent <fieldset>.
 a=
 {
 }
@@ -414,6 +622,22 @@ a=
 {
 }
 }
+marquee{
+f=marquee
+c=1
+d=Used to insert a scrolling area of text. You can control what happens when the text reaches the edges of its content area using its attributes.
+a=
+{
+}
+}
+math{
+f=math
+c=1
+d=The top-level element in MathML. Every valid MathML instance must be wrapped in it. In addition, you must not nest a second <math> element in another, but you can have an arbitrary number of other child elements in it.
+a=
+{
+}
+}
 menu{
 f=menu
 c=1
@@ -424,6 +648,14 @@ a=
 1,In earlier versions of HTML, this had an additional use case as a context menu, however this is considered obsolete and not in spec.
 }
 }
+menuitem{
+f=menuitem
+c=1
+d=Represents a command that a user is able to invoke through a popup menu. This includes context menus, as well as menus that might be attached to a menu button.
+a=
+{
+}
+}
 meta{
 f=metadata
 c=0
@@ -432,10 +664,58 @@ a=name,charset,http-equiv,itemprop
 {
 }
 }
+meter{
+f=meter
+c=1
+d=Represents either a scalar value within a known range or a fractional value.
+a=
+{
+}
+}
 nav{
 f=nav
 c=1
 d=A section of a page whose purpose is to provide navigation links, either within the current document or to other documents.
+a=
+{
+}
+}
+nobr{
+f=nobr
+c=1
+d=Prevents the text it contains from automatically wrapping across multiple lines, potentially resulting in the user having to scroll horizontally to see the entire width of the text.
+a=
+{
+}
+}
+noembed{
+f=noembed
+c=1
+d=An obsolete, non-standard way to provide alternative, or "fallback", content for browsers that do not support the embed element or do not support the type of embedded content an author wishes to use. This element was deprecated in HTML 4.01 and above in favor of placing fallback content between the opening and closing tags of an <object> element.
+a=
+{
+}
+}
+noframes{
+f=noframes
+c=1
+d=Provides content to be presented in browsers that don't support (or have disabled support for) the <frame> element. Although most commonly-used browsers support frames, there are exceptions, including certain special-use browsers including some mobile browsers, as well as text-mode browsers.
+a=
+{
+}
+}
+noscript{
+f=noscript
+c=1
+d=Defines a section of HTML to be inserted if a script type on the page is unsupported or if scripting is currently turned off in the browser.
+a=
+{
+}
+}
+object{
+f=object
+c=1
+d=Represents an external resource, which can be treated as an image, a nested browsing context, or a resource to be handled by a plugin.
 a=
 {
 }
@@ -449,6 +729,30 @@ a=type,start,reversed,id,class
 0,Typically rendered as a numbered list.
 }
 }
+optgroup{
+f=optgroup
+c=1
+d=Creates a grouping of options within a <select> element.
+a=
+{
+}
+}
+option{
+f=option
+c=1
+d=Used to define an item contained in a select, an <optgroup>, or a <datalist> element. As such, <option> can represent menu items in popups and other lists of items in an HTML document.
+a=
+{
+}
+}
+output{
+f=output
+c=1
+d=Container element into which a site or app can inject the results of a calculation or the outcome of a user action.
+a=
+{
+}
+}
 p{
 f=paragraph
 c=1
@@ -456,6 +760,38 @@ d=A block-level element that represents a paragraph.
 a=
 {
 1,Will automatically close if another block-level element is parsed before the closing tag.
+}
+}
+param{
+f=param
+c=1
+d=Defines parameters for an <object> element.
+a=
+{
+}
+}
+picture{
+f=picture
+c=1
+d=Contains zero or more <source> elements and one <img> element to offer alternative versions of an image for different display/device scenarios.
+a=
+{
+}
+}
+plaintext{
+f=plaintext
+c=1
+d=Renders everything following the start tag as raw text, ignoring any following HTML. There is no closing tag, since everything after it is considered raw text.
+a=
+{
+}
+}
+portal{
+f=portal
+c=1
+d=Enables the embedding of another HTML page into the current one to enable smoother navigation into new pages.
+a=
+{
 }
 }
 pre{
@@ -468,6 +804,14 @@ a=
 1,If you have to display reserved characters ( <,>,&," ) they must be escaped using their respective HTML entity.
 }
 }
+progress{
+f=progress
+c=1
+d=Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.
+a=
+{
+}
+}
 q{
 f=inline quotation
 c=1
@@ -475,6 +819,14 @@ d=Indicates that the enclosed text is a short inline quotation.
 a=cite
 {
 1,For long quotations use <blockquote>.
+}
+}
+rb{
+f=rb
+c=1
+d=Used to delimit the base text component of a ruby annotation, i.e. the text that is being annotated. One <rb> element should wrap each separate atomic segment of the base text.
+a=
+{
 }
 }
 rp{
@@ -493,6 +845,14 @@ d=Specifies the ruby text component of a ruby annotation.
 a=
 {
 1,Must always be contained within <ruby>.
+}
+}
+rtc{
+f=rtc
+c=1
+d=Embraces semantic annotations of characters presented in a ruby of <rb> elements used inside of <ruby> element. <rb> elements can have both pronunciation (<rt>) and semantic (<rtc>) annotations.
+a=
+{
 }
 }
 ruby{
@@ -522,6 +882,14 @@ a=
 1,If you need an element which will serve as a container for output generated by JavaScript you should use <output>.
 }
 }
+script{
+f=script
+c=1
+d=Used to embed executable code or data; this is typically used to embed or refer to JavaScript code. The <script> element can also be used with other languages, such as WebGL's GLSL shader programming language and JSON.
+a=
+{
+}
+}
 search{
 f=search
 c=1
@@ -539,10 +907,42 @@ a=
 1,Should always have a heading, with very few exceptions.
 }
 }
+select{
+f=select
+c=1
+d=Represents a control that provides a menu of options.
+a=
+{
+}
+}
+shadow{
+f=shadow
+c=1
+d=An obsolete part of the Web Components technology suite that was intended to be used as a shadow DOM insertion point. You might have used it if you have created multiple shadow roots under a shadow host. Consider using <slot> instead.
+a=
+{
+}
+}
+slot{
+f=slot
+c=1
+d=Part of the Web Components technology suite, this element is a placeholder inside a web component that you can fill with your own markup, which lets you create separate DOM trees and present them together.
+a=
+{
+}
+}
 small{
 f=small print / side comment
 c=1
 d=epresents side-comments and small print, like copyright and legal text, independent of its styled presentation.
+a=
+{
+}
+}
+source{
+f=source
+c=1
+d=Specifies multiple media resources for the picture, the audio element, or the video element. It is a void element, meaning that it has no content and does not have a closing tag. It is commonly used to offer the same media content in multiple file formats in order to provide compatibility with a broad range of browsers given their differing support for image file formats and media file formats.
 a=
 {
 }
@@ -554,6 +954,14 @@ d=A generic inline container for phrasing content, which does not inherently rep
 a=
 {
 0,This is an inline-level element not a block-level element.
+}
+}
+strike{
+f=strike
+c=1
+d=Places a strikethrough (horizontal line) over text.
+a=
+{
 }
 }
 strong{
@@ -580,10 +988,90 @@ a=
 {
 }
 }
+summary{
+f=summary
+c=1
+d=Specifies a summary, caption, or legend for a details element's disclosure box. Clicking the <summary> element toggles the state of the parent <details> element open and closed.
+a=
+{
+}
+}
 sup{
 f=superscript
 c=1
 d=Specifies inline text which is to be displayed as superscript for solely typographical reasons.
+a=
+{
+}
+}
+svg{
+f=svg
+c=1
+d=Container defining a new coordinate system and viewport. It is used as the outermost element of SVG documents, but it can also be used to embed an SVG fragment inside an SVG or HTML document.
+a=
+{
+}
+}
+table{
+f=table
+c=1
+d=Represents tabular data—that is, information presented in a two-dimensional table comprised of rows and columns of cells containing data.
+a=
+{
+}
+}
+tbody{
+f=tbody
+c=1
+d=Encapsulates a set of table rows (<tr> elements), indicating that they comprise the body of a table's (main) data.
+a=
+{
+}
+}
+td{
+f=td
+c=1
+d=A child of the <tr> element, it defines a cell of a table that contains data.
+a=
+{
+}
+}
+template{
+f=template
+c=1
+d=A mechanism for holding HTML that is not to be rendered immediately when a page is loaded but may be instantiated subsequently during runtime using JavaScript.
+a=
+{
+}
+}
+textarea{
+f=textarea
+c=1
+d=Represents a multi-line plain-text editing control, useful when you want to allow users to enter a sizeable amount of free-form text, for example, a comment on a review or feedback form.
+a=
+{
+}
+}
+tfoot{
+f=tfoot
+c=1
+d=Encapsulates a set of table rows (<tr> elements), indicating that they comprise the foot of a table with information about the table's columns. This is usually a summary of the columns, e.g., a sum of the given numbers in a column.
+a=
+{
+}
+}
+th{
+f=th
+c=1
+d=A child of the <tr> element, it defines a cell as the header of a group of table cells. The nature of this group can be explicitly defined by the scope and headers attributes.
+a=
+{
+}
+}
+thead{
+f=thead
+c=1
+d=Encapsulates a set of table rows (<tr> elements), indicating that they comprise the head of a table with information about the table's columns. This is usually in the form of column headers (<th> elements).
 a=
 {
 }
@@ -606,6 +1094,14 @@ a=
 0,Only contains text; tags will be ignored.
 }
 }
+tr{
+f=tr
+c=1
+d=Defines a row of cells in a table. The row's cells can then be established using a mix of <td> (data cell) and <th> (header cell) elements.
+a=
+{
+}
+}
 track{
 f=track
 c=0
@@ -613,6 +1109,14 @@ d=Used as a child of media elements <audio> & <video> that lets you specify time
 a=default,kind,label,src,srclang
 {
 1,A media element cannot have more than one <track> with the same "kind", "srclang", and "label".
+}
+}
+tt{
+f=tt
+c=1
+d=Creates inline text which is presented using the user agent default monospace font face. This element was created for the purpose of rendering text as it would be displayed on a fixed-width display such as a teletype, text-only screen, or line printer.
+a=
+{
 }
 }
 u{
@@ -653,6 +1157,14 @@ wbr{
 f=line break opportunity / word
 c=0
 d=Represents a word break opportunity - a position within text where the browser may optionally break a line, though its line-breaking rules would not otherwise create a break at that location.
+a=
+{
+}
+}
+xmp{
+f=xmp
+c=1
+d=Renders text between the start and end tags without interpreting the HTML in between and using a monospaced font. The HTML2 specification recommended that it should be rendered wide enough to allow 80 characters per line.
 a=
 {
 }

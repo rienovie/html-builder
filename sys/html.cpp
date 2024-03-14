@@ -435,11 +435,13 @@ void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
                             sBuild.clear();
                             bTDFound = false;
                             if(bElementStarted) {
+                                santizeDesc(sTDBuild);
                                 elementBuild.sDescription = sTDBuild;
                                 sTDBuild.clear();
                                 bElementStarted = false;
                                 if(mElementInfo.find(elementBuild.sName) == mElementInfo.end()) {
                                     mElementInfo.emplace(elementBuild.sName,elementBuild);
+                                    elementBuild.update();
                                     elementBuild.clearData();
                                 }
                             } else {
@@ -459,6 +461,7 @@ void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
                 if(c == '>') {
                     bCarrotSearch = false;
                     if(sBuild == "td") { bTDFound = true; }
+                    else if(sBuild == "/section") { bInsideSection = false; }
                     sBuild.clear();
                 } else {
                     sBuild.push_back(c);
@@ -489,27 +492,60 @@ void html::elementInfo::clearData() {
 }
 
 void html::parseAndSetElementFromHtmlFirstLine ( elementInfo& buildElement, std::string sLine ) {
-    int iLength = sLine.length();
     std::string sBuild = "";
-    bool
-        bBuildStarted = false,
-        bLinkFinished = false;
+    bool bBuildStarted = false;
 
     for(char c : sLine) {
         if(bBuildStarted) {
-            if(c == '"' || c =='&') {
+            if(c == '"') {
                 bBuildStarted = false;
-                if(bLinkFinished) {
-                    buildElement.sName = sBuild;
-                    buildElement.sFullName = sBuild;
-                    return;
-                } else {
-                    buildElement.sWebLink = sBuild;
-                    sBuild.clear();
-                    bLinkFinished = true;
-                }
+                buildElement.sWebLink = sBuild;
+                sBuild.clear();
+            } else if (c == '&') {
+                bBuildStarted = false;
+                buildElement.sName = sBuild;
+                buildElement.sFullName = sBuild;
+                sBuild.clear();
             } else { sBuild.push_back(c); }
         } else if(c == '"' || c == ';') { bBuildStarted = true; }
     }
 }
 
+void html::santizeDesc ( std::string& desc ) {
+    bool
+        bCarrotSearch = false,
+        bCodeBlock = false,
+        bAmpersandBuild = false;
+    std::string
+        sBuild = "",
+        sOutput = "";
+
+    for(char c : desc) {
+        if(bCarrotSearch) {
+            if(c == '>') {
+                bCarrotSearch = false;
+                if(sBuild == "code" || sBuild == "/code") { util::flip(bCodeBlock); }
+                sBuild.clear();
+            } else { sBuild.push_back(c); }
+        } else if(c == '<') {
+            bCarrotSearch = true;
+            sBuild.clear();
+        } else if(bCodeBlock) {
+            if(bAmpersandBuild) {
+                if(c == ';') {
+                    if(sBuild == "lt") { sOutput.push_back('<'); }
+                    else if (sBuild == "gt") { sOutput.push_back('>'); }
+                    else util::qPrint("Error when sanitizing Desc: \"&",sBuild,";\" not defined!");
+                    sBuild.clear();
+                    bAmpersandBuild = false;
+                } else { sBuild.push_back(c); }
+            } else if(c == '&') {
+                bAmpersandBuild = true;
+            } else {
+                sOutput.push_back(c);
+            }
+        } else { sOutput.push_back(c); }
+    }
+
+    desc = sOutput;
+}
