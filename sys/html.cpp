@@ -8,7 +8,7 @@ html::elementInfo* html::editElement = NULL;
 html::html() {
     auto mConfig = config::getConfig(config::element);
     elementInfo currentElementInfo;
-    int iCurrentVariable = 0; //0 bContainer, 1 desc, 2 commonAttributes, 3 notes
+    int iCurrentVariable = 0; //0 bContainer, 1 desc, 2 commonAttributes, 3 notes, 4 link
     bool bCurVarDetermined = false;
     int iLineCount = 0; //used to check if just a full blank line
 
@@ -32,6 +32,9 @@ html::html() {
                     case 'a':
                         iCurrentVariable = 3;
                         break;
+                    case 'l':
+                        iCurrentVariable = 4;
+                        break;
                     default:
                         util::qPrint("Error parsing .hbinfo! Expected f|c|d|a but recieved:",sBuild[0]);
                         break;
@@ -43,7 +46,7 @@ html::html() {
 
             if(item.second[i] == '\n') {
                 if(iLineCount > 0) {
-                    if(iCurrentVariable == 4 && sBuild[0] == '}') {
+                    if(iCurrentVariable == 5 && sBuild[0] == '}') {
                         mElementInfo[currentElementInfo.sName] = currentElementInfo;
                         iCurrentVariable = 0;
                         bCurVarDetermined = false;
@@ -63,9 +66,12 @@ html::html() {
                             } else {
                                 currentElementInfo.vCommonAttributes.clear();
                             }
-                            iCurrentVariable++;
                             break;
                         case 4:
+                            currentElementInfo.sWebLink = sBuild;
+                            iCurrentVariable++;
+                            break;
+                        case 5:
                             if(sBuild.length() > 1) {
                                 currentElementInfo.vNotes.push_back(sBuild);
                             }
@@ -75,7 +81,7 @@ html::html() {
                             break;
                     }
                     sBuild.clear();
-                    if(iCurrentVariable != 4) { bCurVarDetermined = false; }
+                    if(iCurrentVariable != 5) { bCurVarDetermined = false; }
                     iLineCount = 0;
                 }
             } else {
@@ -382,8 +388,9 @@ void html::elementInfo::update() {
     sConfigValue.append(sDescription);
     sConfigValue.append("\na=");
     sConfigValue.append(util::vectorToSingleStr(vCommonAttributes,std::string(",")));
-    sConfigValue.push_back('\n');
-    sConfigValue.append(std::string("{\n"));
+    sConfigValue.append("\nl=");
+    sConfigValue.append(sWebLink);
+    sConfigValue.append(std::string("\n{\n"));
     sConfigValue.append(util::vectorToSingleStr(vNotes));
     sConfigValue.append(std::string("}"));
 
@@ -392,6 +399,8 @@ void html::elementInfo::update() {
 }
 
 //specifically designed for the Mozilla page
+//TODO need to account for the different headers
+//h1-h5 don't populate, only h6 does so should be able to just copy h6 for each
 void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
     std::set<std::string> setSections {
         "aria-labelledby=\"main_root\"",
@@ -499,7 +508,8 @@ void html::parseAndSetElementFromHtmlFirstLine ( elementInfo& buildElement, std:
         if(bBuildStarted) {
             if(c == '"') {
                 bBuildStarted = false;
-                buildElement.sWebLink = sBuild;
+                buildElement.sWebLink = "https://developer.mozilla.org";
+                buildElement.sWebLink.append(sBuild);
                 sBuild.clear();
             } else if (c == '&') {
                 bBuildStarted = false;
