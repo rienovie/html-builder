@@ -430,7 +430,8 @@ void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
         bInsideSection = false,
         bCarrotSearch = false, //I think technically it's not a carrot but meh
         bTDFound = false,
-        bElementStarted = false;
+        bElementStarted = false,
+        bObsolete = false;
 
     //There is a lot of if statements here, TODO simplify this later
     for(char c : sMozillaHtml) {
@@ -448,6 +449,9 @@ void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
                                 elementBuild.sDescription = sTDBuild;
                                 sTDBuild.clear();
                                 bElementStarted = false;
+                                if(bObsolete) {
+                                    elementBuild.vNotes.push_back("2,This is either obsolete or deprecated!");
+                                }
                                 if(mElementInfo.find(elementBuild.sName) == mElementInfo.end()) {
                                     mElementInfo.emplace(elementBuild.sName,elementBuild);
                                     elementBuild.update();
@@ -480,7 +484,10 @@ void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
             }
         } else {
             if(c == ' ' || c == '>' || c == '\n') {
-                if(setSections.find(sBuild) != setSections.end()) { bInsideSection = true; }
+                if(setSections.find(sBuild) != setSections.end()) {
+                    bInsideSection = true;
+                    bObsolete = (sBuild == "aria-labelledby=\"obsolete_and_deprecated_elements\"");
+                }
                 sBuild.clear();
             } else {
                 sBuild.push_back(c);

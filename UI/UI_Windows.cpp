@@ -1028,10 +1028,25 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
         sElementNameEdit = elInfo.sName;
         mWindowBools["Edit Element"] = true;
     }
+    ImGui::SameLine();
+    if(elInfo.sWebLink.length() > 0) {
+        ImGui::Text("More info");
+        if(ImGui::IsItemHovered() || ImGui::IsItemActive()) {
+            ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+            ImGui::SetTooltip("%s",elInfo.sWebLink.c_str());
+        }
+        if(ImGui::IsItemClicked()) {
+            std::string sCommand = "xdg-open ";
+            sCommand.append(elInfo.sWebLink);
+            system(sCommand.c_str());
+            html::editElement = &elInfo;
+            sElementNameEdit = elInfo.sName;
+            mWindowBools["Edit Element"] = true;
+        }
+    }
     ImGui::EndTable();
     ImGui::Indent();
     ImGui::Text( "%s", elInfo.sFullName.c_str());
-
     ImGui::Indent();
     ImGui::PushFont(UI::font_light);
     ImGui::TextWrapped( "%s", elInfo.sDescription.c_str());

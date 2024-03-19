@@ -1,5 +1,5 @@
 a{
-f=a
+f=anchor
 c=1
 d=Together with its href attribute, creates a hyperlink to web pages, files, email addresses, locations within the current page, or anything else a URL can address.
 a=
@@ -8,7 +8,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a
 }
 }
 abbr{
-f=abbr
+f=abbreviation
 c=1
 d=Represents an abbreviation or acronym.
 a=
@@ -23,6 +23,7 @@ d=Allows authors to clearly indicate a sequence of characters that compose an ac
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/acronym
 {
+2,This is either obsolete or deprecated!
 }
 }
 address{
@@ -36,7 +37,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/address
 }
 area{
 f=area
-c=1
+c=0
 d=Defines an area inside an image map that has predefined clickable areas. An image map allows geometric areas on an image to be associated with hyperlink.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/area
@@ -71,7 +72,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio
 }
 }
 b{
-f=b
+f=boldface
 c=1
 d=Used to draw the reader's attention to the element's contents, which are not otherwise granted special importance. This was formerly known as the Boldface element, and most browsers still draw the text in boldface. However, you should not use <b> for styling text or granting importance. If you wish to create boldface text, you should use the CSS font-weight property. If you wish to indicate an element is of special importance, you should use the strong element.
 a=
@@ -80,8 +81,8 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/b
 }
 }
 base{
-f=base
-c=1
+f=document base
+c=0
 d=Specifies the base URL to use for all relative URLs in a document. There can be only one such element in a document.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
@@ -89,7 +90,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
 }
 }
 bdi{
-f=bdi
+f=bidirectional isolate
 c=1
 d=Tells the browser's bidirectional algorithm to treat the text it contains in isolation from its surrounding text. It's particularly useful when a website dynamically inserts some text and doesn't know the directionality of the text being inserted.
 a=
@@ -98,7 +99,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/bdi
 }
 }
 bdo{
-f=bdo
+f=bidirectional override
 c=1
 d=Overrides the current directionality of text, so that the text within is rendered in a different direction.
 a=
@@ -113,6 +114,7 @@ d=Renders the enclosed text at a font size one level larger than the surrounding
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/big
 {
+2,This is either obsolete or deprecated!
 }
 }
 blockquote{
@@ -127,15 +129,15 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote
 body{
 f=body
 c=1
-d=represents the content of an HTML document. There can be only one such element in a document.
+d=Represents the content of an HTML document. There can be only one such element in a document.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/body
 {
 }
 }
 br{
-f=br
-c=1
+f=line break / carriage return
+c=0
 d=Produces a line break in text (carriage-return). It is useful for writing a poem or an address, where the division of lines is significant.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/br
@@ -176,10 +178,11 @@ d=Displays its block-level or inline contents centered horizontally within its c
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/center
 {
+2,This is either obsolete or deprecated!
 }
 }
 cite{
-f=cite
+f=citation
 c=1
 d=Used to mark up the title of a cited creative work. The reference may be in an abbreviated form according to context-appropriate conventions related to citation metadata.
 a=
@@ -197,8 +200,8 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/code
 }
 }
 col{
-f=col
-c=1
+f=column
+c=0
 d=Defines one or more columns in a column group represented by its implicit or explicit parent <colgroup> element. The <col> element is only valid as a child of a <colgroup> element that has no span attribute defined.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/col
@@ -206,7 +209,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/col
 }
 }
 colgroup{
-f=colgroup
+f=column group
 c=1
 d=Defines a group of columns within a table.
 a=
@@ -221,6 +224,7 @@ d=An obsolete part of the Web Components suite of technologies—was used inside
 a=
 l=
 {
+2,This is either obsolete or deprecated!
 }
 }
 data{
@@ -242,7 +246,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist
 }
 }
 dd{
-f=dd
+f=description details
 c=1
 d=Provides the description, definition, or value for the preceding term (<dt>) in a description list (<dl>).
 a=
@@ -251,7 +255,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dd
 }
 }
 del{
-f=del
+f=deleted text
 c=1
 d=Represents a range of text that has been deleted from a document. This can be used when rendering "track changes" or source code diff information, for example. The <ins> element can be used for the opposite purpose: to indicate text that has been added to the document.
 a=
@@ -269,7 +273,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details
 }
 }
 dfn{
-f=dfn
+f=definition
 c=1
 d=Used to indicate the term being defined within the context of a definition phrase or sentence. The ancestor <p> element, the <dt>/<dd> pairing, or the nearest section ancestor of the <dfn> element, is considered to be the definition of the term.
 a=
@@ -287,16 +291,17 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog
 }
 }
 dir{
-f=dir
+f=directory
 c=1
 d=Container for a directory of files and/or folders, potentially with styles and icons applied by the user agent. Do not use this obsolete element; instead, you should use the <ul> element for lists, including lists of files.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dir
 {
+2,This is either obsolete or deprecated!
 }
 }
 div{
-f=div
+f=content division
 c=1
 d=The generic container for flow content. It has no effect on the content or layout until styled in some way using CSS (e.g., styling is directly applied to it, or some kind of layout model like flexbox is applied to its parent element).
 a=
@@ -305,7 +310,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/div
 }
 }
 dl{
-f=dl
+f=description list
 c=1
 d=Represents a description list. The element encloses a list of groups of terms (specified using the <dt> element) and descriptions (provided by <dd> elements). Common uses for this element are to implement a glossary or to display metadata (a list of key-value pairs).
 a=
@@ -314,7 +319,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dl
 }
 }
 dt{
-f=dt
+f=description term
 c=1
 d=Specifies a term in a description or definition list, and as such must be used inside a <dl> element. It is usually followed by a <dd> element; however, multiple <dt> elements in a row indicate several terms that are all defined by the immediate next <dd> element.
 a=
@@ -323,7 +328,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dt
 }
 }
 em{
-f=em
+f=emphasis
 c=1
 d=Marks text that has stress emphasis. The <em> element can be nested, with each nesting level indicating a greater degree of emphasis.
 a=
@@ -333,7 +338,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/em
 }
 embed{
 f=embed
-c=1
+c=0
 d=Embeds external content at the specified point in the document. This content is provided by an external application or other source of interactive content such as a browser plug-in.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/embed
@@ -350,7 +355,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset
 }
 }
 figcaption{
-f=figcaption
+f=figure caption
 c=1
 d=Represents a caption or legend describing the rest of the contents of its parent <figure> element.
 a=
@@ -374,6 +379,7 @@ d=Defines the font size, color and face for its content.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/font
 {
+2,This is either obsolete or deprecated!
 }
 }
 footer{
@@ -396,11 +402,12 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
 }
 frame{
 f=frame
-c=1
+c=0
 d=Defines a particular area in which another HTML document can be displayed. A frame should be used within a <frameset>.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/frame
 {
+2,This is either obsolete or deprecated!
 }
 }
 frameset{
@@ -410,19 +417,65 @@ d=Used to contain <frame> elements.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/frameset
 {
+2,This is either obsolete or deprecated!
 }
 }
-h6{
-f=h6
+h1{
+f=header one
 c=1
 d=Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest.
 a=
-l=https://developer.mozilla.org</code></a>, <a href=
+l=
+{
+}
+}
+h2{
+f=header two
+c=1
+d=Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest.
+a=
+l=
+{
+}
+}
+h3{
+f=header three
+c=1
+d=Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest.
+a=
+l=
+{
+}
+}
+h4{
+f=header four
+c=1
+d=Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest.
+a=
+l=
+{
+}
+}
+h5{
+f=header five
+c=1
+d=Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest.
+a=
+l=
+{
+}
+}
+h6{
+f=header six
+c=1
+d=Represent six levels of section headings. <h1> is the highest section level and <h6> is the lowest.
+a=
+l=
 {
 }
 }
 head{
-f=head
+f=header
 c=1
 d=Contains machine-readable information (metadata) about the document, like its title, scripts, and style sheets.
 a=
@@ -440,7 +493,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header
 }
 }
 hgroup{
-f=hgroup
+f=heading group
 c=1
 d=Represents a heading grouped with any secondary content, such as subheadings, an alternative title, or a tagline.
 a=
@@ -449,8 +502,8 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/hgroup
 }
 }
 hr{
-f=hr
-c=1
+f=horizontal rule / thematic break
+c=0
 d=Represents a thematic break between paragraph-level elements: for example, a change of scene in a story, or a shift of topic within a section.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/hr
@@ -458,7 +511,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/hr
 }
 }
 html{
-f=html
+f=hypertext markup language
 c=1
 d=Represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.
 a=
@@ -467,7 +520,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/html
 }
 }
 i{
-f=i
+f=idiomatic / italic
 c=1
 d=Represents a range of text that is set off from the normal text for some reason, such as idiomatic text, technical terms, and taxonomical designations, among others. Historically, these have been presented using italicized type, which is the original source of the <i> naming of this element.
 a=
@@ -476,7 +529,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/i
 }
 }
 iframe{
-f=iframe
+f=inline frame
 c=1
 d=Represents a nested browsing context, embedding another HTML page into the current one.
 a=
@@ -486,16 +539,17 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/iframe
 }
 image{
 f=image
-c=1
+c=0
 d=An ancient and poorly supported precursor to the <img> element. It should not be used.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img
 {
+2,This is either obsolete or deprecated!
 }
 }
 img{
-f=img
-c=1
+f=image
+c=0
 d=Embeds an image into the document.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img
@@ -504,7 +558,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img
 }
 input{
 f=input
-c=1
+c=0
 d=Used to create interactive controls for web-based forms to accept data from the user; a wide variety of types of input data and control widgets are available, depending on the device and user agent. The <input> element is one of the most powerful and complex in all of HTML due to the sheer number of combinations of input types and attributes.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
@@ -512,7 +566,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
 }
 }
 ins{
-f=ins
+f=inserted text
 c=1
 d=Represents a range of text that has been added to a document. You can use the <del> element to similarly represent a range of text that has been deleted from the document.
 a=
@@ -521,7 +575,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ins
 }
 }
 kbd{
-f=kbd
+f=keyboard input
 c=1
 d=Represents a span of inline text denoting textual user input from a keyboard, voice input, or any other text entry device. By convention, the user agent defaults to rendering the contents of a <kbd> element using its default monospace font, although this is not mandated by the HTML standard.
 a=
@@ -548,7 +602,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/legend
 }
 }
 li{
-f=li
+f=list item
 c=1
 d=Represents an item in a list. It must be contained in a parent element: an ordered list (<ol>), an unordered list (<ul>), or a menu (<menu>). In menus and unordered lists, list items are usually displayed using bullet points. In ordered lists, they are usually displayed with an ascending counter on the left, such as a number or letter.
 a=
@@ -558,7 +612,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/li
 }
 link{
 f=link
-c=1
+c=0
 d=Specifies relationships between the current document and an external resource. This element is most commonly used to link to CSS but is also used to establish site icons (both "favicon" style icons and icons for the home screen and apps on mobile devices) among other things.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link
@@ -584,7 +638,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/map
 }
 }
 mark{
-f=mark
+f=mark / highlight
 c=1
 d=Represents text which is marked or highlighted for reference or notation purposes due to the marked passage's relevance in the enclosing context.
 a=
@@ -599,6 +653,7 @@ d=Used to insert a scrolling area of text. You can control what happens when the
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/marquee
 {
+2,This is either obsolete or deprecated!
 }
 }
 math{
@@ -606,7 +661,7 @@ f=math
 c=1
 d=The top-level element in MathML. Every valid MathML instance must be wrapped in it. In addition, you must not nest a second <math> element in another, but you can have an arbitrary number of other child elements in it.
 a=
-l=https://developer.mozilla.org<math>
+l=https://developer.mozilla.org/en-US/docs/Web/MathML/Element/math
 {
 }
 }
@@ -626,11 +681,12 @@ d=Represents a command that a user is able to invoke through a popup menu. This 
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/menuitem
 {
+2,This is either obsolete or deprecated!
 }
 }
 meta{
-f=meta
-c=1
+f=metadata
+c=0
 d=Represents metadata that cannot be represented by other HTML meta-related elements, like <base>, <link>, <script>, <style> and <title>.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
@@ -647,7 +703,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meter
 }
 }
 nav{
-f=nav
+f=navigation section
 c=1
 d=Represents a section of a page whose purpose is to provide navigation links, either within the current document or to other documents. Common examples of navigation sections are menus, tables of contents, and indexes.
 a=
@@ -656,34 +712,37 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav
 }
 }
 nobr{
-f=nobr
+f=non breaking text
 c=1
 d=Prevents the text it contains from automatically wrapping across multiple lines, potentially resulting in the user having to scroll horizontally to see the entire width of the text.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nobr
 {
+2,This is either obsolete or deprecated!
 }
 }
 noembed{
-f=noembed
+f=embed fallback
 c=1
 d=An obsolete, non-standard way to provide alternative, or "fallback", content for browsers that do not support the embed element or do not support the type of embedded content an author wishes to use. This element was deprecated in HTML 4.01 and above in favor of placing fallback content between the opening and closing tags of an <object> element.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/noembed
 {
+2,This is either obsolete or deprecated!
 }
 }
 noframes{
-f=noframes
+f=frame fallback
 c=1
 d=Provides content to be presented in browsers that don't support (or have disabled support for) the <frame> element. Although most commonly-used browsers support frames, there are exceptions, including certain special-use browsers including some mobile browsers, as well as text-mode browsers.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/noframes
 {
+2,This is either obsolete or deprecated!
 }
 }
 noscript{
-f=noscript
+f=script fallback
 c=1
 d=Defines a section of HTML to be inserted if a script type on the page is unsupported or if scripting is currently turned off in the browser.
 a=
@@ -701,7 +760,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/object
 }
 }
 ol{
-f=ol
+f=ordered list
 c=1
 d=Represents an ordered list of items — typically rendered as a numbered list.
 a=
@@ -710,7 +769,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol
 }
 }
 optgroup{
-f=optgroup
+f=option group
 c=1
 d=Creates a grouping of options within a <select> element.
 a=
@@ -737,7 +796,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output
 }
 }
 p{
-f=p
+f=paragraph
 c=1
 d=Represents a paragraph. Paragraphs are usually represented in visual media as blocks of text separated from adjacent blocks by blank lines and/or first-line indentation, but HTML paragraphs can be any structural grouping of related content, such as images or form fields.
 a=
@@ -746,12 +805,13 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/p
 }
 }
 param{
-f=param
+f=object parameter
 c=1
 d=Defines parameters for an <object> element.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/param
 {
+2,This is either obsolete or deprecated!
 }
 }
 picture{
@@ -770,6 +830,7 @@ d=Renders everything following the start tag as raw text, ignoring any following
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/plaintext
 {
+2,This is either obsolete or deprecated!
 }
 }
 portal{
@@ -782,7 +843,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/portal
 }
 }
 pre{
-f=pre
+f=preformatted text
 c=1
 d=Represents preformatted text which is to be presented exactly as written in the HTML file. The text is typically rendered using a non-proportional, or monospaced, font. Whitespace inside this element is displayed as written.
 a=
@@ -800,7 +861,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress
 }
 }
 q{
-f=q
+f=quotation
 c=1
 d=Indicates that the enclosed text is a short inline quotation. Most modern browsers implement this by surrounding the text in quotation marks. This element is intended for short quotations that don't require paragraph breaks; for long quotations use the <blockquote> element.
 a=
@@ -809,16 +870,17 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/q
 }
 }
 rb{
-f=rb
+f=ruby base
 c=1
 d=Used to delimit the base text component of a ruby annotation, i.e. the text that is being annotated. One <rb> element should wrap each separate atomic segment of the base text.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/rb
 {
+2,This is either obsolete or deprecated!
 }
 }
 rp{
-f=rp
+f=ruby parenthesis fallback
 c=1
 d=Used to provide fall-back parentheses for browsers that do not support the display of ruby annotations using the <ruby> element. One <rp> element should enclose each of the opening and closing parentheses that wrap the <rt> element that contains the annotation's text.
 a=
@@ -827,7 +889,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/rp
 }
 }
 rt{
-f=rt
+f=ruby text
 c=1
 d=Specifies the ruby text component of a ruby annotation, which is used to provide pronunciation, translation, or transliteration information for East Asian typography. The <rt> element must always be contained within a <ruby> element.
 a=
@@ -836,16 +898,17 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/rt
 }
 }
 rtc{
-f=rtc
+f=ruby text container
 c=1
 d=Embraces semantic annotations of characters presented in a ruby of <rb> elements used inside of <ruby> element. <rb> elements can have both pronunciation (<rt>) and semantic (<rtc>) annotations.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/rtc
 {
+2,This is either obsolete or deprecated!
 }
 }
 ruby{
-f=ruby
+f=ruby annotation
 c=1
 d=Represents small annotations that are rendered above, below, or next to base text, usually used for showing the pronunciation of East Asian characters. It can also be used for annotating other kinds of text, but this usage is less common.
 a=
@@ -854,7 +917,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ruby
 }
 }
 s{
-f=s
+f=strikethrough
 c=1
 d=Renders text with a strikethrough, or a line through it. Use the <s> element to represent things that are no longer relevant or no longer accurate. However, <s> is not appropriate when indicating document edits; for that, use the <del> and <ins> elements, as appropriate.
 a=
@@ -863,7 +926,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/s
 }
 }
 samp{
-f=samp
+f=sample output
 c=1
 d=Used to enclose inline text which represents sample (or quoted) output from a computer program. Its contents are typically rendered using the browser's default monospaced font (such as Courier or Lucida Console).
 a=
@@ -890,7 +953,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/search
 }
 }
 section{
-f=section
+f=generic section
 c=1
 d=Represents a generic standalone section of a document, which doesn't have a more specific semantic element to represent it. Sections should always have a heading, with very few exceptions.
 a=
@@ -914,6 +977,7 @@ d=An obsolete part of the Web Components technology suite that was intended to b
 a=
 l=
 {
+2,This is either obsolete or deprecated!
 }
 }
 slot{
@@ -935,8 +999,8 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/small
 }
 }
 source{
-f=source
-c=1
+f=media source
+c=0
 d=Specifies multiple media resources for the picture, the audio element, or the video element. It is a void element, meaning that it has no content and does not have a closing tag. It is commonly used to offer the same media content in multiple file formats in order to provide compatibility with a broad range of browsers given their differing support for image file formats and media file formats.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
@@ -959,6 +1023,7 @@ d=Places a strikethrough (horizontal line) over text.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/strike
 {
+2,This is either obsolete or deprecated!
 }
 }
 strong{
@@ -980,7 +1045,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style
 }
 }
 sub{
-f=sub
+f=subscript
 c=1
 d=Specifies inline text which should be displayed as subscript for solely typographical reasons. Subscripts are typically rendered with a lowered baseline using smaller text.
 a=
@@ -998,7 +1063,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/summary
 }
 }
 sup{
-f=sup
+f=superscript
 c=1
 d=Specifies inline text which is to be displayed as superscript for solely typographical reasons. Superscripts are usually rendered with a raised baseline using smaller text.
 a=
@@ -1007,7 +1072,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/sup
 }
 }
 svg{
-f=svg
+f=scalable vector graphic
 c=1
 d=Container defining a new coordinate system and viewport. It is used as the outermost element of SVG documents, but it can also be used to embed an SVG fragment inside an SVG or HTML document.
 a=
@@ -1025,7 +1090,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table
 }
 }
 tbody{
-f=tbody
+f=table body
 c=1
 d=Encapsulates a set of table rows (<tr> elements), indicating that they comprise the body of a table's (main) data.
 a=
@@ -1034,7 +1099,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tbody
 }
 }
 td{
-f=td
+f=table data cell
 c=1
 d=A child of the <tr> element, it defines a cell of a table that contains data.
 a=
@@ -1061,7 +1126,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea
 }
 }
 tfoot{
-f=tfoot
+f=table foot
 c=1
 d=Encapsulates a set of table rows (<tr> elements), indicating that they comprise the foot of a table with information about the table's columns. This is usually a summary of the columns, e.g., a sum of the given numbers in a column.
 a=
@@ -1070,7 +1135,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tfoot
 }
 }
 th{
-f=th
+f=table header
 c=1
 d=A child of the <tr> element, it defines a cell as the header of a group of table cells. The nature of this group can be explicitly defined by the scope and headers attributes.
 a=
@@ -1079,7 +1144,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/th
 }
 }
 thead{
-f=thead
+f=table head
 c=1
 d=Encapsulates a set of table rows (<tr> elements), indicating that they comprise the head of a table with information about the table's columns. This is usually in the form of column headers (<th> elements).
 a=
@@ -1088,7 +1153,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/thead
 }
 }
 time{
-f=time
+f=time / date
 c=1
 d=Represents a specific period in time. It may include the datetime attribute to translate dates into machine-readable format, allowing for better search engine results or custom features such as reminders.
 a=
@@ -1106,7 +1171,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/title
 }
 }
 tr{
-f=tr
+f=table row
 c=1
 d=Defines a row of cells in a table. The row's cells can then be established using a mix of <td> (data cell) and <th> (header cell) elements.
 a=
@@ -1115,8 +1180,8 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tr
 }
 }
 track{
-f=track
-c=1
+f=media track
+c=0
 d=Used as a child of the media elements, audio and video. It lets you specify timed text tracks (or time-based data), for example to automatically handle subtitles. The tracks are formatted in WebVTT format (.vtt files)—Web Video Text Tracks.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track
@@ -1124,16 +1189,17 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track
 }
 }
 tt{
-f=tt
+f=teletype text
 c=1
 d=Creates inline text which is presented using the user agent default monospace font face. This element was created for the purpose of rendering text as it would be displayed on a fixed-width display such as a teletype, text-only screen, or line printer.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/tt
 {
+2,This is either obsolete or deprecated!
 }
 }
 u{
-f=u
+f=underline / unarticulated annotation
 c=1
 d=Represents a span of inline text which should be rendered in a way that indicates that it has a non-textual annotation. This is rendered by default as a simple solid underline but may be altered using CSS.
 a=
@@ -1142,7 +1208,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/u
 }
 }
 ul{
-f=ul
+f=unordered list
 c=1
 d=Represents an unordered list of items, typically rendered as a bulleted list.
 a=
@@ -1151,7 +1217,7 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul
 }
 }
 var{
-f=var
+f=variable text
 c=1
 d=Represents the name of a variable in a mathematical expression or a programming context. It's typically presented using an italicized version of the current typeface, although that behavior is browser-dependent.
 a=
@@ -1169,9 +1235,9 @@ l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video
 }
 }
 wbr{
-f=wbr
-c=1
-d=Represents a word break opportunity—a position within text where the browser may optionally break a line, though its line-breaking rules would not otherwise create a break at that location.
+f=word break / line break
+c=0
+d=Represents a word break opportunity - a position within text where the browser may optionally break a line, though its line-breaking rules would not otherwise create a break at that location.
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/wbr
 {
@@ -1184,5 +1250,6 @@ d=Renders text between the start and end tags without interpreting the HTML in b
 a=
 l=https://developer.mozilla.org/en-US/docs/Web/HTML/Element/xmp
 {
+2,This is either obsolete or deprecated!
 }
 }
