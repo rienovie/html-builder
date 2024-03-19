@@ -648,24 +648,52 @@ void win::hierarchyPopulate(html::element* element) {
         bool bDisable = false; //so EndDisable only runs when beginDisable runs
 
         ImGui::PushID(child);
-        const char* cStrName;
+        std::string sName;
+
         if(child->vChildrenPtrs.size() != 0) {
-            cStrName = child->sElementName.c_str();
+            if(child->mAttributes.find("id") != child->mAttributes.end()) {
+                sName = child->mAttributes.at("id");
+                sName.append(" <");
+                sName.append(child->sElementName);
+                sName.append(">");
+            } else {
+                sName = child->sElementName;
+            }
+        } else if(child->bIsElement) {
+            sName = child->sElementName;
         } else {
-            cStrName = child->sRawLine.c_str();
+            sName = child->sRawLine;
         }
 
         if(UI::selectedElement == child) {
             ImGui::BeginDisabled();
             bDisable = true;
         }
-        if(ImGui::Button(cStrName)) {
+        if(ImGui::Button(sName.c_str())) {
             UI::selectedElement = child;
             mWindowBools["Selected Element"] = true;
         }
         if(UI::selectedElement == child && bDisable) {
             ImGui::EndDisabled();
             bDisable = false;
+        }
+        if(ImGui::IsItemHovered() || ImGui::IsItemActive()) {
+            ImGui::BeginTooltip();
+
+            std::string sTTName = "< ";
+            sTTName.append(child->sElementName);
+            sTTName.append(" >");
+            ImGui::Text( "%s", sTTName.c_str());
+            ImGui::PushFont(UI::font_light);
+            for(auto& att : child->mAttributes) {
+                std::string sTTAtt = att.first;
+                sTTAtt.append("=");
+                sTTAtt.append(att.second);
+                ImGui::Text( "%s", sTTAtt.c_str());
+            }
+            ImGui::Text( "%s", child->sRawLine.c_str());
+            ImGui::PopFont();
+            ImGui::EndTooltip();
         }
 
         if(child->vChildrenPtrs.size() != 0) {
@@ -676,7 +704,7 @@ void win::hierarchyPopulate(html::element* element) {
             && child->vChildrenPtrs[0]->vChildrenPtrs.size() == 0
             ) {
                 hierarchyPopulate(child);
-            } else if(ImGui::TreeNode(cStrName,"Children")) {
+            } else if(ImGui::TreeNode(sName.c_str(),"Children")) {
                 hierarchyPopulate(child);
                 ImGui::TreePop();
             }
@@ -1039,9 +1067,6 @@ void win::swElementInfo ( html::elementInfo& elInfo ) {
             std::string sCommand = "xdg-open ";
             sCommand.append(elInfo.sWebLink);
             system(sCommand.c_str());
-            html::editElement = &elInfo;
-            sElementNameEdit = elInfo.sName;
-            mWindowBools["Edit Element"] = true;
         }
     }
     ImGui::EndTable();
