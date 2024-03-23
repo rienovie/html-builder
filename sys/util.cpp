@@ -109,6 +109,37 @@ namespace util {
         }
     }
 
+    std::string shorten ( std::string& sToShorten, char cEndOn ) {
+        std::string sOutput = "";
 
+        for(char& c : sToShorten) {
+            if(c == cEndOn) { return sOutput; }
+            else sOutput.push_back(c);
+        }
 
+        return sOutput;
+    }
+
+    std::string shorten ( std::string& sToShorten, int iLength ) {
+        std::string sOutput = "";
+        int iShortest = std::min(iLength,int(sToShorten.length()));
+
+        for(int i = 0; i < iShortest; i++) {
+            sOutput.push_back(sToShorten[i]);
+        }
+
+        return sOutput;
+    }
+
+    std::string shorten ( std::string& sToShorten, int iLength, char cEndOn ) {
+        std::string sOutput = "";
+        int iShortest = std::min(iLength,int(sToShorten.length()));
+
+        for(int i = 0; i < iShortest; i++) {
+            if(sToShorten[i] == cEndOn) { return sOutput; }
+            sOutput.push_back(sToShorten[i]);
+        }
+
+        return sOutput;
+    }
 }

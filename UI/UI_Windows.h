@@ -33,7 +33,7 @@ private:
         swThemeOptions(),
         swThemeColors(),
         BasicToolTip(const char* toolTipText),
-        hierarchyPopulate(html::element* element),
+        hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTree),
         wSelectedElement(),
         wAllElements(),
         wEditElement(),

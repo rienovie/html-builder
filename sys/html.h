@@ -69,12 +69,15 @@ public:
         file* filePtr;
         bool
             bIsElement = false,
-            bIsContainer = false;
+            bIsContainer = false,
+            bSearchVis = true;
         std::vector<element*> vChildrenPtrs;
         std::map<std::string,std::string> mAttributes;
 
         element(file& file, element* parent, int2d startEnd);
         ~element();
+
+        void determineVis(std::string& sSearch);
     private:
         int2d indexStartEnd; //this is from the sFullRawFile & only used in construction
         int iCurrentIndex;

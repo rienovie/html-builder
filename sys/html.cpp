@@ -566,3 +566,16 @@ void html::santizeDesc ( std::string& desc ) {
 
     desc = sOutput;
 }
+
+void html::element::determineVis(std::string& sSearch) {
+    this->bSearchVis = false;
+
+    for(auto& child : vChildrenPtrs) {
+        child->determineVis(sSearch);
+        if(child->bSearchVis) { this->bSearchVis = true; }
+    }
+
+    if(this->bSearchVis) { return; }
+    else this->bSearchVis = (sSearch.length() == 0 || sRawLine.find(sSearch) != std::string::npos);
+}
+

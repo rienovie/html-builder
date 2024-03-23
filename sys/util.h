@@ -6,8 +6,7 @@
 #include <sys/resource.h>
 #include <filesystem>
 #include <math.h>
-
-
+#include <algorithm>
 
 namespace util {
 
@@ -65,7 +64,10 @@ namespace util {
 
     std::string
         vectorToSingleStr(std::vector<std::string>& sFullVec,bool bAddNewLines = true),
-        vectorToSingleStr(std::vector<std::string>& sFullVec,std::string sBetweenEach,bool bSkipLast = true);
+        vectorToSingleStr(std::vector<std::string>& sFullVec,std::string sBetweenEach,bool bSkipLast = true),
+        shorten(std::string& sToShorten, int iLength, char cEndOn),
+        shorten(std::string& sToShorten, int iLength),
+        shorten(std::string& sToShorten, char cEndOn);
 
     void
         printMemUse(rusage& usageRef),

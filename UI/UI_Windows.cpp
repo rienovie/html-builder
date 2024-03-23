@@ -638,13 +638,43 @@ void win::wHierarchy() {
 
     ImGui::Begin(sTitle.c_str(),&mWindowBools["Current Hierarchy"]);
 
-    hierarchyPopulate(html::vLoadedHTMLs[0]->rootElementPtr);
+    bool
+        bModTreeNodes = false,
+        bExpandTree = false;
+    if(UI::sItemSearch.length() > 0) {
+        if(ImGui::Button("X")) {
+            UI::sItemSearch.clear();
+            ImGui::SetKeyboardFocusHere();
+        }
+        BasicToolTip("Clear Search");
+        ImGui::SameLine();
+    }
+    ImGui::InputText("Item Search",&UI::sItemSearch);
+    html::vLoadedHTMLs[0]->rootElementPtr->determineVis(UI::sItemSearch);
+    if(ImGui::Button("Expand All")) {
+        bModTreeNodes = true;
+        bExpandTree = true;
+    }
+    ImGui::SameLine();
+    if(ImGui::Button("Collapse All")) {
+        bModTreeNodes = true;
+        bExpandTree = false;
+    }
+    ImGui::Separator();
 
+    ImGui::BeginChild("ChHier");
+    hierarchyPopulate(html::vLoadedHTMLs[0]->rootElementPtr,bModTreeNodes,bExpandTree);
+    ImGui::EndChild();
+
+    bModTreeNodes = false;
+    bExpandTree = false;
     ImGui::End();
 }
 
-void win::hierarchyPopulate(html::element* element) {
+void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTree) {
     for(auto& child : element->vChildrenPtrs) {
+        if(!child->bSearchVis) { continue; }
+
         bool bDisable = false; //so EndDisable only runs when beginDisable runs
 
         ImGui::PushID(child);
@@ -662,7 +692,8 @@ void win::hierarchyPopulate(html::element* element) {
         } else if(child->bIsElement) {
             sName = child->sElementName;
         } else {
-            sName = child->sRawLine;
+            sName = util::shorten(child->sRawLine,12,'\n');
+            sName.append("...");
         }
 
         if(UI::selectedElement == child) {
@@ -680,33 +711,58 @@ void win::hierarchyPopulate(html::element* element) {
         if(ImGui::IsItemHovered() || ImGui::IsItemActive()) {
             ImGui::BeginTooltip();
 
-            std::string sTTName = "< ";
-            sTTName.append(child->sElementName);
-            sTTName.append(" >");
-            ImGui::Text( "%s", sTTName.c_str());
-            ImGui::PushFont(UI::font_light);
-            for(auto& att : child->mAttributes) {
-                std::string sTTAtt = att.first;
-                sTTAtt.append("=");
-                sTTAtt.append(att.second);
-                ImGui::Text( "%s", sTTAtt.c_str());
+            if(child->bIsElement) {
+                std::string sTTName = "< ";
+                sTTName.append(child->sElementName);
+                sTTName.append(" >");
+                ImGui::Text( "%s", sTTName.c_str());
+                ImGui::SameLine();
+                std::string sFullElementName = child->sElementName;
+                if(html::mElementInfo.find(child->sElementName) != html::mElementInfo.end()) {
+                    sFullElementName = (html::mElementInfo.at(child->sElementName).sFullName);
+                }
+                ImGui::TextDisabled( "%s", sFullElementName.c_str());
             }
+            ImGui::PushFont(UI::font_light);
+            if(child->mAttributes.size() > 0) {
+                ImGui::SeparatorText("Attributes");
+                for(auto& att : child->mAttributes) {
+                    std::string sTTAtt = att.first;
+                    sTTAtt.append("=");
+                    sTTAtt.append(att.second);
+                    ImGui::Text( "%s", sTTAtt.c_str());
+                }
+            }
+            ImGui::SeparatorText("Raw");
             ImGui::Text( "%s", child->sRawLine.c_str());
             ImGui::PopFont();
             ImGui::EndTooltip();
         }
 
         if(child->vChildrenPtrs.size() != 0) {
-            ImGui::SameLine();
-
             //if only single child with no next children
             if(child->vChildrenPtrs.size() == 1
             && child->vChildrenPtrs[0]->vChildrenPtrs.size() == 0
+            && child->vChildrenPtrs[0]->bSearchVis
             ) {
-                hierarchyPopulate(child);
-            } else if(ImGui::TreeNode(sName.c_str(),"Children")) {
-                hierarchyPopulate(child);
-                ImGui::TreePop();
+                ImGui::SameLine();
+                hierarchyPopulate(child, bModTree, bExTree);
+            } else {
+                bool bChildVis = false;
+                for(auto& ch : child->vChildrenPtrs) {
+                    if(ch->bSearchVis) {
+                        bChildVis = true;
+                        break;
+                    }
+                }
+                if(bChildVis) {
+                    ImGui::SameLine();
+                    if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
+                    if(ImGui::TreeNode(sName.c_str(),"Children")) {
+                        hierarchyPopulate(child, bModTree, bExTree );
+                        ImGui::TreePop();
+                    }
+                }
             }
         }
 

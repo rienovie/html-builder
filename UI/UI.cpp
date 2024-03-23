@@ -43,6 +43,7 @@ std::vector<std::string>
     UI::vFoundThemes,
     UI::vFavorites;
 std::map<std::string,int> UI::mColorEnum;
+std::string UI::sItemSearch;
 bool
     UI::bDefaultThemeActive = false,
     UI::bFavoritesUpdated = true; //set to true so it'll run right away

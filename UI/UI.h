@@ -61,6 +61,7 @@ public:
     static ImGuiStyle* uiStylePtr;
     static ImGuiIO* ioPtr;
     static html::element* selectedElement;
+    static std::string sItemSearch;
     static std::vector<ImGuiCol> vHueModValues;
     static std::map<std::string,ImVec4> mCustomColorProps;
 
