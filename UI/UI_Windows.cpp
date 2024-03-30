@@ -663,7 +663,9 @@ void win::wHierarchy() {
     ImGui::Separator();
 
     ImGui::BeginChild("ChHier");
+    ImGui::BeginTable("ChTable",1);
     hierarchyPopulate(html::vLoadedHTMLs[0]->rootElementPtr,bModTreeNodes,bExpandTree);
+    ImGui::EndTable();
     ImGui::EndChild();
 
     bModTreeNodes = false;
@@ -674,8 +676,12 @@ void win::wHierarchy() {
 void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTree) {
     for(auto& child : element->vChildrenPtrs) {
         if(!child->bSearchVis) { continue; }
+        else {
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+        }
 
-        bool bDisable = false; //so EndDisable only runs when beginDisable runs
+        //bool bDisable = false; //so EndDisable only runs when beginDisable runs
 
         ImGui::PushID(child);
         std::string sName;
@@ -696,18 +702,48 @@ void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTre
             sName.append("...");
         }
 
-        if(UI::selectedElement == child) {
-            ImGui::BeginDisabled();
-            bDisable = true;
-        }
-        if(ImGui::Button(sName.c_str())) {
+        // if(UI::selectedElement == child) {
+        //     ImGui::BeginDisabled();
+        //     bDisable = true;
+        // }
+        // if(ImGui::Button(sName.c_str())) {
+        //     UI::selectedElement = child;
+        //     mWindowBools["Selected Element"] = true;
+        // }
+        // if(UI::selectedElement == child && bDisable) {
+        //     ImGui::EndDisabled();
+        //     bDisable = false;
+        // }
+
+        if(ImGui::Selectable("",UI::selectedElement == child)) {
             UI::selectedElement = child;
             mWindowBools["Selected Element"] = true;
         }
-        if(UI::selectedElement == child && bDisable) {
-            ImGui::EndDisabled();
-            bDisable = false;
+        ImGui::SameLine();
+        if(child->vChildrenPtrs.size() == 0) {
+            ImGui::BulletText( "%s", sName.c_str());
+        } else {
+            if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
+            if(ImGui::TreeNodeEx(sName.c_str(),ImGuiTreeNodeFlags_OpenOnArrow)) {
+                bool bChildVis = false;
+                for(auto& ch : child->vChildrenPtrs) {
+                    if(ch->bSearchVis) {
+                        bChildVis = true;
+                        break;
+                    }
+                }
+                if(bChildVis) {
+                    hierarchyPopulate(child, bModTree, bExTree );
+                }
+                ImGui::TreePop();
+            }
         }
+
+        // if(ImGui::Selectable(sName.c_str(),UI::selectedElement == child)) {
+        //     UI::selectedElement = child;
+        //     mWindowBools["Selected Element"] = true;
+        // }
+
         if(ImGui::IsItemHovered() || ImGui::IsItemActive()) {
             ImGui::BeginTooltip();
 
@@ -739,32 +775,50 @@ void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTre
             ImGui::EndTooltip();
         }
 
-        if(child->vChildrenPtrs.size() != 0) {
-            //if only single child with no next children
-            if(child->vChildrenPtrs.size() == 1
-            && child->vChildrenPtrs[0]->vChildrenPtrs.size() == 0
-            && child->vChildrenPtrs[0]->bSearchVis
-            ) {
-                ImGui::SameLine();
-                hierarchyPopulate(child, bModTree, bExTree);
-            } else {
-                bool bChildVis = false;
-                for(auto& ch : child->vChildrenPtrs) {
-                    if(ch->bSearchVis) {
-                        bChildVis = true;
-                        break;
-                    }
-                }
-                if(bChildVis) {
-                    ImGui::SameLine();
-                    if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
-                    if(ImGui::TreeNode(sName.c_str(),"Children")) {
-                        hierarchyPopulate(child, bModTree, bExTree );
-                        ImGui::TreePop();
-                    }
-                }
-            }
-        }
+
+        // if(child->vChildrenPtrs.size() > 0) {
+        //     bool bChildVis = false;
+        //     for(auto& ch : child->vChildrenPtrs) {
+        //         if(ch->bSearchVis) {
+        //             bChildVis = true;
+        //             break;
+        //         }
+        //     }
+        //     if(bChildVis) {
+        //         ImGui::SameLine();
+        //         if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
+        //         if(ImGui::TreeNode(sName.c_str(),"Children")) {
+        //             hierarchyPopulate(child, bModTree, bExTree );
+        //             ImGui::TreePop();
+        //         }
+        //     }
+        // }
+        // if(child->vChildrenPtrs.size() != 0) {
+        //     //if only single child with no next children
+        //     if(child->vChildrenPtrs.size() == 1
+        //     && child->vChildrenPtrs[0]->vChildrenPtrs.size() == 0
+        //     && child->vChildrenPtrs[0]->bSearchVis
+        //     ) {
+        //         ImGui::SameLine();
+        //         hierarchyPopulate(child, bModTree, bExTree);
+        //     } else {
+        //         bool bChildVis = false;
+        //         for(auto& ch : child->vChildrenPtrs) {
+        //             if(ch->bSearchVis) {
+        //                 bChildVis = true;
+        //                 break;
+        //             }
+        //         }
+        //         if(bChildVis) {
+        //             ImGui::SameLine();
+        //             if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
+        //             if(ImGui::TreeNode(sName.c_str(),"Children")) {
+        //                 hierarchyPopulate(child, bModTree, bExTree );
+        //                 ImGui::TreePop();
+        //             }
+        //         }
+        //     }
+        // }
 
         ImGui::PopID();
 

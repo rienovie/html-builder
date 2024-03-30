@@ -166,7 +166,7 @@ void html::file::populateElements() {
         sCurrentLine = "",
         sBuild = "";
 
-    //finds all terminating elements
+    //finds all terminating elements for missing elementInfo fallback
     for(int i = 0; i < iFileLineSize; i++) {
         iSize = vFileLines[i].size();
         sCurrentLine = vFileLines[i];
@@ -295,7 +295,11 @@ int2d html::element::getNextElement() {
                     //TODO check if this breaks with <>
                     sBuiltName = sBuild.substr(1,sBuild.length() - 2);
 
-                    iTerminating = (filePtr->setTerminations.find(sBuiltName) != filePtr->setTerminations.end()) + 1;
+                    if(mElementInfo.find(sBuiltName) != mElementInfo.end()) {
+                        iTerminating = mElementInfo.at(sBuiltName).bContainer + 1;
+                    } else {
+                        iTerminating = (filePtr->setTerminations.find(sBuiltName) != filePtr->setTerminations.end()) + 1;
+                    }
                 }
             } else { //first char found, term not determined, carrot not found
                 //just need to find end for Raw text
@@ -340,10 +344,17 @@ void html::element::populateElementValues() {
 
     for(int i = 1; i < sRawLine.length() - 1; i++) { //skip first and last
         if(!bOpenQuotes) {
-            if (sRawLine[i] == ' ' && !bNameSet) {
-                sElementName = sBuild;
-                bNameSet = true;
-                sBuild.clear();
+            if (sRawLine[i] == ' ') {
+                if(!bNameSet) {
+                    sElementName = sBuild;
+                    bNameSet = true;
+                    sBuild.clear();
+                } else if (sBuild.length() > 0) { //this should handle blank attributes
+                    sProp = sBuild;
+                    mAttributes[sProp]; //should create blank value? TODO check this
+                    sBuild.clear();
+                    sProp.clear();
+                }
             } else if (sRawLine[i] == '=') {
                 sProp = sBuild;
                 sBuild.clear();
@@ -399,7 +410,6 @@ void html::elementInfo::update() {
 }
 
 //specifically designed for the Mozilla page
-//TODO need to account for the different headers
 //h1-h5 don't populate, only h6 does so should be able to just copy h6 for each
 void html::parseHtmlForElementInfos ( std::string sMozillaHtml ) {
     std::set<std::string> setSections {

@@ -95,6 +95,8 @@ public:
             sFullRawFile;
         std::vector<std::string> vFileLines;
         element* rootElementPtr;
+
+        //these are used as fallback if an element does not have elementInfo
         std::set<std::string> setTerminations;
 
         file(std::string sFilePath);
