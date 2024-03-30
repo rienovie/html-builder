@@ -30,7 +30,8 @@ public:
 
     static int
         iFontSize,
-        iCurrentTheme;
+        iCurrentTheme,
+        iMaxRawLength;
 
     static ImVec2
         limitFontSize,

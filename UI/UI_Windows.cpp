@@ -234,7 +234,7 @@ void win::wTest() {
 }
 
 void win::wSettings() {
-    static fetch::fetchData* fetchPtr = NULL;
+
 
     ImGui::Begin("Settings",&mWindowBools["Settings"],ImGuiWindowFlags_NoCollapse);
 
@@ -242,55 +242,36 @@ void win::wSettings() {
     for(auto& item : html::vLoadedHTMLs) {
         ImGui::Text( "%s", item->sFileLocation.c_str());
     }
-    if(ImGui::Button("Default")) { UI::iFontSize = 20; };
-    ImGui::SameLine();
     ImGui::PushFont(UI::font_bold);
-    ImGui::SliderInt("Font Size",&UI::iFontSize,UI::limitFontSize.x,UI::limitFontSize.y);
+    ImGui::Text("Font Size");
     ImGui::PopFont();
+    ImGui::PushID("DefFonSizeBtn");
+    if(ImGui::Button("Default")) { UI::iFontSize = 20; };
+    ImGui::PopID();
+    ImGui::SameLine();
+    ImGui::SliderInt("Size",&UI::iFontSize,UI::limitFontSize.x,UI::limitFontSize.y);
+
+
 
     ImGui::NewLine();
-    if(ImGui::Button("Fetch HTML Elements")) {
-        fetchPtr = fetch::fetchUrl("https://developer.mozilla.org/en-US/docs/Web/HTML/Element");
-        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-        ImGui::SetNextWindowPos(center,ImGuiCond_Appearing,ImVec2(0.5f,0.5f));
-        ImGui::OpenPopup("Fetching Elements");
-
-    } BasicToolTip("Gets elements from Mozilla Web Docs");
-    if(ImGui::BeginPopupModal("Fetching Elements",NULL,ImGuiWindowFlags_AlwaysAutoResize)) {
-        static std::string sCurrentFetchStatus;
-        if(!fetchPtr) { util::qPrint("fetchPtr not valid but modal was called!"); }
-        switch (fetchPtr->currentStatus) {
-            case fetch::notActive:
-                sCurrentFetchStatus = "Not Active";
-                break;
-            case fetch::init:
-                sCurrentFetchStatus = "Initializing...";
-                break;
-            case fetch::fetching:
-                sCurrentFetchStatus = "Fetching from URL...";
-                break;
-            case fetch::fetchSuccess:
-                sCurrentFetchStatus = "Populating Elements...";
-                html::parseHtmlForElementInfos(fetchPtr->sHtml);
-                fetchPtr = NULL;
-                ImGui::CloseCurrentPopup();
-                ImGui::EndPopup();
-                ImGui::End();
-                return;
-            case fetch::error:
-                sCurrentFetchStatus = fetchPtr->sError;
-                if(ImGui::Button("Close")) {
-                    fetchPtr = NULL;
-                    ImGui::CloseCurrentPopup();
-                }
-                break;
-        };
-        ImGui::Text("Getting Elements from Mozilla Web Docs...");
-        ImGui::Text( "%s", fetchPtr->sUrl.c_str());
-        ImGui::ProgressBar(fetchPtr->currentStatus/3,ImVec2(500,0),sCurrentFetchStatus.c_str());
-
-        ImGui::EndPopup();
+    ImGui::PushFont(UI::font_bold);
+    ImGui::Text("Max Raw Preview Length");
+    ImGui::PopFont();
+    ImGui::PushID("DefMaxRawBtn");
+    if(ImGui::Button("Default")) {
+        UI::iMaxRawLength = 24;
+        config::update(config::system,"maxRawLength","24");
     }
+    ImGui::PopID();
+    ImGui::SameLine();
+    if(ImGui::SliderInt("Characters",&UI::iMaxRawLength,12,48)) {
+        config::update(config::system,"maxRawLength",std::to_string(UI::iMaxRawLength));
+    }
+    std::string sRawSamp = "In the heirarchy this is where it will be cut off";
+    sRawSamp = sRawSamp.substr(0,UI::iMaxRawLength);
+    sRawSamp.append("...");
+    ImGui::TextDisabled( "%s", sRawSamp.c_str());
+    ImGui::NewLine();
 
     /* using this to write to the config file, will probably clean up later
      * Put the ImGui color copy in the demo window here and uncomment this code
@@ -315,10 +296,14 @@ void win::wSettings() {
         }
     } */
 
+    //Fetch HTML Elements not sure if I want this is release version or not :/
+    //swFetchElementBtn();
 
     ImGui::SeparatorText("Theme");
 
+    ImGui::PushFont(UI::font_bold);
     ImGui::Text("Create New Theme Based on Current");
+    ImGui::PopFont();
     static char cBufNameInput[32] = "";
     ImGui::InputTextWithHint("New Theme","New Theme Name",cBufNameInput,32,ImGuiInputTextFlags_CallbackCharFilter,themeNameCallback);
 
@@ -390,6 +375,45 @@ void win::wSettings() {
     if(UI::bDefaultThemeActive) {
         ImGui::BeginDisabled();
         ImGui::Text("Cannot modify Default theme");
+    } else {
+        if(ImGui::Button("Delete Current Theme")) {
+            ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+            ImGui::SetNextWindowPos(center,ImGuiCond_Appearing,ImVec2(0.5f,0.5f));
+            ImGui::OpenPopup("Confirm Theme Deletion");
+        }
+    }
+    if(ImGui::BeginPopupModal("Confirm Theme Deletion",NULL,ImGuiWindowFlags_AlwaysAutoResize)) {
+        std::string sMessage = "Are you sure you wish to delete theme \"";
+        sMessage.append(config::getProp(config::system,"theme"));
+        sMessage.append("\"?");
+        ImGui::Text( "%s", sMessage.c_str());
+        ImGui::PushStyleColor(ImGuiCol_Text,UI::mCustomColorProps.at("Critical"));
+        ImGui::Text("This cannot be undone!");
+        ImGui::NewLine();
+        ImGui::BeginTable("BtnTab",2,ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_PadOuterX);
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        if(ImGui::Button("Yes, delete the theme!")) {
+            config::deleteCurrentTheme();
+            ImGui::PopStyleColor();
+            ImGui::CloseCurrentPopup();
+            ImGui::EndTable();
+            ImGui::EndPopup();
+            ImGui::End();
+            UI::vFoundThemes = config::getAllThemeNames();
+            UI::assignCurrentThemeValueByName(config::getProp(config::system,"theme"));
+            UI::refreshTheme();
+            return;
+        }
+        ImGui::PopStyleColor();
+        ImGui::TableNextColumn();
+        if(ImGui::Button("No, do NOT delete the theme!")) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndTable();
+        ImGui::NewLine();
+
+        ImGui::EndPopup();
     }
     swThemeOptions();
     swThemeColors();
@@ -663,7 +687,7 @@ void win::wHierarchy() {
     ImGui::Separator();
 
     ImGui::BeginChild("ChHier");
-    ImGui::BeginTable("ChTable",1);
+    ImGui::BeginTable("ChTable",1,ImGuiTableFlags_RowBg);
     hierarchyPopulate(html::vLoadedHTMLs[0]->rootElementPtr,bModTreeNodes,bExpandTree);
     ImGui::EndTable();
     ImGui::EndChild();
@@ -681,8 +705,6 @@ void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTre
             ImGui::TableNextColumn();
         }
 
-        //bool bDisable = false; //so EndDisable only runs when beginDisable runs
-
         ImGui::PushID(child);
         std::string sName;
 
@@ -698,51 +720,22 @@ void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTre
         } else if(child->bIsElement) {
             sName = child->sElementName;
         } else {
-            sName = util::shorten(child->sRawLine,12,'\n');
+            sName = util::shorten(child->sRawLine,UI::iMaxRawLength,'\n');
             sName.append("...");
         }
 
-        // if(UI::selectedElement == child) {
-        //     ImGui::BeginDisabled();
-        //     bDisable = true;
-        // }
-        // if(ImGui::Button(sName.c_str())) {
-        //     UI::selectedElement = child;
-        //     mWindowBools["Selected Element"] = true;
-        // }
-        // if(UI::selectedElement == child && bDisable) {
-        //     ImGui::EndDisabled();
-        //     bDisable = false;
-        // }
-
-        if(ImGui::Selectable("",UI::selectedElement == child)) {
+        if(ImGui::Selectable("",UI::selectedElement == child, ImGuiSelectableFlags_AllowOverlap | ImGuiSelectableFlags_AllowItemOverlap)) {
             UI::selectedElement = child;
             mWindowBools["Selected Element"] = true;
+            //util::qPrint("Selectable Clicked!");
         }
         ImGui::SameLine();
-        if(child->vChildrenPtrs.size() == 0) {
-            ImGui::BulletText( "%s", sName.c_str());
-        } else {
-            if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
-            if(ImGui::TreeNodeEx(sName.c_str(),ImGuiTreeNodeFlags_OpenOnArrow)) {
-                bool bChildVis = false;
-                for(auto& ch : child->vChildrenPtrs) {
-                    if(ch->bSearchVis) {
-                        bChildVis = true;
-                        break;
-                    }
-                }
-                if(bChildVis) {
-                    hierarchyPopulate(child, bModTree, bExTree );
-                }
-                ImGui::TreePop();
-            }
-        }
 
-        // if(ImGui::Selectable(sName.c_str(),UI::selectedElement == child)) {
-        //     UI::selectedElement = child;
-        //     mWindowBools["Selected Element"] = true;
-        // }
+        if(ImGui::IsItemClicked()) {
+            UI::selectedElement = child;
+            mWindowBools["Selected Element"] = true;
+            //util::qPrint("Item Clicked");
+        }
 
         if(ImGui::IsItemHovered() || ImGui::IsItemActive()) {
             ImGui::BeginTooltip();
@@ -775,50 +768,24 @@ void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTre
             ImGui::EndTooltip();
         }
 
-
-        // if(child->vChildrenPtrs.size() > 0) {
-        //     bool bChildVis = false;
-        //     for(auto& ch : child->vChildrenPtrs) {
-        //         if(ch->bSearchVis) {
-        //             bChildVis = true;
-        //             break;
-        //         }
-        //     }
-        //     if(bChildVis) {
-        //         ImGui::SameLine();
-        //         if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
-        //         if(ImGui::TreeNode(sName.c_str(),"Children")) {
-        //             hierarchyPopulate(child, bModTree, bExTree );
-        //             ImGui::TreePop();
-        //         }
-        //     }
-        // }
-        // if(child->vChildrenPtrs.size() != 0) {
-        //     //if only single child with no next children
-        //     if(child->vChildrenPtrs.size() == 1
-        //     && child->vChildrenPtrs[0]->vChildrenPtrs.size() == 0
-        //     && child->vChildrenPtrs[0]->bSearchVis
-        //     ) {
-        //         ImGui::SameLine();
-        //         hierarchyPopulate(child, bModTree, bExTree);
-        //     } else {
-        //         bool bChildVis = false;
-        //         for(auto& ch : child->vChildrenPtrs) {
-        //             if(ch->bSearchVis) {
-        //                 bChildVis = true;
-        //                 break;
-        //             }
-        //         }
-        //         if(bChildVis) {
-        //             ImGui::SameLine();
-        //             if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
-        //             if(ImGui::TreeNode(sName.c_str(),"Children")) {
-        //                 hierarchyPopulate(child, bModTree, bExTree );
-        //                 ImGui::TreePop();
-        //             }
-        //         }
-        //     }
-        // }
+        if(child->vChildrenPtrs.size() == 0) {
+            ImGui::BulletText( "%s", sName.c_str());
+        } else {
+            if( bModTree ) { ImGui::SetNextItemOpen(bExTree); }
+            if(ImGui::TreeNodeEx(sName.c_str(),ImGuiTreeNodeFlags_OpenOnArrow)) {
+                bool bChildVis = false;
+                for(auto& ch : child->vChildrenPtrs) {
+                    if(ch->bSearchVis) {
+                        bChildVis = true;
+                        break;
+                    }
+                }
+                if(bChildVis) {
+                    hierarchyPopulate(child, bModTree, bExTree );
+                }
+                ImGui::TreePop();
+            }
+        }
 
         ImGui::PopID();
 
@@ -1251,4 +1218,51 @@ void win::newNote ( std::string& sNewNote, int& iNoteType ) {
     sNewNote.clear();
 }
 
+void win::swFetchElementBtn() {
+    static fetch::fetchData* fetchPtr = NULL;
 
+    ImGui::NewLine();
+    if(ImGui::Button("Fetch HTML Elements")) {
+        fetchPtr = fetch::fetchUrl("https://developer.mozilla.org/en-US/docs/Web/HTML/Element");
+        ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+        ImGui::SetNextWindowPos(center,ImGuiCond_Appearing,ImVec2(0.5f,0.5f));
+        ImGui::OpenPopup("Fetching Elements");
+
+    } BasicToolTip("Gets elements from Mozilla Web Docs");
+    if(ImGui::BeginPopupModal("Fetching Elements",NULL,ImGuiWindowFlags_AlwaysAutoResize)) {
+        static std::string sCurrentFetchStatus;
+        if(!fetchPtr) { util::qPrint("fetchPtr not valid but modal was called!"); }
+        switch (fetchPtr->currentStatus) {
+            case fetch::notActive:
+                sCurrentFetchStatus = "Not Active";
+                break;
+            case fetch::init:
+                sCurrentFetchStatus = "Initializing...";
+                break;
+            case fetch::fetching:
+                sCurrentFetchStatus = "Fetching from URL...";
+                break;
+            case fetch::fetchSuccess:
+                sCurrentFetchStatus = "Populating Elements...";
+                html::parseHtmlForElementInfos(fetchPtr->sHtml);
+                fetchPtr = NULL;
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                ImGui::End();
+                return;
+            case fetch::error:
+                sCurrentFetchStatus = fetchPtr->sError;
+                if(ImGui::Button("Close")) {
+                    fetchPtr = NULL;
+                    ImGui::CloseCurrentPopup();
+                }
+                break;
+        };
+        ImGui::Text("Getting Elements from Mozilla Web Docs...");
+        ImGui::Text( "%s", fetchPtr->sUrl.c_str());
+        ImGui::ProgressBar(fetchPtr->currentStatus/3,ImVec2(500,0),sCurrentFetchStatus.c_str());
+
+        ImGui::EndPopup();
+    }
+
+}

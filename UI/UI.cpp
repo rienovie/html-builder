@@ -18,7 +18,8 @@ int
     UI::iCurrentTheme = 0,
     UI::iUserWindowWidth = 1600,
     UI::iUserWindowHeight = 900,
-    UI::iLastStoredFontSize = 20;
+    UI::iLastStoredFontSize = 20,
+    UI::iMaxRawLength = 12;
 
 ImVec2
     UI::limitFontSize = ImVec2(12,32),
@@ -116,6 +117,7 @@ UI::UI() {
     ImGui::CreateContext();
 
     iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
+    iMaxRawLength = util::strToInt(config::getProp(config::system,"maxRawLength"));
     ioPtr = &ImGui::GetIO();
     ioPtr->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ioPtr->ConfigFlags |= ImGuiConfigFlags_DockingEnable;

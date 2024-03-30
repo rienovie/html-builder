@@ -39,7 +39,8 @@ private:
         wEditElement(),
         wEditElementName(),
         swElementInfo(html::elementInfo& elInfo),
-        newNote(std::string& sNewNote, int& iNoteType);
+        newNote(std::string& sNewNote, int& iNoteType),
+        swFetchElementBtn();
 
     static int themeNameCallback(ImGuiInputTextCallbackData* data);
 };

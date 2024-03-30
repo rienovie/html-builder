@@ -6,7 +6,8 @@ std::map<std::string, std::string> config::mDefaultConfig{
     {"windowWidth","1600"},
     {"windowHeight","900"},
     {"fontSize","24"},
-    {"favorites","/,/home"}
+    {"favorites","/,/home"},
+    {"maxRawLength","24"}
 };
 
 bool
@@ -645,4 +646,21 @@ void config::removeProp ( configType cfgTo, const char* propertyName ) {
     ConfigMapPtr->erase(propertyName);
 }
 
+void config::deleteCurrentTheme() {
+    std::string sThemeToDelete = getProp(system,"theme");
+    if(sThemeToDelete == "Default") { return; } //only delete if not default
+    update(system,"theme","Default");
+
+    //delete theme
+    std::string sPath = getThemePathByName(sThemeToDelete);
+
+    //if doesn't exist
+    if(!(std::filesystem::exists(sPath))) {
+        util::qPrint("Error, theme",sThemeToDelete,"at path",sPath,"does not exist!");
+        return;
+    }
+    std::filesystem::remove(sPath);
+
+    findAllThemes();
+}
 

@@ -24,7 +24,8 @@ public:
         checkIfShouldSaveConfigs(),
         createNewThemeFromCurrent(std::string sNewThemeName),
         findAllThemes(),
-        modifyFavorites(std::string sPath,bool bRemove = false);
+        modifyFavorites(std::string sPath,bool bRemove = false),
+        deleteCurrentTheme();
 
     static std::vector<std::string>
         getFavorites(),
