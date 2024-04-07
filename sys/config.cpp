@@ -7,7 +7,8 @@ std::map<std::string, std::string> config::mDefaultConfig{
     {"windowHeight","900"},
     {"fontSize","24"},
     {"favorites","/,/home"},
-    {"maxRawLength","24"}
+    {"maxRawLength","24"},
+    {"fullNames","1"}
 };
 
 bool

@@ -136,6 +136,8 @@ public:
 
     html();
     ~html();
+
+    static elementInfo* getElementInfo(std::string sElementName);
 private:
     static void
         parseAndSetElementFromHtmlFirstLine(elementInfo& buildElement,std::string sLine),

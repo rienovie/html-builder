@@ -57,6 +57,7 @@ public:
 
     static bool
         bDefaultThemeActive,
+        bFullElementNames,
         bFavoritesUpdated;
 
     static ImGuiStyle* uiStylePtr;

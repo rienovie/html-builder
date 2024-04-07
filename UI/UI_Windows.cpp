@@ -239,9 +239,14 @@ void win::wSettings() {
     ImGui::Begin("Settings",&mWindowBools["Settings"],ImGuiWindowFlags_NoCollapse);
 
     ImGui::SeparatorText("System");
-    for(auto& item : html::vLoadedHTMLs) {
-        ImGui::Text( "%s", item->sFileLocation.c_str());
+    if(html::vLoadedHTMLs.size() > 0) {
+        ImGui::TextDisabled("Open Files:");
+        for(auto& item : html::vLoadedHTMLs) {
+            ImGui::BulletText( "%s", item->sFileLocation.c_str());
+        }
+        ImGui::NewLine();
     }
+
     ImGui::PushFont(UI::font_bold);
     ImGui::Text("Font Size");
     ImGui::PopFont();
@@ -250,8 +255,6 @@ void win::wSettings() {
     ImGui::PopID();
     ImGui::SameLine();
     ImGui::SliderInt("Size",&UI::iFontSize,UI::limitFontSize.x,UI::limitFontSize.y);
-
-
 
     ImGui::NewLine();
     ImGui::PushFont(UI::font_bold);
@@ -271,6 +274,15 @@ void win::wSettings() {
     sRawSamp = sRawSamp.substr(0,UI::iMaxRawLength);
     sRawSamp.append("...");
     ImGui::TextDisabled( "%s", sRawSamp.c_str());
+    ImGui::NewLine();
+
+    if(ImGui::Checkbox("Use Full Element Names",&UI::bFullElementNames)) {
+        config::update(config::system,"fullNames",std::to_string(UI::bFullElementNames));
+    }
+    ImGui::TextDisabled("<div> will show in heirarchy as:");
+    std::string sExample = (UI::bFullElementNames ? "content division" : "div");
+    ImGui::SameLine();
+    ImGui::TextDisabled( "%s", sExample.c_str());
     ImGui::NewLine();
 
     /* using this to write to the config file, will probably clean up later
@@ -707,18 +719,19 @@ void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTre
 
         ImGui::PushID(child);
         std::string sName;
+        html::elementInfo* curInfo = html::getElementInfo(child->sElementName);
 
-        if(child->vChildrenPtrs.size() != 0) {
-            if(child->mAttributes.find("id") != child->mAttributes.end()) {
-                sName = child->mAttributes.at("id");
-                sName.append(" <");
-                sName.append(child->sElementName);
-                sName.append(">");
+        if(child->mAttributes.find("id") != child->mAttributes.end()) {
+            sName = child->mAttributes.at("id");
+            sName.append(" <");
+            sName.append(child->sElementName);
+            sName.append(">");
+        } else if(child->bIsElement) {
+            if(UI::bFullElementNames && curInfo) {
+                sName = curInfo->sFullName;
             } else {
                 sName = child->sElementName;
             }
-        } else if(child->bIsElement) {
-            sName = child->sElementName;
         } else {
             sName = util::shorten(child->sRawLine,UI::iMaxRawLength,'\n');
             sName.append("...");
@@ -747,8 +760,9 @@ void win::hierarchyPopulate(html::element* element, bool& bModTree, bool& bExTre
                 ImGui::Text( "%s", sTTName.c_str());
                 ImGui::SameLine();
                 std::string sFullElementName = child->sElementName;
-                if(html::mElementInfo.find(child->sElementName) != html::mElementInfo.end()) {
-                    sFullElementName = (html::mElementInfo.at(child->sElementName).sFullName);
+                html::elementInfo* curInfo = html::getElementInfo(child->sElementName);
+                if(curInfo) {
+                    sFullElementName = (curInfo->sFullName);
                 }
                 ImGui::TextDisabled( "%s", sFullElementName.c_str());
             }

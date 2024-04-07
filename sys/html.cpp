@@ -589,3 +589,11 @@ void html::element::determineVis(std::string& sSearch) {
     else this->bSearchVis = (sSearch.length() == 0 || sRawLine.find(sSearch) != std::string::npos);
 }
 
+html::elementInfo * html::getElementInfo ( std::string sElementName ) {
+    if(mElementInfo.find(sElementName) == mElementInfo.end()) {
+        return NULL;
+    } else {
+        return &mElementInfo.at(sElementName);
+    }
+}
+

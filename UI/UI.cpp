@@ -47,6 +47,7 @@ std::map<std::string,int> UI::mColorEnum;
 std::string UI::sItemSearch;
 bool
     UI::bDefaultThemeActive = false,
+    UI::bFullElementNames = true,
     UI::bFavoritesUpdated = true; //set to true so it'll run right away
 ImGuiStyle* UI::uiStylePtr = NULL;
 GLFWwindow* UI::mainWindow = NULL;
@@ -118,6 +119,7 @@ UI::UI() {
 
     iFontSize = util::strToInt(config::getProp(config::system,"fontSize"));
     iMaxRawLength = util::strToInt(config::getProp(config::system,"maxRawLength"));
+    bFullElementNames = util::strToInt(config::getProp(config::system,"fullNames"));
     ioPtr = &ImGui::GetIO();
     ioPtr->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ioPtr->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
