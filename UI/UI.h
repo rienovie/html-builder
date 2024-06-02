@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ImGui/imgui.h"
-#include "ImGui/imgui_stdlib.h"
-#include "ImGui/imconfig.h"
-#include "ImGui/backends/imgui_impl_glfw.h"
-#include "ImGui/backends/imgui_impl_opengl3.h"
+#include "../ImGui/imgui.h"
+#include "../ImGui/misc/cpp/imgui_stdlib.h"
+#include "../ImGui/imconfig.h"
+#include "../ImGui/backends/imgui_impl_glfw.h"
+#include "../ImGui/backends/imgui_impl_opengl3.h"
 #include <GLFW/glfw3.h>
-#include "../sys/util.h"
+#include "../Util/util.hpp"
 #include <fstream>
 #include <map>
 #include <filesystem>

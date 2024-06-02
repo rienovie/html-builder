@@ -71,7 +71,7 @@ void tick_sec() {
 }
 
 void tick_long() {
-    if(bCloseThreads) return;
+    if( bCloseThreads ) return;
     std::this_thread::sleep_for(std::chrono::seconds(5));
     if( bCloseThreads ) return;
     //util::printMemUse(memUsage);

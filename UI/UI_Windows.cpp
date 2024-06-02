@@ -40,7 +40,7 @@ void win::wMainMenu() {
 }
 
 void win::mainLoop() {
-    ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+    ImGui::DockSpaceOverViewport(0,ImGui::GetMainViewport());
 
     wMainMenu();
     if(mWindowBools["ImGui Demo"]) { ImGui::ShowDemoWindow(&mWindowBools["ImGui Demo"]); }
@@ -812,7 +812,6 @@ void win::wSelectedElement() {
         mWindowBools["Selected Element"] = false;
         return;
     }
-
     html::element* SE = UI::selectedElement;
 
     ImGui::Begin("Selected Element",&mWindowBools["Selected Element"]);

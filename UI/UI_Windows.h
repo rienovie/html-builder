@@ -3,9 +3,9 @@
 //needed for the circle Tess Setting
 #define IM_MAX(A, B)            (((A) >= (B)) ? (A) : (B))
 
-#include "../sys/util.h"
-#include "ImGui/imgui.h"
-#include "ImGui/imgui_stdlib.h"
+#include "../Util/util.hpp"
+#include "../ImGui/imgui.h"
+#include "../ImGui/misc/cpp/imgui_stdlib.h"
 #include "../sys/config.h"
 #include "UI.h"
 #include <map>

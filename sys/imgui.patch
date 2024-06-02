@@ -1,0 +1,26 @@
+diff --git a/backends/imgui_impl_glfw.h b/backends/imgui_impl_glfw.h
+index 6fe6882c..e2dca4d5 100644
+--- a/backends/imgui_impl_glfw.h
++++ b/backends/imgui_impl_glfw.h
+@@ -22,7 +22,7 @@
+ // - Introduction, links and more at the top of imgui.cpp
+ 
+ #pragma once
+-#include "imgui.h"      // IMGUI_IMPL_API
++#include "../imgui.h"      // IMGUI_IMPL_API
+ #ifndef IMGUI_DISABLE
+ 
+ struct GLFWwindow;
+diff --git a/backends/imgui_impl_opengl3.h b/backends/imgui_impl_opengl3.h
+index ae718d8d..6300a38b 100644
+--- a/backends/imgui_impl_opengl3.h
++++ b/backends/imgui_impl_opengl3.h
+@@ -27,7 +27,7 @@
+ //  Only override if your GL version doesn't handle this GLSL version. See GLSL version table at the top of imgui_impl_opengl3.cpp.
+ 
+ #pragma once
+-#include "imgui.h"      // IMGUI_IMPL_API
++#include "../imgui.h"      // IMGUI_IMPL_API
+ #ifndef IMGUI_DISABLE
+ 
+ // Backend API

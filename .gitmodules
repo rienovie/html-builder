@@ -1,0 +1,7 @@
+[submodule "Util"]
+	path = Util
+	url = git@github.com:rienovie/CppUtil.git
+[submodule "ImGui"]
+	path = ImGui
+	url = git@github.com:ocornut/imgui.git
+	branch = docking
